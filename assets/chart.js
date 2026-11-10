@@ -213,7 +213,7 @@
   const box = document.querySelector(".story .chart-box");
   const playBtn = box.querySelector(".play");
   const timeEl = box.querySelector(".time");
-  const HOLD = [5500, 6000, 7500, 6500, 8000];          // ms on each step (reading time)
+  const HOLD = [2500, 3000, 3500, 3000, 4000];          // ms on each step (reading time)
   const segFills = steps.map((_, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "seg-i"; b.setAttribute("aria-label", `Step ${i + 1}`);
@@ -224,15 +224,15 @@
   });
 
   function apply() {
-    set("draw", step >= 2 ? 1 : 0, 1400);
-    set("region", step >= 2 ? 1 : 0, 600, step >= 2 ? 1100 : 0);
+    set("draw", step >= 2 ? 1 : 0, 900);
+    set("region", step >= 2 ? 1 : 0, 400, step >= 2 ? 700 : 0);
     for (const it of items) {
-      if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 600, it.idx * 90);
-      else set("asym" + it.idx, step >= 4 ? 1 : 0, 600, step >= 4 ? it.idx * 35 : 0);
+      if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 600, it.idx * 50);
+      else set("asym" + it.idx, step >= 4 ? 1 : 0, 600, step >= 4 ? it.idx * 20 : 0);
     }
     set("asymAll", step >= 4 ? 1 : 0, 600);
-    set("gap", step >= 3 ? 1 : 0, 1100);
-    set("supply", step >= 5 ? 1 : 0, 1400);
+    set("gap", step >= 3 ? 1 : 0, 700);
+    set("supply", step >= 5 ? 1 : 0, 900);
     steps.forEach((s) => s.classList.toggle("active", +s.dataset.step === step));
     timeEl.textContent = `${step} / ${steps.length}`;
   }
