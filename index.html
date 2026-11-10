@@ -23,9 +23,11 @@
   <figure class="fig2-player" data-src="assets/marketplace-anim.json">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
-      <button type="button" class="play" aria-label="Play animation">Play</button>
-      <button type="button" class="replay" aria-label="Replay from the start">Replay</button>
-      <div class="chapters" role="group" aria-label="Jump to"></div>
+      <button type="button" class="play" aria-label="Play">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9.5-5.5z"/><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
+      </button>
+      <div class="scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill"></div><div class="knob"></div></div>
+      <span class="time">0:00 / 0:00</span>
     </div>
   </figure>
   <p class="caption">Each traveller and each airline is represented by its own agent. User agents send requests
@@ -36,17 +38,6 @@
 <section id="chart" class="story wrap wide" aria-label="Rewards compared with the MAX reference">
   <div class="story-chart">
     <div class="chart-box">
-      <div class="chart-top">
-        <div class="seg" role="group" aria-label="Supply">
-          <button type="button" data-supply="scarce" aria-pressed="true">Scarce seats</button>
-          <button type="button" data-supply="abundant" aria-pressed="false">Plenty of seats</button>
-        </div>
-        <div class="stepper" aria-label="Chart steps">
-          <button type="button" class="prev" aria-label="Previous step">←</button>
-          <span class="count">1 / 6</span>
-          <button type="button" class="next" aria-label="Next step">→</button>
-        </div>
-      </div>
       <svg class="pareto" viewBox="0 0 640 560" role="img" aria-label="Mean user reward against mean provider reward for each model assignment, with the MAX reference line"></svg>
       <div class="key">
         <span><i class="ln"></i>MAX reward</span>
@@ -54,6 +45,13 @@
         <span><i class="dot" style="--c: var(--google)"></i>Google</span>
         <span><i class="dot" style="--c: var(--anthropic)"></i>Anthropic</span>
         <span class="k-asym"><i class="dot hollow"></i>mixed pairing</span>
+      </div>
+      <div class="controls chart-controls">
+        <button type="button" class="play" aria-label="Play">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9.5-5.5z"/><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
+        </button>
+        <div class="segs" role="group" aria-label="Jump to step"></div>
+        <span class="time">1 / 6</span>
       </div>
     </div>
   </div>

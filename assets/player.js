@@ -106,30 +106,28 @@
           el.inner.setAttribute("clip-path", `url(#${el.clipId})`);
         } else el.inner.removeAttribute("clip-path");
       }
-      // chapter highlight
-      chapterBtns.forEach((b, i) => {
-        const next = d.chapters[i + 1];
-        b.setAttribute("aria-pressed", t >= d.chapters[i].t && (!next || t < next.t) ? "true" : "false");
-      });
+      showTime(t);
     }
 
-    // ---- controls
+    // ---- video-style controls: play/pause, seek bar, time
+    const DUR = S2 + d.chat.start + d.chat.cycle;            // one full pass, then it loops
     const bar = root.querySelector(".controls");
     const playBtn = bar.querySelector(".play");
-    const chapWrap = bar.querySelector(".chapters");
-    const chapterBtns = d.chapters.map((c) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.textContent = c.label;
-      b.addEventListener("click", () => { t = c.t; last = null; play(true); });
-      chapWrap.appendChild(b);
-      return b;
-    });
+    const scrub = bar.querySelector(".scrub"), fill = scrub.querySelector(".fill"), knob = scrub.querySelector(".knob");
+    const timeEl = bar.querySelector(".time");
+    const fmt = (ms) => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
+    function showTime(t) {
+      const f = Math.min(t / DUR, 1) * 100;
+      fill.style.width = `${f}%`; knob.style.left = `${f}%`;
+      scrub.setAttribute("aria-valuenow", Math.round(f));
+      timeEl.textContent = `${fmt(t)} / ${fmt(DUR)}`;
+    }
 
     let t = 0, last = null, playing = false, userPaused = false, raf = 0;
     function tick(now) {
       if (last !== null) t += now - last;
       last = now;
+      if (t >= DUR) t %= DUR;
       render(t);
       raf = requestAnimationFrame(tick);
     }
@@ -138,18 +136,34 @@
       if (playing) return;
       playing = true; last = null;
       raf = requestAnimationFrame(tick);
-      playBtn.textContent = "Pause";
-      playBtn.setAttribute("aria-label", "Pause animation");
+      root.classList.add("playing");
+      playBtn.setAttribute("aria-label", "Pause");
     }
     function pause(fromUser) {
       if (fromUser) userPaused = true;
       playing = false;
       cancelAnimationFrame(raf);
-      playBtn.textContent = "Play";
-      playBtn.setAttribute("aria-label", "Play animation");
+      root.classList.remove("playing");
+      playBtn.setAttribute("aria-label", "Play");
     }
-    playBtn.addEventListener("click", () => (playing ? pause(true) : play(true)));
-    bar.querySelector(".replay").addEventListener("click", () => { t = 0; last = null; render(0); play(true); });
+    const toggle = () => (playing ? pause(true) : play(true));
+    playBtn.addEventListener("click", toggle);
+    stage.addEventListener("click", toggle);
+    // seeking: click or drag on the bar, arrow keys when focused
+    const seek = (clientX) => {
+      const r = scrub.getBoundingClientRect();
+      t = clamp01((clientX - r.left) / r.width) * DUR * 0.9999; last = null; render(t);
+    };
+    scrub.addEventListener("pointerdown", (e) => {
+      scrub.setPointerCapture(e.pointerId); seek(e.clientX);
+      const move = (ev) => seek(ev.clientX);
+      const up = () => { scrub.removeEventListener("pointermove", move); scrub.removeEventListener("pointerup", up); };
+      scrub.addEventListener("pointermove", move); scrub.addEventListener("pointerup", up);
+    });
+    scrub.addEventListener("keydown", (e) => {
+      const step = { ArrowLeft: -5000, ArrowRight: 5000 }[e.key];
+      if (step) { e.preventDefault(); t = Math.min(Math.max(t + step, 0), DUR * 0.9999); last = null; render(t); }
+    });
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) { t = S2 + d.chat.start; render(t); pause(true); return; }
