@@ -140,7 +140,7 @@
     return (t) => {
       dots.forEach((d) => { const [x, y] = kf(d.k, t); d.c.setAttribute("cx", x); d.c.setAttribute("cy", y); });
       count.setAttribute("opacity", kf([[0, 0], [3000, 0], [3500, 1]], t));
-      count.textContent = "858 of 858 bookings (scarce) · 531 of 531 (abundant)";
+      count.textContent = "858 of 858 (scarce supply) · 531 of 531 (abundant supply)";
       ex.setAttribute("opacity", kf([[0, 0], [4200, 0], [4700, 1]], t));
       priceBars.forEach((p, i) => {
         const v = kf([[0, 0], [4600 + i * 1400, 0], [5800 + i * 1400, 1]], t);

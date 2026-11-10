@@ -1,6 +1,6 @@
 // "Does a pricier airline agent help?" For a fixed travellers' model, each airline model is a vertical bar at its
 // inference cost per task, from the airline's reward (square) to the travellers' reward (dot).
-// Switching travellers' model or supply glides the bars; the x axis is shared, so scarce -> plenty shows costs halving.
+// Switching travellers' model or supply glides the bars; the x axis is shared, so scarce -> abundant supply shows costs halving.
 (function () {
   const svg = document.querySelector(".tokplot");
   if (!svg) return;

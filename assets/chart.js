@@ -55,6 +55,11 @@
   el("text", { class: "alabel", transform: `translate(18 ${(Y(0) + Y(1)) / 2}) rotate(-90)`, "text-anchor": "middle" }).textContent = "User reward: how happy travellers were →";
   el("text", { class: "corner", x: X(1) - 4, y: Y(1) + 16, "text-anchor": "end" }).textContent = "both sides happy ↗";
 
+  // which supply regime is on screen
+  const badge = el("g", { class: "supply-badge" });
+  const badgeBg = el("rect", { y: Y(0) - 36, height: 26, rx: 13 }, badge);      // bottom-right corner is always empty
+  const badgeA = el("text", { x: X(1) - 24, y: Y(0) - 18.5, "text-anchor": "end" }, badge); badgeA.textContent = "Scarce supply";
+  const badgeB = el("text", { x: X(1) - 24, y: Y(0) - 18.5, "text-anchor": "end" }, badge); badgeB.textContent = "Abundant supply";
   const region = el("path", { class: "gaparea" });
   const defs = el("defs", {});
   const mask = el("mask", { id: "max-reveal", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H }, defs);
@@ -62,6 +67,11 @@
   const maxLine = el("path", { class: "max", mask: "url(#max-reveal)" });
   const maxLbl = el("text", { class: "maxlbl", "text-anchor": "start" });
   maxLbl.textContent = "MAX";
+  // step 1: one example dot walks right (airlines do better) then up (travellers happier)
+  const demo = el("g", {});
+  const demoTrail = el("path", { fill: "none", stroke: "#c9c6d6", "stroke-width": 2, "stroke-dasharray": "4 5" }, demo);
+  const demoDot = el("circle", { r: 9, fill: "var(--ink)" }, demo);
+  const demoTxt = el("text", { class: "lbl" }, demo);
   const gapLayer = el("g", {});
   const dotLayer = el("g", {});
   const lblLayer = el("g", {});
@@ -123,6 +133,10 @@
   function render(now) {
     const s = get("supply", now);
     const c = curve(s);
+    badgeA.setAttribute("opacity", clamp01(1 - 2 * s).toFixed(2));
+    badgeB.setAttribute("opacity", clamp01(2 * s - 1).toFixed(2));
+    const bw = lerp(badgeA.getComputedTextLength(), badgeB.getComputedTextLength(), s) + 28;
+    badgeBg.setAttribute("width", bw); badgeBg.setAttribute("x", X(1) - 10 - bw);
     // MAX line
     const pts = c.map((q) => `${X(q.p).toFixed(1)},${Y(q.u).toFixed(1)}`);
     const d = "M" + pts.join(" L");
@@ -133,6 +147,7 @@
     maskPath.setAttribute("stroke-dasharray", `${len} ${len}`);
     maskPath.setAttribute("stroke-dashoffset", (len * (1 - draw)).toFixed(1));
     const top = c[c.length - 1];
+    maxLine.style.display = draw < 0.005 ? "none" : "";
     maxLbl.setAttribute("x", X(top.p) - 6);
     maxLbl.setAttribute("y", Y(top.u) - 12);
     maxLbl.setAttribute("opacity", clamp01(draw * 3 - 2).toFixed(2));
@@ -140,6 +155,20 @@
     const reg = get("region", now);
     region.setAttribute("d", `M${X(0)},${Y(0)} L${X(0)},${Y(top.u)} L` + [...pts].reverse().join(" L") + ` L${X(c[0].p)},${Y(0)} Z`);
     region.setAttribute("opacity", reg.toFixed(2));
+
+    // demo dot
+    const dv = get("demoVis", now), dt = get("demo", now);
+    demo.setAttribute("opacity", dv.toFixed(3)); demo.style.display = dv < 0.01 ? "none" : "";
+    if (dv >= 0.01) {
+      const P0 = [0.15, 0.15], P1 = [0.8, 0.15], P2 = [0.8, 0.85];
+      const a = clamp01(dt * 2), b = clamp01(dt * 2 - 1);
+      const px = lerp(P0[0], P1[0], ease(a)), pu = lerp(P0[1], P2[1], ease(b));
+      demoDot.setAttribute("cx", X(px)); demoDot.setAttribute("cy", Y(pu));
+      demoTrail.setAttribute("d", `M${X(P0[0])},${Y(P0[1])} L${X(px)},${Y(P0[1])} L${X(px)},${Y(pu)}`);
+      demoTxt.textContent = dt < 0.5 ? "airlines do better →" : "travellers happier ↑";
+      demoTxt.setAttribute("x", X(px) + (dt < 0.5 ? -14 : -14)); demoTxt.setAttribute("y", Y(pu) + (dt < 0.5 ? -16 : 5));
+      demoTxt.setAttribute("text-anchor", "end");
+    }
 
     const gapT = get("gap", now), dim = 1 - 0.65 * get("asymAll", now);
     for (const it of items) {
@@ -203,7 +232,7 @@
   const box = document.querySelector(".story .chart-box");
   const playBtn = box.querySelector(".play");
   const timeEl = box.querySelector(".time");
-  const HOLD = [6500, 8000, 7000, 9500, 8000, 9500];          // ms on each step (reading time)
+  const HOLD = [3000, 3600, 4000, 4800, 4200, 5500];          // ms on each step (reading time)
   const segFills = steps.map((_, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "seg-i"; b.setAttribute("aria-label", `Step ${i + 1}`);
@@ -214,11 +243,13 @@
   });
 
   function apply() {
-    set("draw", step >= 2 ? 1 : 0, 1800);
-    set("region", step >= 2 ? 1 : 0, 900, step >= 2 ? 1400 : 0);
+    if (step === 1) tw.demo = { from: 0, to: 1, start: performance.now() + 150, dur: reduce ? 1 : 2400 };
+    set("demoVis", step === 1 ? 1 : 0, 400);
+    set("draw", step >= 2 ? 1 : 0, 1500, step === 2 ? 200 : 0);
+    set("region", step >= 2 ? 1 : 0, 700, step >= 2 ? 1300 : 0);
     for (const it of items) {
-      if (it.sym) set("sym" + it.idx, step >= 3 ? 1 : 0, 700, step >= 3 ? it.idx * 160 : 0);
-      else set("asym" + it.idx, step >= 5 ? 1 : 0, 600, step >= 5 ? it.idx * 60 : 0);
+      if (it.sym) set("sym" + it.idx, step >= 3 ? 1 : 0, 700, step >= 3 ? it.idx * 110 : 0);
+      else set("asym" + it.idx, step >= 5 ? 1 : 0, 600, step >= 5 ? it.idx * 35 : 0);
     }
     set("asymAll", step >= 5 ? 1 : 0, 600);
     set("gap", step >= 4 ? 1 : 0, 1200);
