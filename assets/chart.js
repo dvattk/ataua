@@ -67,11 +67,6 @@
   const maxLine = el("path", { class: "max", mask: "url(#max-reveal)" });
   const maxLbl = el("text", { class: "maxlbl", "text-anchor": "start" });
   maxLbl.textContent = "MAX";
-  // step 1: one example dot walks right (airlines do better) then up (travellers happier)
-  const demo = el("g", {});
-  const demoTrail = el("path", { fill: "none", stroke: "#c9c6d6", "stroke-width": 2, "stroke-dasharray": "4 5" }, demo);
-  const demoDot = el("circle", { r: 9, fill: "var(--ink)" }, demo);
-  const demoTxt = el("text", { class: "lbl" }, demo);
   const gapLayer = el("g", {});
   const dotLayer = el("g", {});
   const lblLayer = el("g", {});
@@ -156,20 +151,6 @@
     region.setAttribute("d", `M${X(0)},${Y(0)} L${X(0)},${Y(top.u)} L` + [...pts].reverse().join(" L") + ` L${X(c[0].p)},${Y(0)} Z`);
     region.setAttribute("opacity", reg.toFixed(2));
 
-    // demo dot
-    const dv = get("demoVis", now), dt = get("demo", now);
-    demo.setAttribute("opacity", dv.toFixed(3)); demo.style.display = dv < 0.01 ? "none" : "";
-    if (dv >= 0.01) {
-      const P0 = [0.15, 0.15], P1 = [0.8, 0.15], P2 = [0.8, 0.85];
-      const a = clamp01(dt * 2), b = clamp01(dt * 2 - 1);
-      const px = lerp(P0[0], P1[0], ease(a)), pu = lerp(P0[1], P2[1], ease(b));
-      demoDot.setAttribute("cx", X(px)); demoDot.setAttribute("cy", Y(pu));
-      demoTrail.setAttribute("d", `M${X(P0[0])},${Y(P0[1])} L${X(px)},${Y(P0[1])} L${X(px)},${Y(pu)}`);
-      demoTxt.textContent = dt < 0.5 ? "airlines do better →" : "travellers happier ↑";
-      demoTxt.setAttribute("x", X(px) + (dt < 0.5 ? -14 : -14)); demoTxt.setAttribute("y", Y(pu) + (dt < 0.5 ? -16 : 5));
-      demoTxt.setAttribute("text-anchor", "end");
-    }
-
     const gapT = get("gap", now), dim = 1 - 0.65 * get("asymAll", now);
     for (const it of items) {
       const a = it.at.scarce, b = it.at.abundant;
@@ -227,12 +208,12 @@
   }
 
   // ---------------------------------------------------------------- steps (auto-play, like a short video)
-  let step = 0;
+  let step = 0, seen = false;              // dots drop in the moment the chart is first on screen
   const steps = [...document.querySelectorAll(".story .step")];
   const box = document.querySelector(".story .chart-box");
   const playBtn = box.querySelector(".play");
   const timeEl = box.querySelector(".time");
-  const HOLD = [3000, 3600, 4000, 4800, 4200, 5500];          // ms on each step (reading time)
+  const HOLD = [4000, 4000, 5500, 4500, 6000];          // ms on each step (reading time)
   const segFills = steps.map((_, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "seg-i"; b.setAttribute("aria-label", `Step ${i + 1}`);
@@ -243,17 +224,15 @@
   });
 
   function apply() {
-    if (step === 1) tw.demo = { from: 0, to: 1, start: performance.now() + 150, dur: reduce ? 1 : 2400 };
-    set("demoVis", step === 1 ? 1 : 0, 400);
-    set("draw", step >= 2 ? 1 : 0, 1500, step === 2 ? 200 : 0);
-    set("region", step >= 2 ? 1 : 0, 700, step >= 2 ? 1300 : 0);
+    set("draw", step >= 2 ? 1 : 0, 1400);
+    set("region", step >= 2 ? 1 : 0, 600, step >= 2 ? 1100 : 0);
     for (const it of items) {
-      if (it.sym) set("sym" + it.idx, step >= 3 ? 1 : 0, 700, step >= 3 ? it.idx * 110 : 0);
-      else set("asym" + it.idx, step >= 5 ? 1 : 0, 600, step >= 5 ? it.idx * 35 : 0);
+      if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 600, it.idx * 90);
+      else set("asym" + it.idx, step >= 4 ? 1 : 0, 600, step >= 4 ? it.idx * 35 : 0);
     }
-    set("asymAll", step >= 5 ? 1 : 0, 600);
-    set("gap", step >= 4 ? 1 : 0, 1200);
-    set("supply", step >= 6 ? 1 : 0, 1400);
+    set("asymAll", step >= 4 ? 1 : 0, 600);
+    set("gap", step >= 3 ? 1 : 0, 1100);
+    set("supply", step >= 5 ? 1 : 0, 1400);
     steps.forEach((s) => s.classList.toggle("active", +s.dataset.step === step));
     timeEl.textContent = `${step} / ${steps.length}`;
   }
@@ -279,8 +258,8 @@
   }
   playBtn.addEventListener("click", () => { userPaused = playing; setPlaying(!playing); });
   box.querySelector(".pareto").addEventListener("click", (e) => { if (e.target.tagName !== "circle") { userPaused = playing; setPlaying(!playing); } });
-  new IntersectionObserver((es) => es.forEach((e) => { visible = e.isIntersecting; if (visible && !userPaused) setPlaying(true); }),
-    { threshold: 0.5 }).observe(box);
+  new IntersectionObserver((es) => es.forEach((e) => { visible = e.isIntersecting; if (visible && !seen) { seen = true; apply(); } if (visible && !userPaused) setPlaying(true); }),
+    { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
   fetch("assets/chart-data.json").then((r) => r.json()).then((data) => {
@@ -293,6 +272,7 @@
     }));
     const q = new URLSearchParams(location.search).get("step");   // ?step=4 for screenshots
     go(q ? +q : 1);
+    if (q || reduce) { seen = true; apply(); }
     if (q) { for (const k in tw) tw[k].start = -1e9; userPaused = true; }      // pinned: no auto-advance
     if (reduce) { go(steps.length); userPaused = true; }
     requestAnimationFrame(clock);

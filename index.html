@@ -52,7 +52,7 @@
           <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9.5-5.5z"/><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
         </button>
         <div class="segs" role="group" aria-label="Jump to step"></div>
-        <span class="time">1 / 6</span>
+        <span class="time">1 / 5</span>
       </div>
     </div>
   </div>
@@ -61,38 +61,31 @@
     <article class="step" data-step="1">
       <p class="n">1</p>
       <h2>One dot, one whole market</h2>
-      <p>Each dot is a full run: 100 markets of five travellers each. Up is how happy the travellers were
-        (mean <b>user reward</b>), right is how well the airlines did (mean <b>provider reward</b>). The best
-        possible corner is the top right.</p>
+      <p>Each dot is a full run: 100 markets of five travellers, with the same model on both sides. Up is how
+        happy the travellers were (<b>user reward</b>), right is how well the airlines did (<b>provider
+        reward</b>). The strongest models make travellers fairly happy.</p>
     </article>
     <article class="step" data-step="2">
       <p class="n">2</p>
       <h2>What was on the table</h2>
       <p>The dashed line is <b>MAX</b>: the best allocations a joint search found for every market, from
-        "everything for the airlines" (bottom right) to "everything for the travellers" (top left). It is a
-        best-found reference, not a guaranteed ceiling.</p>
+        "everything for the airlines" to "everything for the travellers". Every dot sits far to its left.</p>
     </article>
     <article class="step" data-step="3">
       <p class="n">3</p>
-      <h2>Where the agents land</h2>
-      <p>Now the agents. Here every traveller and every airline uses the same model. The strongest models make
-        travellers fairly happy, but every dot sits far to the left of the line.</p>
-    </article>
-    <article class="step" data-step="4">
-      <p class="n">4</p>
       <h2>The gap is on the airline side</h2>
       <p>Take <b>GPT-6 Astra</b>, the best for travellers at <b>0.74</b>. At that same traveller reward, the best
         allocation found gives airlines <b>0.63</b>, not <b>0.34</b>. Every model leaves at least <b>0.23</b> of
         provider reward on the table.</p>
     </article>
-    <article class="step" data-step="5">
-      <p class="n">5</p>
+    <article class="step" data-step="4">
+      <p class="n">4</p>
       <h2>Mixing models doesn't close it</h2>
       <p>Hollow dots use one model for all travellers and another for all airlines. Swapping who sits on which
         side moves dots around the same cluster. None comes close to the line.</p>
     </article>
-    <article class="step" data-step="6">
-      <p class="n">6</p>
+    <article class="step" data-step="5">
+      <p class="n">5</p>
       <h2>Abundant supply helps travellers, not airlines</h2>
       <p>Under abundant supply, travellers do much better: GPT-6 Astra reaches <b>0.97</b>, close to the line. The
         airlines still trail. Apart from Astra, every model sits at least <b>0.34</b> short on the airline side.</p>
