@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AτA · Agentic Economies</title>
+<meta name="description" content="AτA: a benchmark for multi-agent interaction in agentic economies, where users and airlines are both represented by AI agents that negotiate in a shared market.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">A<span class="tau">τ</span>A</a>
+    <nav aria-label="Sections">
+      <a href="#overview">Overview</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#scoring">Scoring</a>
+      <a href="#setup">Setup</a>
+      <a href="#findings">Findings</a>
+      <a href="#cite">Cite</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero wrap">
+  <p class="banner"><span class="pill">Preview</span> Paper under review · anonymous version</p>
+  <h1>A<span class="tau">τ</span>A</h1>
+  <p class="tagline">A benchmark for multi-agent interaction in agentic economies.</p>
+  <p class="lede">What happens when travellers <em>and</em> airlines both send AI agents to the market? A&tau;A puts user
+    agents and airline agents in a shared airline marketplace, grounded in real U.S. fare data, and scores the outcome
+    for both sides, not just whether a booking was made.</p>
+  <div class="actions">
+    <a class="btn primary" href="#leaderboard">See the leaderboard</a>
+    <span class="btn ghost" aria-disabled="true" title="Available after the review period">Paper · after review</span>
+    <span class="btn ghost" aria-disabled="true" title="Available after the review period">Code · after review</span>
+  </div>
+</section>
+
+<section id="overview" class="wrap wide">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json">
+    <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram of the agentic marketplace: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; finally user agents coordinate privately in a huddle." xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <div class="controls">
+      <button type="button" class="play" aria-label="Play animation">Play</button>
+      <button type="button" class="replay" aria-label="Replay from the start">Replay</button>
+      <div class="chapters" role="group" aria-label="Jump to"></div>
+    </div>
+    <figcaption><strong>The agentic marketplace.</strong> Users and airlines delegate to their own agents. User agents
+      send requests (solid) and provider agents respond (dashed); every user agent can talk to every airline. In
+      <em>User Coordinate</em> mode, user agents also open a private channel to compare offers. Dialogue and prices
+      are illustrative.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why a market, not a single chat?</h2>
+    <p>Benchmarks for agents usually test one agent serving one user: did it book the right flight? But once agents
+      act in real markets, completing the task is not enough. A flight booked for one traveller is a seat another
+      traveller cannot have, and a discount that delights a customer is revenue an airline gives away. Outcomes
+      depend on how well agents serve several parties with competing goals.</p>
+    <p>Today, platforms sit in the middle: they aggregate options, rank them, and take a commission. A&tau;A asks what
+      happens when that middle layer is replaced by agents. Each user is represented by a <strong>user agent</strong>
+      and each airline by a <strong>provider agent</strong>; they search, negotiate and book directly with each other.</p>
+    <div class="compare">
+      <div class="card">
+        <h3>Platform-only</h3>
+        <p>One platform agent serves all users. It reads each request, queries airlines, and books. It optimises user
+          reward; no one negotiates for the airlines.</p>
+      </div>
+      <div class="card accent">
+        <h3>Agentic BASE</h3>
+        <p>N user agents and K provider agents. Any user agent can contact any airline, compare offers and negotiate
+          price and services. The airline's agent completes the booking under its policy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="leaderboard" class="wrap wide">
+  <div class="section-head">
+    <h2>Leaderboard</h2>
+    <p>Mean rewards in Agentic BASE over 100 tasks with five users each (500 booking goals per row). Higher is better
+      for both columns; shading is relative within each column.</p>
+  </div>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="Supply">
+      <button type="button" data-supply="scarce" aria-pressed="true">Scarce supply</button>
+      <button type="button" data-supply="abundant" aria-pressed="false">Abundant supply</button>
+    </div>
+    <div class="seg" role="group" aria-label="Model assignment">
+      <button type="button" data-topo="all" aria-pressed="true">All</button>
+      <button type="button" data-topo="sym" aria-pressed="false">Symmetric</button>
+      <button type="button" data-topo="asym" aria-pressed="false">Asymmetric</button>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="board">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th data-sort="user">User agents</th>
+          <th data-sort="provider">Provider agents</th>
+          <th class="num" data-sort="ru" title="Mean user reward">User R<sub>u</sub></th>
+          <th class="num" data-sort="rp" title="Mean provider reward">Provider R<sub>p</sub></th>
+          <th class="num" data-sort="w" title="Total welfare: user + provider reward">Welfare</th>
+          <th class="num" data-sort="scored">Scored</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <ol class="notes">
+    <li>Symmetric rows use one model for every agent; asymmetric rows use one model for all user agents and another for all provider agents.</li>
+    <li>Welfare is the sum of the two mean rewards. Means include evaluated zeros and exclude unscored outcomes.</li>
+    <li>Rows come from separate runs whose prompt settings and dates differ, so differences are descriptive, not controlled model effects.</li>
+  </ol>
+
+  <div class="chart-card">
+    <div class="chart-head">
+      <h3>User reward vs. provider reward</h3>
+      <div class="legend" aria-hidden="true">
+        <span><i style="--c: var(--openai)"></i>OpenAI users</span>
+        <span><i style="--c: var(--google)"></i>Google users</span>
+        <span><i style="--c: var(--anthropic)"></i>Anthropic users</span>
+        <span><i class="hollow"></i>asymmetric</span>
+      </div>
+    </div>
+    <svg class="scatter" viewBox="0 0 720 420" role="img" aria-label="Scatter of mean user reward against mean provider reward for each model assignment"></svg>
+    <p class="chart-note">Hover or tap a point for its model assignment. Supply follows the leaderboard toggle. High user
+      reward does not imply high provider reward: no assignment is best on both axes.</p>
+  </div>
+</section>
+
+<section id="scoring" class="wrap">
+  <div class="section-head">
+    <h2>How a booking is scored</h2>
+    <p>Every booking goal gets two scores in [0, 1], one for the traveller and one for the airlines.</p>
+  </div>
+  <div class="flow">
+    <div class="step"><span class="k">1</span><h4>Booking goal</h4><p>Route, dates and party size, plus personal emails that hint at preferences and budget.</p></div>
+    <div class="arrow" aria-hidden="true"></div>
+    <div class="step"><span class="k">2</span><h4>Negotiation</h4><p>The user agent contacts provider agents, compares offers and haggles over price and services.</p></div>
+    <div class="arrow" aria-hidden="true"></div>
+    <div class="step"><span class="k">3</span><h4>Booking</h4><p>A provider agent books under its airline's policy. Seats come out of shared inventory.</p></div>
+    <div class="arrow" aria-hidden="true"></div>
+    <div class="step"><span class="k">4</span><h4>Two rewards</h4><p>The user reward checks the trip; the provider reward checks the revenue.</p></div>
+  </div>
+  <div class="formulas">
+    <div class="card">
+      <h3>User reward</h3>
+      <p class="eq">R<sub>u</sub> = I<sub>hard</sub> · I<sub>pax</sub> · C<sub>trip</sub> · S<sub>budget</sub> · S<sub>pref</sub></p>
+      <dl>
+        <dt>I<sub>hard</sub></dt><dd>0 if an annotated hard requirement is violated (say, no travel insurance).</dd>
+        <dt>I<sub>pax</sub></dt><dd>1 only if the right number of travellers is booked.</dd>
+        <dt>C<sub>trip</sub></dt><dd>Share of required journeys covered: two people to Paris and back need four.</dd>
+        <dt>S<sub>budget</sub></dt><dd>1 up to the target budget, falling linearly to 0 at the walkaway budget.</dd>
+        <dt>S<sub>pref</sub></dt><dd>Ranked preferences met, weighted toward the top priorities.</dd>
+      </dl>
+      <svg class="budget" viewBox="0 0 300 120" role="img" aria-label="Budget satisfaction is 1 up to the target budget, then falls linearly to 0 at the walkaway budget">
+        <line x1="30" y1="95" x2="290" y2="95" class="ax"/><line x1="30" y1="95" x2="30" y2="12" class="ax"/>
+        <polyline points="30,22 140,22 230,95 285,95" class="curve"/>
+        <line x1="140" y1="22" x2="140" y2="95" class="guide"/><line x1="230" y1="22" x2="230" y2="95" class="guide"/>
+        <text x="140" y="112" text-anchor="middle">target</text><text x="230" y="112" text-anchor="middle">walkaway</text>
+        <text x="22" y="26" text-anchor="end">1</text><text x="22" y="99" text-anchor="end">0</text>
+        <text x="290" y="88" text-anchor="end" class="small">spend</text>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Provider reward</h3>
+      <p class="eq">R<sub>p</sub> = mean over booked airlines of min(1, r<sub>a</sub> / R<sub>a</sub>)</p>
+      <p>Each airline's net revenue r<sub>a</sub> is compared with a reference revenue R<sub>a</sub> for the trip,
+        then averaged over the airlines the user booked with.</p>
+      <h3 class="mt">The MAX reference</h3>
+      <p>A reward of 1 is not always reachable under shared seats and budgets. A restricted, best-found search
+        allocates every customer jointly (dates within ±3 days) to show how much was on the table. It is a
+        reference, not a guaranteed upper bound.</p>
+    </div>
+  </div>
+</section>
+
+<section id="setup" class="wrap">
+  <div class="section-head">
+    <h2>Benchmark setup</h2>
+    <p>Both sides of the market are grounded in real fares, and every user brings their own constraints.</p>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>1,746</b><span>itineraries over a 30-day schedule</span></div>
+    <div class="stat"><b>44 · 23</b><span>airports · airlines, from BTS DB1B fares</span></div>
+    <div class="stat"><b>13</b><span>traveller personas with target and walkaway budgets</span></div>
+    <div class="stat"><b>500</b><span>booking goals per run: 100 tasks × 5 users</span></div>
+  </div>
+  <div class="prose">
+    <p><strong>Providers.</strong> Each airline keeps its own database of routes, times, fares and seats per cabin.
+      Routes and reference fares come from the median observed fare per route and airline in the U.S. Bureau of
+      Transportation Statistics' DB1B survey.</p>
+    <p><strong>Users.</strong> Preferences are not handed to the agent as a form. They live in synthetic personal emails
+      that mix <em>hard</em> constraints ("never buy travel insurance") with <em>soft</em> ones ("I'd rather keep
+      layovers under three hours"). The agent has to read between the lines; the structured profile is kept for scoring.</p>
+    <p><strong>Supply.</strong> In <em>abundant</em> supply there are plenty of seats. In <em>scarce</em> supply, users compete:
+      two may want the same basic-economy seat, and only one gets it. Inventory is shared, so every booking changes
+      what the others can buy.</p>
+  </div>
+  <figure class="paper-fig">
+    <img src="assets/fig/data_generation_reverse_c.svg" alt="Pipeline: BTS routes and fares build the airline inventory; an itinerary is sampled and users with different preferences, party sizes and budgets are generated around it." loading="lazy">
+    <figcaption>Routes and fares from BTS build the airline inventory; a sampled itinerary anchors a task, and users
+      with different preferences, party sizes and budgets are generated around it (here, Philadelphia–Houston).</figcaption>
+  </figure>
+</section>
+
+<section id="findings" class="wrap">
+  <div class="section-head">
+    <h2>Findings</h2>
+    <p>Agents complete most bookings, yet the market they produce together is far from the best one available.</p>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Findings">
+    <button role="tab" aria-selected="true" aria-controls="f-direct" id="t-direct">Direct vs. platform</button>
+    <button role="tab" aria-selected="false" aria-controls="f-seats" id="t-seats" tabindex="-1">Competing for seats</button>
+    <button role="tab" aria-selected="false" aria-controls="f-sellers" id="t-sellers" tabindex="-1">Good buyers, poor sellers</button>
+    <button role="tab" aria-selected="false" aria-controls="f-cost" id="t-cost" tabindex="-1">Inference cost</button>
+  </div>
+
+  <div class="panel" role="tabpanel" id="f-direct" aria-labelledby="t-direct">
+    <h3>Direct agent interaction can benefit both sides.</h3>
+    <p>Compared with a single platform agent, Agentic BASE had higher mean user <em>and</em> provider reward in
+      <strong>8 of 16</strong> model–supply comparisons (5 under scarce supply, 3 under abundant supply). GPT-6 Astra
+      and both Gemini Flash models improved both sides under both supply regimes, while GPT-5.4 traded higher user
+      reward for lower provider reward under abundant supply.</p>
+    <figure class="paper-fig">
+      <img src="assets/fig/platform_full100_vs_base.png" alt="Arrows from platform-only (hollow) to Agentic BASE (filled) for each model, user reward against provider reward, scarce and abundant supply." loading="lazy">
+      <figcaption>Platform-only (hollow) to Agentic BASE (filled), per model. These are cross-run comparisons, so
+        the gains cannot be attributed to direct interaction alone.</figcaption>
+    </figure>
+  </div>
+
+  <div class="panel" role="tabpanel" id="f-seats" aria-labelledby="t-seats" hidden>
+    <h3>Individual decisions can undermine collective outcomes.</h3>
+    <p>Under scarce supply, each user agent tries to satisfy its own customer, but one agent's booking can remove the
+      option another customer needs. Every purchase succeeds; the market as a whole ends up worse off.</p>
+    <div class="story">
+      <div class="story-col">
+        <h4>What the agents did</h4>
+        <ol>
+          <li><b>Agent A</b> books two economy seats on Delta's August 2 flight, Houston → New York.</li>
+          <li><b>Agent B</b> tries the same flight for its party of two ($1,485 round trip). The seats are gone.</li>
+          <li>B settles for a <b>$1,631</b> United trip on different dates.</li>
+        </ol>
+      </div>
+      <div class="story-col">
+        <h4>A coordinated alternative</h4>
+        <p>Give the August 2 flight to B (user reward 0.96 → 1.00), move A to other Spirit and Delta flights a day or two
+          later (1.00 → 0.91), and rebook the other three customers.</p>
+        <div class="bars">
+          <div class="bar-row"><span>User reward</span><div class="bar"><i style="--v:.88"></i><i class="after" style="--v:.93"></i></div><b>0.88 → 0.93</b></div>
+          <div class="bar-row"><span>Provider reward</span><div class="bar"><i style="--v:.40"></i><i class="after" style="--v:.93"></i></div><b>0.40 → 0.93</b></div>
+        </div>
+        <p class="small">Averaged over all five customers in the task.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" role="tabpanel" id="f-sellers" aria-labelledby="t-sellers" hidden>
+    <h3>Agents are good buyers but poor sellers.</h3>
+    <p>As buyers, agents ask for the best discounted fare in almost every first contact. As sellers they have many
+      levers (hold the fare, concede part of the discount, offer another cabin or itinerary, add paid services), yet
+      they almost always pull the one that gives the most away.</p>
+    <div class="stats three">
+      <div class="stat"><b>100%</b><span>of bookings got the maximum 30% discount (858 scarce, 531 abundant)</span></div>
+      <div class="stat"><b>52–55%</b><span>median share of their budget that customers actually spent</span></div>
+      <div class="stat"><b>1st quote</b><span>is usually where the full discount is granted</span></div>
+    </div>
+    <div class="story">
+      <div class="story-col">
+        <h4>What happened</h4>
+        <p>A party of two books American's AA303 nonstop in economy at the "maximum 30% discount": <b>$840</b>,
+          provider reward <b>0.43</b>, user reward 1.00.</p>
+      </div>
+      <div class="story-col">
+        <h4>What was possible</h4>
+        <p>Same party, same flight one day earlier, almost no discount and more paid add-ons: <b>$1,139</b>, provider
+          reward <b>0.59</b>, and user reward still 1.00. The customer would have been just as satisfied.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" role="tabpanel" id="f-cost" aria-labelledby="t-cost" hidden>
+    <h3>Pricier provider models don't reliably buy better outcomes.</h3>
+    <p>Users call their agent occasionally; providers serve everyone, so per-request costs add up on the airline side.
+      Fixing the user model and varying the provider model:</p>
+    <ul>
+      <li>Provider inference cost was <strong>2.05× higher under scarce supply</strong> than under abundant supply, across matched pairings.</li>
+      <li>Gemini Flash providers had the lowest cost in every fixed-user group, without a consistent disadvantage in either reward.</li>
+      <li>With GPT-6 Astra users, both Gemini Flash providers beat Claude Opus 5 on both rewards at much lower cost.</li>
+      <li>With Claude Opus 5.5 users, Opus providers earned more for the airline but less for the user than Gemini Flash.</li>
+    </ul>
+    <figure class="paper-fig narrow">
+      <img src="assets/fig/provider_cost-1.png" alt="Grid of panels: for each fixed user model, mean user and provider utility versus provider inference cost per task, under scarce supply." loading="lazy">
+      <figcaption>Scarce supply. Each row fixes the user model; points are provider models, placed by provider
+        inference cost per task (x) and mean utility (y).</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="section-head">
+    <h2>Coordination</h2>
+  </div>
+  <div class="prose">
+    <p>A&tau;A can also open private backchannels on one side of the market at a time. In <strong>User Coordinate</strong>,
+      user agents in the same task can invite each other to share quotes and plan a joint negotiation (the huddle in
+      the animation above). In <strong>Provider Coordinate</strong>, instances of the <em>same</em> airline serving
+      different users can align their offers, but competing airlines never talk. Results with these channels are
+      mixed and reported descriptively in the paper.</p>
+    <h2>Limitations</h2>
+    <p>Inventories and preferences are synthetic, grounded in selected real inputs, not live markets. Rows come from runs
+      with different prompt settings and dates, model identifiers do not pin backend revisions, and some conditions are
+      only partly scored. Cost figures are recorded-token estimates, not invoices. None of this supports universal
+      claims about direct exchange or causal claims about coordination.</p>
+  </div>
+</section>
+
+<section id="cite" class="wrap">
+  <div class="section-head"><h2>Team &amp; citation</h2></div>
+  <p class="authors">Anonymous authors. Names and affiliations will appear after the review period.</p>
+  <div class="bib">
+    <button type="button" class="copy">Copy</button>
+<pre><code id="bibtex">@inproceedings{ataua2027,
+  title     = {A$\tau$A: A Benchmark for Multi-Agent Interaction in Agentic Economies},
+  author    = {Anonymous},
+  booktitle = {Under review},
+  year      = {2027}
+}</code></pre>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap foot">
+  <p>Figure artwork and results are from the A&tau;A paper. The animation is built live from the paper's own SVG figure.</p>
+</footer>
+
+<script src="assets/player.js" defer></script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

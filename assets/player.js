@@ -1,0 +1,171 @@
+// Live version of Figure 2: same artwork and timeline as the slides (exported by export_web_anim.py).
+// Scene 1: one user agent talks to P1..P3, then more user / user-agent pairs join and everyone talks.
+// Scene 2: the view widens and the User Coordinate huddle chats in a loop, forever.
+(function () {
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const ease = (x) => x * x * (3 - 2 * x);
+  const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
+
+  async function init(root) {
+    const d = await (await fetch(root.dataset.src)).json();
+    const stage = root.querySelector("svg.stage");
+    stage.innerHTML = d.defs + '<defs class="clips"></defs><rect class="bg" fill="#fff"/><g class="world"></g>';
+    const clips = stage.querySelector("defs.clips");
+    const world = stage.querySelector("g.world");
+    world.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+    world.setAttribute("fill", "#34343B");
+    world.setAttribute("text-anchor", "middle");
+
+    const els = {};
+    d.elements.forEach((el, i) => {
+      const outer = document.createElementNS(SVGNS, "g");
+      const inner = document.createElementNS(SVGNS, "g");
+      inner.innerHTML = el.svg;
+      outer.appendChild(inner);
+      world.appendChild(outer);
+      const cp = document.createElementNS(SVGNS, "clipPath");
+      cp.id = `fig2-clip-${i}`;
+      const r = document.createElementNS(SVGNS, "rect");
+      cp.appendChild(r);
+      clips.appendChild(cp);
+      els[el.key] = { outer, inner, rect: r, clipId: cp.id, box: el.box };
+    });
+    const scene1 = new Set(d.scene1), scene2 = new Set(d.scene2), chatKeys = new Set(d.chat.keys);
+    const S2 = d.s1End + d.morph;
+    const bg = stage.querySelector("rect.bg");
+
+    function state(el, ev, t) {
+      // returns {hidden, opacity, dy, zoom, clip}
+      const out = { hidden: false, opacity: 1, dy: 0, zoom: null, clip: null };
+      if (!ev) return out;
+      let move = null, last = null, anyVis = false;
+      for (const e of ev) {
+        if (e[0] === "move") { if (e[1] <= t) move = e; continue; }
+        anyVis = true;
+        if (e[1] <= t) last = e;
+      }
+      if (move) {
+        const o = move[3];
+        out.dy = o.y0 + (o.y1 - o.y0) * ease(clamp01((t - move[1]) / move[2]));
+      }
+      if (anyVis && !last) { out.hidden = true; return out; }
+      if (!last) return out;
+      const [eff, st, du, opt] = last;
+      const p = clamp01((t - st) / du);
+      if (eff === "pulse") {                     // auto-reverse fade, accelerate 100%, repeating
+        const ph = (t - st) % (2 * du);
+        const x = ph < du ? ph / du : 2 - ph / du;
+        out.opacity = x * x;
+        if (out.opacity < 0.002) out.hidden = true;
+      } else if (eff === "fadeout") {
+        if (p >= 1) out.hidden = true; else out.opacity = 1 - p;
+      } else if (p < 1) {
+        if (eff === "fade") out.opacity = p;
+        else if (eff === "zoom") { out.opacity = p; out.zoom = Math.max(p, 0.001); }
+        else if (eff === "wipe") {
+          const [x, y, w, h] = el.box, frm = (opt && opt.frm) || "left";
+          if (frm === "left" || frm === "right") {
+            const ww = (w + 28) * p;
+            out.clip = [frm === "left" ? x - 14 : x + w + 14 - ww, y - 20, ww, h + 40];
+          } else {
+            const hh = (h + 28) * p;
+            out.clip = [x - 20, frm === "top" ? y - 14 : y + h + 14 - hh, w + 40, hh];
+          }
+        }
+      }
+      return out;
+    }
+
+    function render(t) {
+      let keys, ev, local, e;
+      if (t < S2) { keys = scene1; ev = d.ev1; local = t; e = ease(clamp01((t - d.s1End) / d.morph)); }
+      else { keys = scene2; ev = d.ev2; local = t - S2; e = 1; }
+      const cam = d.cam1.map((a, i) => a + (d.cam2[i] - a) * e);
+      stage.setAttribute("viewBox", cam.join(" "));
+      bg.setAttribute("x", cam[0] - 5); bg.setAttribute("y", cam[1] - 5);
+      bg.setAttribute("width", cam[2] + 10); bg.setAttribute("height", cam[3] + 10);
+      for (const key in els) {
+        const el = els[key];
+        if (!keys.has(key)) { el.outer.style.display = "none"; continue; }
+        let tl = local;
+        if (keys === scene2 && chatKeys.has(key) && local > d.chat.start)
+          tl = d.chat.start + ((local - d.chat.start) % d.chat.cycle);
+        const s = state(el, ev[key], tl);
+        el.outer.style.display = s.hidden ? "none" : "";
+        if (s.hidden) continue;
+        el.outer.setAttribute("transform", s.dy ? `translate(0 ${s.dy.toFixed(2)})` : "");
+        el.inner.setAttribute("opacity", s.opacity.toFixed(3));
+        if (s.zoom !== null) {
+          const [x, y, w, h] = el.box, cx = x + w / 2, cy = y + h / 2;
+          el.inner.setAttribute("transform", `translate(${cx} ${cy}) scale(${s.zoom.toFixed(3)}) translate(${-cx} ${-cy})`);
+        } else el.inner.removeAttribute("transform");
+        if (s.clip) {
+          const [x, y, w, h] = s.clip;
+          el.rect.setAttribute("x", x); el.rect.setAttribute("y", y);
+          el.rect.setAttribute("width", Math.max(w, 0)); el.rect.setAttribute("height", Math.max(h, 0));
+          el.inner.setAttribute("clip-path", `url(#${el.clipId})`);
+        } else el.inner.removeAttribute("clip-path");
+      }
+      // chapter highlight
+      chapterBtns.forEach((b, i) => {
+        const next = d.chapters[i + 1];
+        b.setAttribute("aria-pressed", t >= d.chapters[i].t && (!next || t < next.t) ? "true" : "false");
+      });
+    }
+
+    // ---- controls
+    const bar = root.querySelector(".controls");
+    const playBtn = bar.querySelector(".play");
+    const chapWrap = bar.querySelector(".chapters");
+    const chapterBtns = d.chapters.map((c) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.textContent = c.label;
+      b.addEventListener("click", () => { t = c.t; last = null; play(true); });
+      chapWrap.appendChild(b);
+      return b;
+    });
+
+    let t = 0, last = null, playing = false, userPaused = false, raf = 0;
+    function tick(now) {
+      if (last !== null) t += now - last;
+      last = now;
+      render(t);
+      raf = requestAnimationFrame(tick);
+    }
+    function play(fromUser) {
+      if (fromUser) userPaused = false;
+      if (playing) return;
+      playing = true; last = null;
+      raf = requestAnimationFrame(tick);
+      playBtn.textContent = "Pause";
+      playBtn.setAttribute("aria-label", "Pause animation");
+    }
+    function pause(fromUser) {
+      if (fromUser) userPaused = true;
+      playing = false;
+      cancelAnimationFrame(raf);
+      playBtn.textContent = "Play";
+      playBtn.setAttribute("aria-label", "Play animation");
+    }
+    playBtn.addEventListener("click", () => (playing ? pause(true) : play(true)));
+    bar.querySelector(".replay").addEventListener("click", () => { t = 0; last = null; render(0); play(true); });
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { t = S2 + d.chat.start; render(t); pause(true); return; }
+    const start = +(new URLSearchParams(location.search).get("t") || 0);   // e.g. ?t=25000 to jump ahead
+    t = start;
+    render(t);
+    new IntersectionObserver((entries) => {
+      for (const en of entries) {
+        if (en.isIntersecting && !userPaused) play(false);
+        else if (!en.isIntersecting && playing) pause(false);
+      }
+    }, { threshold: 0.35 }).observe(root);
+  }
+
+  document.querySelectorAll(".fig2-player").forEach((r) => init(r).catch((err) => {
+    r.querySelector(".controls").textContent = "Animation failed to load.";
+    console.error(err);
+  }));
+})();
