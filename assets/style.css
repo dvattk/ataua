@@ -63,18 +63,18 @@ b { color: var(--ink); font-weight: 650; }
 .stepper button { padding: 4px 10px; }
 
 .pareto { width: 100%; height: auto; display: block; overflow: visible; }
-.pareto .grid { stroke: #ececf2; }
-.pareto .axis { stroke: var(--ink); stroke-width: 1.2; }
-.pareto .tick { font: 12px var(--sans); fill: var(--muted); }
-.pareto .alabel { font: 600 14px var(--sans); fill: var(--ink); }
-.pareto .corner { font: 500 12px var(--sans); fill: #a7a7b3; }
+.pareto .grid, .tokplot .grid { stroke: #ececf2; }
+.pareto .axis, .tokplot .axis { stroke: var(--ink); stroke-width: 1.2; }
+.pareto .tick, .tokplot .tick { font: 12px var(--sans); fill: var(--muted); }
+.pareto .alabel, .tokplot .alabel { font: 600 14px var(--sans); fill: var(--ink); }
+.pareto .corner, .tokplot .corner { font: 500 12px var(--sans); fill: #a7a7b3; }
 .pareto .max { fill: none; stroke: var(--max); stroke-width: 3.2; stroke-dasharray: 12 8; stroke-linejoin: round; }
 .pareto .maxlbl { font: 700 13px var(--sans); fill: var(--max); }
 .pareto .gaparea { fill: var(--gap); }
 .pareto .gap { stroke: var(--max); stroke-width: 1.6; stroke-dasharray: 3 4; }
 .pareto .gap.hero { stroke-dasharray: none; stroke-width: 2.2; }
 .pareto .gapnum { font: 700 13px var(--mono); fill: var(--max); }
-.pareto .lbl { font: 600 13px var(--sans); fill: var(--ink); paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
+.pareto .lbl, .tokplot .lbl { font: 600 13px var(--sans); fill: var(--ink); paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }
 .pareto circle { cursor: pointer; }
 .pareto .tip rect { fill: var(--ink); }
 .pareto .tip text { font: 500 12px var(--sans); fill: #fff; }
@@ -104,6 +104,19 @@ b { color: var(--ink); font-weight: 650; }
 .replay-mini { position: absolute; right: 10px; bottom: 10px; font-size: .78rem; padding: 3px 9px; }
 .why-anim text { font-family: var(--sans); }
 
+/* ---------------------------------------------------------------- tokenomics */
+.tok { max-width: 1120px; padding-top: 72px; border-top: 1px solid var(--line); }
+.tok-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: start; margin-top: 36px; }
+.big { border-left: 3px solid var(--max); padding: 4px 0 4px 16px; margin-bottom: 24px; }
+.big b { display: block; font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; color: var(--max); line-height: 1.1; }
+.big span { font-size: .92rem; color: var(--muted); }
+.tok-caption { font-size: 1.05rem; min-height: 5.5em; }
+.small { font-size: .82rem; color: var(--muted); }
+.tok-chart .chart-top { margin-bottom: 8px; }
+.tok-user { flex-wrap: wrap; }
+.tokplot { width: 100%; height: auto; display: block; overflow: visible; }
+.key .sq { width: 9px; height: 9px; border: 2px solid var(--ink); border-radius: 2px; background: #fff; }
+
 /* ---------------------------------------------------------------- footer */
 .foot { padding: 40px 24px 72px; border-top: 1px solid var(--line); font-size: .88rem; color: var(--muted); max-width: 1120px; }
 .foot p { max-width: 760px; }
@@ -125,6 +138,7 @@ b { color: var(--ink); font-weight: 650; }
   .step .n, .step h2, .step p { background: rgba(255, 255, 255, .94); }
   .why-block, .why-block.flip { grid-template-columns: 1fr; gap: 20px; }
   .why-block.flip .why-text { order: 0; }
+  .tok-grid { grid-template-columns: 1fr; gap: 20px; }
   .controls .chapters { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .step { transition: none; } }

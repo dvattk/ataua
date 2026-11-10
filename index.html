@@ -136,6 +136,44 @@
   </div>
 </section>
 
+<!-- ======================================================= tokenomics -->
+<section class="wrap tok" aria-label="Provider inference cost and rewards">
+  <h2 class="section-title">Does a pricier airline agent help?</h2>
+  <p class="section-lede">A traveller calls their agent now and then; an airline's agent serves everyone, so its
+    inference bill adds up. We fixed the travellers' model and swapped the airline's model to see what the extra
+    spend buys.</p>
+
+  <div class="tok-grid">
+    <div class="tok-side">
+      <div class="big"><b>2.05×</b><span>higher airline inference cost per task under scarce seats than with plenty
+        of seats, across matched pairings</span></div>
+      <p class="tok-caption" aria-live="polite"></p>
+      <p class="small">Costs are upper reference estimates from recorded tokens and public prices, per five-traveller
+        task. Runs differ in dates and settings, so comparisons are descriptive.</p>
+    </div>
+    <div class="tok-chart">
+      <div class="chart-top">
+        <div class="seg tok-user" role="group" aria-label="Travellers' model"></div>
+      </div>
+      <div class="chart-top">
+        <span class="small">Travellers use <b class="tok-user-name"></b></span>
+        <div class="seg" role="group" aria-label="Supply">
+          <button type="button" data-tsupply="scarce" aria-pressed="true">Scarce seats</button>
+          <button type="button" data-tsupply="abundant" aria-pressed="false">Plenty of seats</button>
+        </div>
+      </div>
+      <svg class="tokplot" viewBox="0 0 640 430" role="img" aria-label="For the chosen travellers' model, each airline model's inference cost per task against the travellers' and the airline's mean reward"></svg>
+      <div class="key">
+        <span><i class="dot" style="--c: var(--ink)"></i>travellers' reward</span>
+        <span><i class="sq"></i>airline's reward</span>
+        <span><i class="dot" style="--c: var(--openai)"></i>OpenAI</span>
+        <span><i class="dot" style="--c: var(--google)"></i>Google</span>
+        <span><i class="dot" style="--c: var(--anthropic)"></i>Anthropic</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="wrap foot">
   <p><b>Fine print.</b> Markets, fares and preferences are synthetic but grounded in U.S. BTS fare data. Dots come
     from separate runs whose prompts and dates differ, so differences between models are descriptive, not causal.
@@ -154,5 +192,6 @@
 <script src="assets/player.js" defer></script>
 <script src="assets/chart.js" defer></script>
 <script src="assets/why.js" defer></script>
+<script src="assets/tokenomics.js" defer></script>
 </body>
 </html>
