@@ -213,7 +213,7 @@
   const box = document.querySelector(".story .chart-box");
   const playBtn = box.querySelector(".play");
   const timeEl = box.querySelector(".time");
-  const HOLD = [4000, 4000, 5500, 4500, 6000];          // ms on each step (reading time)
+  const HOLD = [5500, 6000, 7500, 6500, 8000];          // ms on each step (reading time)
   const segFills = steps.map((_, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "seg-i"; b.setAttribute("aria-label", `Step ${i + 1}`);
