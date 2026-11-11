@@ -146,6 +146,10 @@
       const link = el(g, "line", { x1: AG[0], y1: AG[1], x2: cx, y2: cy, stroke: C.line, "stroke-width": 1.5, "stroke-dasharray": "4 4" });
       const r = el(g, "rect", { x: L.x, y: L.y, width: W, height: H, rx: 12, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
       el(g, "text", { x: L.x + 14, y: L.y + (L.bar ? 21 : 30), "font-size": 13, "font-weight": 650, fill: C.ink }, L.name);
+      if (L.bar) {                     // a dollar badge on the discount lever
+        el(g, "circle", { cx: L.x + W - 20, cy: L.y + 17, r: 10, fill: C.max });
+        el(g, "text", { x: L.x + W - 20, y: L.y + 21.5, "text-anchor": "middle", "font-size": 13, "font-weight": 800, fill: "#fff" }, "$");
+      }
       let fill = null, pct = null;
       if (L.bar) {
         el(g, "rect", { x: L.x + 14, y: L.y + 30, width: 92, height: 8, rx: 4, fill: C.soft });
@@ -164,11 +168,6 @@
     // the user agent who wants to book, and the tally of bookings
     const user = el(g, "circle", { r: 9, fill: C.a });
     const tag = el(g, "text", { "font-size": 11, "font-weight": 700, "font-family": "JetBrains Mono, monospace", fill: C.max, "text-anchor": "middle" }, "−30%");
-    const done = [0, 1, 2].map((i) => el(g, "g", {}));
-    done.forEach((d, i) => {
-      el(d, "circle", { cx: 440 + i * 27, cy: 150, r: 8, fill: C.a });
-      el(d, "text", { x: 440 + i * 27, y: 172, "text-anchor": "middle", "font-size": 9, "font-weight": 700, fill: C.max }, "30%");
-    });
     const takeaway = el(g, "text", { x: 260, y: 300, "text-anchor": "middle", "font-size": 13, "font-weight": 650, fill: C.ink },
       "Every booking got the full 30% discount.");
     const LOOK = [0, 2, 3, 0, 2, 1];          // lever order the agent glances at before giving in to the discount
@@ -194,7 +193,6 @@
       user.setAttribute("opacity", live ? kf([[0, 0], [200, 1], [2900, 1], [3100, 0]], u) : 0);
       tag.setAttribute("x", x); tag.setAttribute("y", y + 24);
       tag.setAttribute("opacity", live && u > 2400 ? kf([[2400, 0], [2600, 1], [2900, 1], [3100, 0]], u) : 0);
-      done.forEach((d, i) => d.setAttribute("opacity", t > i * B + 3050 ? 1 : 0));
       takeaway.setAttribute("opacity", kf([[0, 0], [3 * B, 0], [3 * B + 400, 1]], t));
     };
   });
