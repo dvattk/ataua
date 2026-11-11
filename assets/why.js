@@ -125,52 +125,77 @@
     };
   });
 
-  // ---------------------------------------------------------------- 2. every booking at the max discount
+  // ---------------------------------------------------------------- 2. a provider agent and its levers
+  // The provider agent sits among the levers it could pull (hold the fare, discount, another cabin, paid add-ons).
+  // Each time a user agent comes to book, the provider agent looks from lever to lever, can't settle, and pulls
+  // the discount all the way to the 30% maximum. Three bookings, then the takeaway.
   const disc = document.querySelector(".why-anim.discount");
-  if (disc) player(disc, 11000, (svg) => {
+  if (disc) player(disc, 12000, (svg) => {
     const g = el(svg, "g", { "font-family": "Inter, Arial, sans-serif" });
-    el(g, "text", { x: 16, y: 26, "font-size": 12, "font-weight": 700, fill: C.max, "letter-spacing": ".06em" }, "DISCOUNT ON EVERY BOOKING");
-    const X = (d) => 50 + d / 30 * 380, AY = 150;
-    el(g, "line", { x1: X(0), x2: X(30), y1: AY, y2: AY, stroke: C.ink, "stroke-width": 1.5 });
-    [0, 10, 20, 30].forEach((d) => {
-      el(g, "line", { x1: X(d), x2: X(d), y1: AY, y2: AY + 6, stroke: C.ink });
-      el(g, "text", { x: X(d), y: AY + 22, "text-anchor": "middle", "font-size": 12, fill: C.muted }, d === 30 ? "30% (max)" : `${d}%`);
+    el(g, "text", { x: 16, y: 22, "font-size": 12, "font-weight": 700, fill: C.max, "letter-spacing": ".06em" }, "WHICH LEVER TO PULL?");
+    const AG = [260, 150];
+    const LEVERS = [
+      { name: "Hold the fare", x: 40, y: 44 },
+      { name: "Discount", x: 330, y: 44, bar: true },
+      { name: "Another cabin", x: 40, y: 210 },
+      { name: "Paid add-ons", x: 330, y: 210 },
+    ];
+    const W = 150, H = 50;
+    const levers = LEVERS.map((L) => {
+      const cx = L.x + W / 2, cy = L.y + H / 2;
+      const link = el(g, "line", { x1: AG[0], y1: AG[1], x2: cx, y2: cy, stroke: C.line, "stroke-width": 1.5, "stroke-dasharray": "4 4" });
+      const r = el(g, "rect", { x: L.x, y: L.y, width: W, height: H, rx: 12, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
+      el(g, "text", { x: L.x + 14, y: L.y + (L.bar ? 21 : 30), "font-size": 13, "font-weight": 650, fill: C.ink }, L.name);
+      let fill = null, pct = null;
+      if (L.bar) {
+        el(g, "rect", { x: L.x + 14, y: L.y + 30, width: 92, height: 8, rx: 4, fill: C.soft });
+        fill = el(g, "rect", { x: L.x + 14, y: L.y + 30, height: 8, rx: 4, fill: C.max });
+        pct = el(g, "text", { x: L.x + 114, y: L.y + 38, "font-size": 11, "font-weight": 700, "font-family": "JetBrains Mono, monospace", fill: C.max });
+      }
+      return { link, r, fill, pct };
     });
-    el(g, "text", { x: X(0), y: AY + 40, "font-size": 11, fill: C.muted }, "no discount");
-    const count = el(g, "text", { x: X(30) - 40, y: 46, "text-anchor": "end", "font-size": 13, "font-weight": 650, fill: C.ink });
-    // 48 bookings start at random discounts, then all slide to the max and stack
-    const N = 48, rnd = (i) => ((Math.sin(i * 12.9898) * 43758.5453) % 1 + 1) % 1;
-    const dots = [...Array(N)].map((_, i) => {
-      const c = el(g, "circle", { r: 4.2, fill: C.max });
-      const startX = X(rnd(i) * 30), startY = 40 + rnd(i + 99) * 70;
-      const col = i % 4, row = Math.floor(i / 4);
-      const endX = X(30) - 13 + col * 9, endY = AY - 7 - row * 9;
-      return { c, k: [[0, [startX, startY]], [200 + i * 30, [startX, startY]], [1400 + i * 30, [endX, endY]]] };
+    // the provider agent
+    el(g, "circle", { cx: AG[0], cy: AG[1], r: 30, fill: "#fff", stroke: C.ink, "stroke-width": 2 });
+    el(g, "text", { x: AG[0], y: AG[1] - 2, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "Provider");
+    el(g, "text", { x: AG[0], y: AG[1] + 12, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "agent");
+    const think = el(g, "g", {});
+    el(think, "circle", { cx: AG[0] + 30, cy: AG[1] - 34, r: 11, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
+    el(think, "text", { x: AG[0] + 30, y: AG[1] - 29.5, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: C.muted }, "?");
+    // the user agent who wants to book, and the tally of bookings
+    const user = el(g, "circle", { r: 9, fill: C.a });
+    const tag = el(g, "text", { "font-size": 11, "font-weight": 700, "font-family": "JetBrains Mono, monospace", fill: C.max, "text-anchor": "middle" }, "−30%");
+    const done = [0, 1, 2].map((i) => el(g, "g", {}));
+    done.forEach((d, i) => {
+      el(d, "circle", { cx: 440 + i * 27, cy: 150, r: 8, fill: C.a });
+      el(d, "text", { x: 440 + i * 27, y: 172, "text-anchor": "middle", "font-size": 9, "font-weight": 700, fill: C.max }, "30%");
     });
-    // example prices
-    const ex = el(g, "g", {});
-    const rows = [["What happened", "AA303 · party of 2 · 30% off", 840, "provider 0.43 · user 1.00"],
-                  ["Also possible", "same flight, a day earlier, add-ons", 1139, "provider 0.59 · user 1.00"]];
-    const priceBars = rows.map(([h, sub, price, rw], i) => {
-      const y = 204 + i * 58;
-      el(ex, "text", { x: 16, y, "font-size": 12, "font-weight": 650, fill: C.ink }, h);
-      el(ex, "text", { x: 16, y: y + 16, "font-size": 11, fill: C.muted }, sub);
-      const bar = el(ex, "rect", { x: 230, y: y - 12, height: 16, rx: 5, fill: i ? C.max : "#c8c3dc" });
-      const lbl = el(ex, "text", { x: 238, y: y + 1, "font-size": 12, "font-weight": 700, "font-family": "JetBrains Mono, monospace", fill: C.ink });
-      el(ex, "text", { x: 230, y: y + 22, "font-size": 11, fill: C.muted }, rw);
-      return { bar, lbl, price };
-    });
+    const takeaway = el(g, "text", { x: 260, y: 300, "text-anchor": "middle", "font-size": 13, "font-weight": 650, fill: C.ink },
+      "Every booking got the full 30% discount.");
+    const LOOK = [0, 2, 3, 0, 2, 1];          // lever order the agent glances at before giving in to the discount
+    const B = 3200;                           // one booking
     return (t) => {
-      dots.forEach((d) => { const [x, y] = kf(d.k, t); d.c.setAttribute("cx", x); d.c.setAttribute("cy", y); });
-      count.setAttribute("opacity", kf([[0, 0], [3000, 0], [3500, 1]], t));
-      count.textContent = "858 of 858 (scarce supply) · 531 of 531 (abundant supply)";
-      ex.setAttribute("opacity", kf([[0, 0], [4200, 0], [4700, 1]], t));
-      priceBars.forEach((p, i) => {
-        const v = kf([[0, 0], [4600 + i * 1400, 0], [5800 + i * 1400, 1]], t);
-        p.bar.setAttribute("width", (p.price / 1139) * 200 * v);
-        p.lbl.setAttribute("x", 230 + (p.price / 1139) * 200 * v + 8);
-        p.lbl.textContent = v > 0.05 ? `$${Math.round(p.price * v).toLocaleString()}` : "";
+      const k = Math.min(Math.floor(t / B), 2), u = t - k * B, live = t < 3 * B;
+      // where the agent is looking (-1 = nowhere)
+      let look = -1;
+      if (live && u > 700 && u < 2000) look = LOOK[Math.floor((u - 700) / 220) % LOOK.length];
+      if (live && u >= 2000 && u < 2900) look = 1;
+      levers.forEach((L, i) => {
+        const on = i === look;
+        L.r.setAttribute("stroke", on ? C.max : C.line); L.r.setAttribute("stroke-width", on ? 2.5 : 1.5);
+        L.link.setAttribute("stroke", on ? C.max : C.line);
       });
+      think.setAttribute("opacity", live && u > 600 && u < 2000 ? 1 : 0);
+      const f = live ? kf([[0, 0], [2000, 0], [2400, 1], [2900, 1], [3200, 0]], u) : 0;
+      levers[1].fill.setAttribute("width", 92 * f);
+      levers[1].pct.textContent = f > 0.02 ? `${Math.round(30 * f)}%` : "";
+      // the user agent walks up, waits, then leaves to the right with its discount
+      const [x, y] = live ? kf([[0, [30, 150]], [600, [196, 150]], [2500, [196, 150]], [2750, [262, 206]], [3100, [420, 150]]], u) : [-50, 0];
+      user.setAttribute("cx", x); user.setAttribute("cy", y);
+      user.setAttribute("opacity", live ? kf([[0, 0], [200, 1], [2900, 1], [3100, 0]], u) : 0);
+      tag.setAttribute("x", x); tag.setAttribute("y", y + 24);
+      tag.setAttribute("opacity", live && u > 2400 ? kf([[2400, 0], [2600, 1], [2900, 1], [3100, 0]], u) : 0);
+      done.forEach((d, i) => d.setAttribute("opacity", t > i * B + 3050 ? 1 : 0));
+      takeaway.setAttribute("opacity", kf([[0, 0], [3 * B, 0], [3 * B + 400, 1]], t));
     };
   });
 
