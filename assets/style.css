@@ -185,3 +185,11 @@ b { color: var(--ink); font-weight: 650; }
 .ctl { display: flex; flex-direction: column; gap: 4px; }
 .ctl-lbl { font: 600 .7rem var(--sans); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; padding-left: 2px; }
 .seg-select { padding: 3px; }
+/* symmetry: three equal controls spanning the chart width; key centred under the chart */
+.tok-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-bottom: 14px; }
+.tok-controls .seg, .tok-controls .seg-select { display: flex; width: 100%; }
+.tok-controls .seg button { flex: 1; }
+.tok-controls .seg-select select { flex: 1; width: 100%; }
+.tok-chart .key { justify-content: center; }
+.tok-grid { align-items: center; }
+@media (max-width: 880px) { .tok-controls { grid-template-columns: 1fr; } }
