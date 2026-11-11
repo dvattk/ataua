@@ -51,19 +51,22 @@
   // ---------------------------------------------------------------- shared pieces
   const TINT = { [C.a]: "#e9f0fe", [C.b]: "#fbeee7" };
   // the Figure 2 robot, drawn small: head, eyes, mouth, antenna; headset for provider agents
-  function robot(g, x, y, col, s = 1, headset = false) {
+  // colours match Figure 2: dark outline, lavender for user agents, pink for provider agents
+  const BOT = { ink: "#34343B", user: "#E6DFFA", provider: "#F4DFE9" };
+  function robot(g, x, y, fill, s = 1, headset = false) {
+    const col = BOT.ink;
     const r = el(g, "g", { transform: `translate(${x} ${y}) scale(${s})` });
     el(r, "line", { x1: 0, y1: -13, x2: 0, y2: -18, stroke: col, "stroke-width": 2, "stroke-linecap": "round" });
     el(r, "circle", { cx: 0, cy: -19.5, r: 2.4, fill: col });
-    el(r, "rect", { x: -14, y: -13, width: 28, height: 22, rx: 7, fill: "#fff", stroke: col, "stroke-width": 2 });
+    el(r, "rect", { x: -14, y: -13, width: 28, height: 22, rx: 7, fill, stroke: col, "stroke-width": 2 });
     el(r, "circle", { cx: -5.5, cy: -3, r: 2.3, fill: col });
     el(r, "circle", { cx: 5.5, cy: -3, r: 2.3, fill: col });
     el(r, "line", { x1: -4, y1: 3.5, x2: 4, y2: 3.5, stroke: col, "stroke-width": 2, "stroke-linecap": "round" });
-    el(r, "rect", { x: -9, y: 11, width: 18, height: 8, rx: 3, fill: "#fff", stroke: col, "stroke-width": 2 });
+    el(r, "rect", { x: -9, y: 11, width: 18, height: 8, rx: 3, fill, stroke: col, "stroke-width": 2 });
     if (headset) {
       el(r, "path", { d: "M -18 -2 A 18 18 0 0 1 18 -2", fill: "none", stroke: col, "stroke-width": 2 });
-      el(r, "rect", { x: -21, y: -6, width: 6, height: 11, rx: 2.5, fill: "#fff", stroke: col, "stroke-width": 2 });
-      el(r, "rect", { x: 15, y: -6, width: 6, height: 11, rx: 2.5, fill: "#fff", stroke: col, "stroke-width": 2 });
+      el(r, "rect", { x: -21, y: -6, width: 6, height: 11, rx: 2.5, fill, stroke: col, "stroke-width": 2 });
+      el(r, "rect", { x: 15, y: -6, width: 6, height: 11, rx: 2.5, fill, stroke: col, "stroke-width": 2 });
     }
     return r;
   }
@@ -109,9 +112,9 @@
     el(stamp, "text", { x: 0, y: 5, "text-anchor": "middle", "font-size": 12, "font-weight": 800, fill: C.max, "letter-spacing": ".08em" }, "SOLD OUT");
     // agents
     const AG = { A: [40, 92], B: [40, 190] };
-    robot(g, ...AG.A, C.a);
+    robot(g, ...AG.A, BOT.user);
     el(g, "text", { x: AG.A[0], y: AG.A[1] + 38, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.a }, "A");
-    robot(g, ...AG.B, C.b);
+    robot(g, ...AG.B, BOT.user);
     el(g, "text", { x: AG.B[0], y: AG.B[1] + 38, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.b }, "B");
     // A and B talk (part 2): two bubbles with dots, then a check
     const talk = el(g, "g", {});
@@ -214,7 +217,7 @@
       }
       return { link, r, badge, fill, pct };
     });
-    robot(g, AG[0], AG[1] - 4, C.ink, 1.35, true);
+    robot(g, AG[0], AG[1] - 4, BOT.provider, 1.35, true);
     el(g, "text", { x: AG[0], y: AG[1] + 40, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.ink }, "Provider agent");
     // the "?" while it hesitates
     const think = el(g, "g", {});
@@ -222,7 +225,7 @@
     const qmark = el(think, "text", { x: AG[0] + 34, y: AG[1] - 37, "text-anchor": "middle", "font-size": 20, "font-weight": 800, fill: C.max }, "?");
     // the user agent who comes to book, and the discount that flies to it
     const user = el(g, "g", {});
-    robot(user, 0, 0, C.a, 0.85);
+    robot(user, 0, 0, BOT.user, 0.85);
     const tag = el(g, "g", {});
     el(tag, "rect", { x: -22, y: -11, width: 44, height: 22, rx: 11, fill: C.max });
     el(tag, "text", { x: 0, y: 4.5, "text-anchor": "middle", "font-size": 12, "font-weight": 800, fill: "#fff" }, "−30%");
