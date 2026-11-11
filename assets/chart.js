@@ -260,7 +260,7 @@
     { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
-  fetch("assets/chart-data.json?v=1794410620").then((r) => r.json()).then((data) => {
+  fetch("assets/chart-data.json?v=1794410744").then((r) => r.json()).then((data) => {
     D = data;
     build();
     document.fonts && document.fonts.ready.then(() => items.forEach((it) => {
