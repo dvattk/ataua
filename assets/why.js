@@ -49,16 +49,20 @@
   }
 
   // ---------------------------------------------------------------- 1. competing for seats
+  // Part 1 (what the agents did): A and B race for the same two Delta seats; A gets there first, B finds it sold
+  // out and goes to United. Part 2 (coordinated): start over, A and B talk first, then A takes the later
+  // Spirit/Delta option and B gets Delta. Bars show user and provider reward for each outcome.
   const seats = document.querySelector(".why-anim.seats");
-  if (seats) player(seats, 12000, (svg) => {
+  if (seats) player(seats, 13000, (svg) => {
     const g = el(svg, "g", { "font-family": "Inter, Arial, sans-serif" });
-    const phase = el(g, "text", { x: 16, y: 26, "font-size": 12, "font-weight": 700, fill: C.max, "letter-spacing": ".06em" });
-    box(g, 170, 46, 180, 104, "Delta · Aug 2", "Houston → New York");
-    const seatPos = [[218, 112], [262, 112]];
-    const seatRects = seatPos.map(([x, y]) => el(g, "rect", { x: x - 16, y: y - 14, width: 32, height: 28, rx: 6, fill: "#fff", stroke: C.ink, "stroke-width": 1.5 }));
-    const soldOut = el(g, "text", { x: 260, y: 168, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.max }, "sold out for B");
-    box(g, 372, 46, 132, 74, "Spirit · Delta", "a day or two later");
-    box(g, 372, 136, 132, 74, "United", "other dates · $1,631");
+    const phase = el(g, "text", { x: 16, y: 22, "font-size": 12, "font-weight": 700, fill: C.max, "letter-spacing": ".06em" });
+    // flights: one column on the right
+    box(g, 300, 30, 204, 86, "Delta · Aug 2", "Houston → New York");
+    const seatPos = [[432, 92], [470, 92]];
+    const seatRects = seatPos.map(([x, y]) => el(g, "rect", { x: x - 15, y: y - 13, width: 30, height: 26, rx: 6, fill: "#fff", stroke: C.ink, "stroke-width": 1.5 }));
+    const soldOut = el(g, "text", { x: 451, y: 48, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.max }, "sold out");
+    box(g, 300, 128, 204, 62, "Spirit · Delta", "a day or two later");
+    box(g, 300, 202, 204, 62, "United", "other dates · $1,631");
     // agents
     const agent = (x, y, name, col) => {
       el(g, "circle", { cx: x, cy: y, r: 18, fill: "#fff", stroke: col, "stroke-width": 2 });
@@ -66,39 +70,47 @@
       el(g, "text", { x, y: y + 34, "text-anchor": "middle", "font-size": 11, fill: C.muted }, "party of 2");
     };
     agent(52, 80, "A", C.a);
-    agent(52, 180, "B", C.b);
-    // the two travellers of each party
+    agent(52, 200, "B", C.b);
+    // A and B talking (part 2): a link between them with typing dots
+    const talk = el(g, "g", {});
+    el(talk, "line", { x1: 52, x2: 52, y1: 128, y2: 180, stroke: C.muted, "stroke-width": 1.5, "stroke-dasharray": "3 4" });
+    el(talk, "rect", { x: 30, y: 142, width: 44, height: 24, rx: 12, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
+    const typing = [42, 52, 62].map((x) => el(talk, "circle", { cx: x, cy: 154, r: 3, fill: C.muted }));
+    // each party = two travelers
     const party = (col) => [0, 1].map(() => el(g, "circle", { r: 7, fill: col }));
     const A = party(C.a), B = party(C.b);
-    // bars
-    const bars = [["Traveller reward", 0.88, 0.93], ["Airline reward", 0.40, 0.93]].map(([name], i) => {
-      const y = 254 + i * 34;
+    // reward bars
+    const bars = ["User reward", "Provider reward"].map((name, i) => {
+      const y = 282 + i * 26;
       el(g, "text", { x: 16, y: y + 10, "font-size": 12, fill: C.ink }, name);
-      el(g, "rect", { x: 130, y, width: 300, height: 12, rx: 6, fill: C.soft });
+      el(g, "rect", { x: 130, y, width: 240, height: 12, rx: 6, fill: C.soft });
       const bar = el(g, "rect", { x: 130, y, height: 12, rx: 6, fill: C.max });
-      const val = el(g, "text", { x: 440, y: y + 11, "font-size": 12, "font-family": "JetBrains Mono, monospace", fill: C.ink });
+      const val = el(g, "text", { x: 380, y: y + 11, "font-size": 12, "font-family": "JetBrains Mono, monospace", fill: C.ink });
       return { bar, val };
     });
-    const home = { A: [100, 80], B: [100, 180] };
+    const VAL = [[0.88, 0.93], [0.40, 0.93]];            // [what the agents did, coordinated]
+    const HOME = { A: [100, 80], B: [100, 200] }, SPIRIT = [278, 159], UNITED = [278, 233], BLOCKED = [268, 92];
     const off = (p, i) => [p[0] + (i ? 9 : -9), p[1]];
-    const S = seatPos, ALT = [438, 100], UNI = [438, 190];
-    // keyframes (ms)
-    const KA = [[0, home.A], [700, home.A], [1600, null], [6200, null], [7200, ALT], [12000, ALT]];
-    const KB = [[0, home.B], [2000, home.B], [2700, [150, 140]], [3100, [150, 140]], [3900, UNI], [7400, UNI], [8400, null], [12000, null]];
-    const pos = (frames, i, t, seatsAt) => kf(frames.map(([tt, v]) => [tt, v === null ? S[i] : off(v, i)]), t);
+    // paths go through the lane left of the flight boxes (x = 268) so dots never cross a box
+    const KA = [[0, HOME.A], [400, HOME.A], [1800, "seat"], [6500, "seat"], [6501, HOME.A], [9300, HOME.A], [9900, [268, 166]], [10400, SPIRIT], [13000, SPIRIT]];
+    const KB = [[0, HOME.B], [400, HOME.B], [2200, BLOCKED], [3000, BLOCKED], [3400, [268, 240]], [4000, UNITED], [6500, UNITED], [6501, HOME.B],
+                [8900, HOME.B], [9500, [268, 92]], [10000, "seat"], [13000, "seat"]];
+    const pos = (frames, i, t) => kf(frames.map(([tt, v]) => [tt, v === "seat" ? seatPos[i] : off(v, i)]), t);
     return (t) => {
-      phase.textContent = t < 6000 ? "WHAT THE AGENTS DID" : "A COORDINATED ALLOCATION";
-      A.forEach((c, i) => { const [x, y] = pos(KA, i, t); c.setAttribute("cx", x); c.setAttribute("cy", y); });
-      B.forEach((c, i) => { const [x, y] = pos(KB, i, t); c.setAttribute("cx", x); c.setAttribute("cy", y); });
-      soldOut.setAttribute("opacity", kf([[0, 0], [2700, 0], [3000, 1], [5800, 1], [6100, 0]], t));
-      const v = [kf([[0, 0], [4200, 0], [5200, 1], [8600, 1], [9600, 2], [12000, 2]], t)];
+      phase.textContent = t < 6500 ? "WHAT THE AGENTS DID" : "A COORDINATED ALLOCATION";
+      const vis = kf([[0, 1], [6200, 1], [6450, 0], [6550, 0], [6900, 1]], t);     // parties blink back home between parts
+      A.forEach((c, i) => { const [x, y] = pos(KA, i, t); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("opacity", vis); });
+      B.forEach((c, i) => { const [x, y] = pos(KB, i, t); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("opacity", vis); });
+      soldOut.setAttribute("opacity", kf([[0, 0], [2200, 0], [2500, 1], [6200, 1], [6450, 0]], t));
+      seatRects.forEach((r) => r.setAttribute("stroke", t > 1800 && t < 6450 ? C.a : t > 10000 ? C.b : C.ink));
+      talk.setAttribute("opacity", kf([[0, 0], [7100, 0], [7400, 1], [8700, 1], [9000, 0]], t));
+      typing.forEach((c, i) => c.setAttribute("opacity", 0.3 + 0.7 * Math.max(0, Math.sin((t / 1000) * 6 - i * 0.9))));
       bars.forEach((b, i) => {
-        const [lo, hi] = i ? [0.40, 0.93] : [0.88, 0.93];
-        const x = v[0] <= 1 ? lo * v[0] : lo + (hi - lo) * (v[0] - 1);
-        b.bar.setAttribute("width", 300 * x);
-        b.val.textContent = v[0] > 0.02 ? x.toFixed(2) : "";
+        const [lo, hi] = VAL[i];
+        const x = kf([[0, 0], [4300, 0], [5300, lo], [6300, lo], [6600, 0], [10300, 0], [11300, hi]], t);
+        b.bar.setAttribute("width", 240 * x);
+        b.val.textContent = x > 0.02 ? x.toFixed(2) : "";
       });
-      seatRects.forEach((r) => r.setAttribute("stroke", t > 1600 && t < 6400 ? C.a : t > 8400 ? C.b : C.ink));
     };
   });
 
@@ -126,8 +138,8 @@
     });
     // example prices
     const ex = el(g, "g", {});
-    const rows = [["What happened", "AA303 · party of 2 · 30% off", 840, "airline 0.43 · traveller 1.00"],
-                  ["Also possible", "same flight, a day earlier, add-ons", 1139, "airline 0.59 · traveller 1.00"]];
+    const rows = [["What happened", "AA303 · party of 2 · 30% off", 840, "provider 0.43 · user 1.00"],
+                  ["Also possible", "same flight, a day earlier, add-ons", 1139, "provider 0.59 · user 1.00"]];
     const priceBars = rows.map(([h, sub, price, rw], i) => {
       const y = 204 + i * 58;
       el(ex, "text", { x: 16, y, "font-size": 12, "font-weight": 650, fill: C.ink }, h);

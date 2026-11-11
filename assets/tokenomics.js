@@ -1,6 +1,6 @@
-// "Does a pricier airline agent help?" For a fixed travellers' model, each airline model is a vertical bar at its
-// inference cost per task, from the airline's reward (square) to the travellers' reward (dot).
-// Switching travellers' model or supply glides the bars; the x axis is shared, so scarce -> abundant supply shows costs halving.
+// "Does a pricier airline agent help?" For a fixed travelers' model, each airline model is a vertical bar at its
+// inference cost per task, from the airline's reward (square) to the travelers' reward (dot).
+// Switching travelers' model or supply glides the bars; the x axis is shared, so scarce -> abundant supply shows costs halving.
 (function () {
   const svg = document.querySelector(".tokplot");
   if (!svg) return;
@@ -9,9 +9,9 @@
   const USERS = ["GPT-6 Astra", "Claude Opus 5.5", "Gemini 3.8 Flash", "GPT-5.4"];
   const CAPTION = {
     "GPT-6 Astra": "Both Gemini Flash airline agents beat Claude Opus 5 on <b>both</b> rewards, at under a third of its cost, with either supply.",
-    "Claude Opus 5.5": "Opus airline agents earn more for the airline but leave travellers less happy than Gemini Flash, at 1.5–1.9× the cost.",
+    "Claude Opus 5.5": "Opus airline agents earn more for the airline but leave travelers less happy than Gemini Flash, at 1.5–1.9× the cost.",
     "Gemini 3.8 Flash": "Gemini Flash airline agents come close to GPT-6 Astra on both rewards at a quarter of the cost or less.",
-    "GPT-5.4": "The cheapest airline agent, Gemini 3.7 Flash, gives travellers the best reward with either supply, and the airline too when seats are scarce.",
+    "GPT-5.4": "The cheapest airline agent, Gemini 3.7 Flash, gives travelers the best reward with either supply, and the airline too when seats are scarce.",
   };
   const W = 640, H = 430, M = { l: 58, r: 24, t: 20, b: 58 }, XMAX = 6;
   const X = (c) => M.l + (c / XMAX) * (W - M.l - M.r);
@@ -87,7 +87,7 @@
       b.r = w ? w.r : b.r;
       b.t0 = now;
     }
-    document.querySelector(".tok-caption").innerHTML = `<b>${user} travellers.</b> ${CAPTION[user]}`;
+    document.querySelector(".tok-caption").innerHTML = `<b>${user} travelers.</b> ${CAPTION[user]}`;
     document.querySelector(".tok-user-name").textContent = user;
   }
 
@@ -111,7 +111,7 @@
         b.lbl.setAttribute("x", (x + dx).toFixed(1)); b.lbl.setAttribute("y", (base + dy).toFixed(1));
         b.lbl.setAttribute("text-anchor", L0.anchor);
       }
-      if (b.r) b.dot.setAttribute("aria-label", `${name}: $${b.r.cost.toFixed(2)} per task, travellers ${b.r.ru.toFixed(2)}, airline ${b.r.rp.toFixed(2)}`);
+      if (b.r) b.dot.setAttribute("aria-label", `${name}: $${b.r.cost.toFixed(2)} per task, travelers ${b.r.ru.toFixed(2)}, airline ${b.r.rp.toFixed(2)}`);
     }
     requestAnimationFrame(render);
   }
@@ -135,7 +135,7 @@
     target();
   }));
 
-  fetch("assets/tokenomics.json?v=1794412092").then((r) => r.json()).then((d) => {
+  fetch("assets/tokenomics.json?v=1794412684").then((r) => r.json()).then((d) => {
     data = d;
     const q = new URLSearchParams(location.search);
     if (q.get("tuser")) user = q.get("tuser");

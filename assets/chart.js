@@ -101,7 +101,7 @@
         it.lbl.textContent = it.user;
         it.w = it.lbl.getComputedTextLength();
       }
-      it.c.setAttribute("aria-label", `${it.user} travellers, ${it.provider} airlines`);
+      it.c.setAttribute("aria-label", `${it.user} travelers, ${it.provider} airlines`);
       const show = () => showTip(it);
       it.c.addEventListener("mouseenter", show);
       it.c.addEventListener("focus", show);
@@ -187,7 +187,7 @@
     if (tipFor) {
       const it = tipFor, q = (s < 0.5 ? it.at.scarce : it.at.abundant) || it.at.scarce || it.at.abundant;
       tipText.textContent = it.sym ? `${it.user} on both sides · user ${q.u.toFixed(2)}, provider ${q.p.toFixed(2)}`
-        : `${it.user} travellers, ${it.provider} airlines · ${q.u.toFixed(2)} / ${q.p.toFixed(2)}`;
+        : `${it.user} travelers, ${it.provider} airlines · ${q.u.toFixed(2)} / ${q.p.toFixed(2)}`;
       const bb = tipText.getBBox();
       const tr = it.g.getAttribute("transform").match(/[-\d.]+/g).map(Number);
       let tx = tr[0] + 14, ty = tr[1] - 22;
@@ -246,7 +246,7 @@
     { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
-  fetch("assets/chart-data.json?v=1794412092").then((r) => r.json()).then((data) => {
+  fetch("assets/chart-data.json?v=1794412684").then((r) => r.json()).then((data) => {
     D = data;
     build();
     document.fonts && document.fonts.ready.then(() => items.forEach((it) => {

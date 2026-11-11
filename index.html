@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AτA: A Benchmark for Multi-Agent Interaction in Agentic Economies</title>
-<meta name="description" content="When travellers and airlines both send AI agents to the market, bookings get made, but the market they build together is far from the best one available.">
+<meta name="description" content="When travelers and airlines both send AI agents to the market, bookings get made, but the market they build together is far from the best one available.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794412092">
+<link rel="stylesheet" href="assets/style.css?v=1794412684">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794412092">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794412684">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -115,8 +115,8 @@
 <!-- ======================================================= tokenomics -->
 <section class="wrap tok" aria-label="Provider inference cost and rewards">
   <h2 class="section-title">Does a pricier airline agent help?</h2>
-  <p class="section-lede">A traveller calls their agent now and then; an airline's agent serves everyone, so its
-    inference bill adds up. We fixed the travellers' model and swapped the airline's model to see what the extra
+  <p class="section-lede">A traveler calls their agent now and then; an airline's agent serves everyone, so its
+    inference bill adds up. We fixed the travelers' model and swapped the airline's model to see what the extra
     spend buys.</p>
 
   <div class="tok-grid">
@@ -124,24 +124,24 @@
       <div class="big"><b>2.05×</b><span>higher airline inference cost per task under scarce supply than under
         abundant supply, across matched pairings</span></div>
       <p class="tok-caption" aria-live="polite"></p>
-      <p class="small">Costs are upper reference estimates from recorded tokens and public prices, per five-traveller
+      <p class="small">Costs are upper reference estimates from recorded tokens and public prices, per five-traveler
         task. Runs differ in dates and settings, so comparisons are descriptive.</p>
     </div>
     <div class="tok-chart">
       <div class="chart-top">
-        <div class="seg tok-user" role="group" aria-label="Travellers' model"></div>
+        <div class="seg tok-user" role="group" aria-label="Travelers' model"></div>
       </div>
       <div class="chart-top">
-        <span class="small">Travellers use <b class="tok-user-name"></b></span>
+        <span class="small">Travelers use <b class="tok-user-name"></b></span>
         <div class="seg" role="group" aria-label="Supply">
           <button type="button" data-tsupply="scarce" aria-pressed="true">Scarce supply</button>
           <button type="button" data-tsupply="abundant" aria-pressed="false">Abundant supply</button>
         </div>
       </div>
-      <svg class="tokplot" viewBox="0 0 640 430" role="img" aria-label="For the chosen travellers' model, each airline model's inference cost per task against the travellers' and the airline's mean reward"></svg>
+      <svg class="tokplot" viewBox="0 0 640 430" role="img" aria-label="For the chosen travelers' model, each airline model's inference cost per task against the travelers' and the airline's mean reward"></svg>
       <div class="key">
-        <span><i class="dot" style="--c: var(--ink)"></i>travellers' reward</span>
-        <span><i class="sq"></i>airline's reward</span>
+        <span><i class="dot" style="--c: var(--ink)"></i>user reward</span>
+        <span><i class="sq"></i>provider reward</span>
         <span><i class="dot" style="--c: var(--openai)"></i>OpenAI</span>
         <span><i class="dot" style="--c: var(--google)"></i>Google</span>
         <span><i class="dot" style="--c: var(--anthropic)"></i>Anthropic</span>
@@ -165,9 +165,9 @@
   </div>
 </footer>
 
-<script src="assets/player.js?v=1794412092" defer></script>
-<script src="assets/chart.js?v=1794412092" defer></script>
-<script src="assets/why.js?v=1794412092" defer></script>
-<script src="assets/tokenomics.js?v=1794412092" defer></script>
+<script src="assets/player.js?v=1794412684" defer></script>
+<script src="assets/chart.js?v=1794412684" defer></script>
+<script src="assets/why.js?v=1794412684" defer></script>
+<script src="assets/tokenomics.js?v=1794412684" defer></script>
 </body>
 </html>
