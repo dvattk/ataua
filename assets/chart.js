@@ -55,11 +55,6 @@
   el("text", { class: "alabel", transform: `translate(18 ${(Y(0) + Y(1)) / 2}) rotate(-90)`, "text-anchor": "middle" }).textContent = "User reward: how happy travellers were →";
   el("text", { class: "corner", x: X(1) - 4, y: Y(1) + 16, "text-anchor": "end" }).textContent = "both sides happy ↗";
 
-  // which supply regime is on screen
-  const badge = el("g", { class: "supply-badge" });
-  const badgeBg = el("rect", { y: Y(0) - 36, height: 26, rx: 13 }, badge);      // bottom-right corner is always empty
-  const badgeA = el("text", { x: X(1) - 24, y: Y(0) - 18.5, "text-anchor": "end" }, badge); badgeA.textContent = "Scarce supply";
-  const badgeB = el("text", { x: X(1) - 24, y: Y(0) - 18.5, "text-anchor": "end" }, badge); badgeB.textContent = "Abundant supply";
   const region = el("path", { class: "gaparea" });
   const defs = el("defs", {});
   const mask = el("mask", { id: "max-reveal", maskUnits: "userSpaceOnUse", x: 0, y: 0, width: W, height: H }, defs);
@@ -128,10 +123,6 @@
   function render(now) {
     const s = get("supply", now);
     const c = curve(s);
-    badgeA.setAttribute("opacity", clamp01(1 - 2 * s).toFixed(2));
-    badgeB.setAttribute("opacity", clamp01(2 * s - 1).toFixed(2));
-    const bw = lerp(badgeA.getComputedTextLength(), badgeB.getComputedTextLength(), s) + 28;
-    badgeBg.setAttribute("width", bw); badgeBg.setAttribute("x", X(1) - 10 - bw);
     // MAX line
     const pts = c.map((q) => `${X(q.p).toFixed(1)},${Y(q.u).toFixed(1)}`);
     const d = "M" + pts.join(" L");
@@ -208,7 +199,7 @@
   }
 
   // ---------------------------------------------------------------- steps (auto-play, like a short video)
-  let step = 0, seen = false;              // dots drop in the moment the chart is first on screen
+  let step = 0, seen = false, userSupply = null;   // userSupply: the reader picked a supply (pauses autoplay)              // dots drop in the moment the chart is first on screen
   const steps = [...document.querySelectorAll(".story .step")];
   const box = document.querySelector(".story .chart-box");
   const playBtn = box.querySelector(".play");
@@ -232,13 +223,15 @@
     }
     set("asymAll", step >= 4 ? 1 : 0, 600);
     set("gap", step >= 3 ? 1 : 0, 700);
-    set("supply", step >= 5 ? 1 : 0, 900);
+    const sup = userSupply || (step >= 5 ? "abundant" : "scarce");
+    set("supply", sup === "abundant" ? 1 : 0, 900);
+    supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === sup ? "true" : "false"));
     steps.forEach((s) => s.classList.toggle("active", +s.dataset.step === step));
     timeEl.textContent = `${step} / ${steps.length}`;
   }
   function go(n) {
     n = Math.min(Math.max(n, 1), steps.length);
-    if (n !== step) { step = n; apply(); }
+    if (n !== step) { step = n; if (playing) userSupply = null; apply(); }
   }
 
   // clock: advances only while playing and on screen; loops back to step 1 after the last one
@@ -256,7 +249,11 @@
     playing = on; box.classList.toggle("playing", on);
     playBtn.setAttribute("aria-label", on ? "Pause" : "Play");
   }
-  playBtn.addEventListener("click", () => { userPaused = playing; setPlaying(!playing); });
+  playBtn.addEventListener("click", () => { userPaused = playing; if (!playing) userSupply = null; setPlaying(!playing); apply(); });
+  const supBtns = [...box.querySelectorAll("[data-supply]")];
+  supBtns.forEach((b) => b.addEventListener("click", () => {
+    userSupply = b.dataset.supply; userPaused = true; setPlaying(false); apply();
+  }));
   box.querySelector(".pareto").addEventListener("click", (e) => { if (e.target.tagName !== "circle") { userPaused = playing; setPlaying(!playing); } });
   new IntersectionObserver((es) => es.forEach((e) => { visible = e.isIntersecting; if (visible && !seen) { seen = true; apply(); } if (visible && !userPaused) setPlaying(true); }),
     { threshold: 0.2 }).observe(box);

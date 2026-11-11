@@ -39,6 +39,12 @@
 <section id="chart" class="story wrap wide" aria-label="Rewards compared with the MAX reference">
   <div class="story-chart">
     <div class="chart-box">
+      <div class="chart-top">
+        <div class="seg supply-seg" role="group" aria-label="Seat supply">
+          <button type="button" data-supply="scarce" aria-pressed="true" title="Scarce supply: few open seats"><svg viewBox="0 0 22 14" aria-hidden="true"><rect x="2" y="1" width="5" height="5" rx="1.3"/><rect class="off" x="8.5" y="1" width="5" height="5" rx="1.3"/><rect class="off" x="15" y="1" width="5" height="5" rx="1.3"/><rect class="off" x="2" y="8" width="5" height="5" rx="1.3"/><rect class="off" x="8.5" y="8" width="5" height="5" rx="1.3"/><rect class="off" x="15" y="8" width="5" height="5" rx="1.3"/></svg>Scarce supply</button>
+          <button type="button" data-supply="abundant" aria-pressed="false" title="Abundant supply: plenty of open seats"><svg viewBox="0 0 22 14" aria-hidden="true"><rect x="2" y="1" width="5" height="5" rx="1.3"/><rect x="8.5" y="1" width="5" height="5" rx="1.3"/><rect x="15" y="1" width="5" height="5" rx="1.3"/><rect x="2" y="8" width="5" height="5" rx="1.3"/><rect x="8.5" y="8" width="5" height="5" rx="1.3"/><rect x="15" y="8" width="5" height="5" rx="1.3"/></svg>Abundant supply</button>
+        </div>
+      </div>
       <svg class="pareto" viewBox="0 0 640 560" role="img" aria-label="Mean user reward against mean provider reward for each model assignment, with the MAX reference line"></svg>
       <div class="key">
         <span><i class="ln"></i>MAX reward</span>
