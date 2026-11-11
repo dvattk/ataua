@@ -66,7 +66,7 @@
     const soldOut = el(g, "text", { x: 451, y: 44, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.max }, "sold out");
     box(g, 300, 110, 204, 76, "Spirit · Delta", "a day or two later");
     const SPIRIT = seatRow(168), spirit = seatBox(SPIRIT);
-    box(g, 300, 194, 204, 76, "United · $1,631", "other dates");
+    box(g, 300, 194, 204, 76, "United", "other dates");
     const UNITED = seatRow(252), united = seatBox(UNITED);
     // agents
     const agent = (x, y, name, col) => {
