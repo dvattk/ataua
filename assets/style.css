@@ -118,7 +118,8 @@ b { color: var(--ink); font-weight: 650; }
 .why-text h3 { font-size: 1.45rem; }
 .why-anim { position: relative; margin: 0; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 8px; }
 .why-anim svg { width: 100%; height: auto; display: block; }
-.replay-mini { position: absolute; right: 10px; bottom: 10px; font-size: .78rem; padding: 3px 9px; }
+.replay-mini { position: absolute; right: 12px; top: 12px; font-size: .76rem; padding: 2px 9px; }
+.why-anim svg { shape-rendering: geometricPrecision; text-rendering: geometricPrecision; }
 .why-anim text { font-family: var(--sans); }
 
 /* ---------------------------------------------------------------- tokenomics */
