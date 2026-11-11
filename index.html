@@ -33,11 +33,14 @@
 <!-- ======================================================= overview -->
 <section class="wrap prose">
   <h2>Overview</h2>
-  <p>Most agent benchmarks evaluate a single agent serving a single user. In real markets, task completion alone is
-    not enough: outcomes depend on how well agents satisfy multiple parties with competing objectives.</p>
-  <p>A<span class="tau">τ</span>A is a benchmark for multi-agent interaction in agentic economies, in which both users
-    and providers navigate the market through autonomous agents. We find that high booking rates do not translate into
-    good outcomes for both sides: even strong models remain far from Pareto optimal.</p>
+  <p>This post covers our paper, <b>A<span class="tau">τ</span>A: A Benchmark for Multi-Agent Interaction in Agentic
+    Economies</b>. We build a simulator for studying multi-agent interaction in a realistic market, where a population
+    of user agents seeks a service from providers represented by provider agents. We use the airline industry, a
+    familiar domain that is easy to study.</p>
+  <p>Each user has a persona, preferences and a budget, and a user agent acts on their behalf. Each airline has a
+    provider agent that sells from its flight inventory under the airline's policy. User agents compete for the same
+    seats, and provider agents compete for the same users. Below, we walk through how the market is built, how we
+    score each booking for both sides, and what the best possible outcome looks like.</p>
 
   <details class="more"><summary>Cite this work</summary>
     <div class="bib">
