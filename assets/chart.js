@@ -51,8 +51,8 @@
   }
   el("line", { class: "axis", x1: X(0), x2: X(1), y1: Y(0), y2: Y(0) });
   el("line", { class: "axis", x1: X(0), x2: X(0), y1: Y(0), y2: Y(1) });
-  el("text", { class: "alabel", x: (X(0) + X(1)) / 2, y: H - 18, "text-anchor": "middle" }).textContent = "Provider reward: how well airlines did →";
-  el("text", { class: "alabel", transform: `translate(18 ${(Y(0) + Y(1)) / 2}) rotate(-90)`, "text-anchor": "middle" }).textContent = "User reward: how happy travellers were →";
+  el("text", { class: "alabel", x: (X(0) + X(1)) / 2, y: H - 18, "text-anchor": "middle" }).textContent = "Provider reward";
+  el("text", { class: "alabel", transform: `translate(18 ${(Y(0) + Y(1)) / 2}) rotate(-90)`, "text-anchor": "middle" }).textContent = "User reward";
   el("text", { class: "corner", x: X(1) - 4, y: Y(1) + 16, "text-anchor": "end" }).textContent = "both sides happy ↗";
 
   const region = el("path", { class: "gaparea" });
@@ -246,7 +246,7 @@
     { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
-  fetch("assets/chart-data.json?v=1794410872").then((r) => r.json()).then((data) => {
+  fetch("assets/chart-data.json?v=1794411033").then((r) => r.json()).then((data) => {
     D = data;
     build();
     document.fonts && document.fonts.ready.then(() => items.forEach((it) => {

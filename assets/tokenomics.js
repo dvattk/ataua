@@ -30,7 +30,7 @@
   }
   el("line", { class: "axis", x1: X(0), x2: X(XMAX), y1: Y(0), y2: Y(0) });
   el("line", { class: "axis", x1: X(0), x2: X(0), y1: Y(0), y2: Y(1) });
-  el("text", { class: "alabel", x: (X(0) + X(XMAX)) / 2, y: H - 14, "text-anchor": "middle" }).textContent = "Airline agent's inference cost per task →";
+  el("text", { class: "alabel", x: (X(0) + X(XMAX)) / 2, y: H - 14, "text-anchor": "middle" }).textContent = "Provider inference cost per task";
   el("text", { class: "alabel", transform: `translate(16 ${(Y(0) + Y(1)) / 2}) rotate(-90)`, "text-anchor": "middle" }).textContent = "Mean reward";
   el("text", { class: "corner", x: X(0) + 6, y: Y(1) + 14 }).textContent = "↖ cheap and good";
   const layer = el("g", {});
@@ -135,7 +135,7 @@
     target();
   }));
 
-  fetch("assets/tokenomics.json?v=1794410872").then((r) => r.json()).then((d) => {
+  fetch("assets/tokenomics.json?v=1794411033").then((r) => r.json()).then((d) => {
     data = d;
     const q = new URLSearchParams(location.search);
     if (q.get("tuser")) user = q.get("tuser");
