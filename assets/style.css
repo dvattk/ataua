@@ -154,3 +154,10 @@ b { color: var(--ink); font-weight: 650; }
   .tok-grid { grid-template-columns: 1fr; gap: 20px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .step { transition: none; transform: none; } }
+
+/* Figure 2 controls: hidden until you hover (or focus), like a video player */
+.fig2-player { position: relative; }
+.fig2-player .controls { position: absolute; left: 0; right: 0; bottom: 0; border-top: 0; background: rgba(247, 246, 251, .92);
+  opacity: 0; transition: opacity .25s; }
+.fig2-player:hover .controls, .fig2-player:focus-within .controls { opacity: 1; }
+@media (hover: none) { .fig2-player .controls { opacity: 1; position: static; } }
