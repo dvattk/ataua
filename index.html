@@ -33,14 +33,11 @@
 <!-- ======================================================= overview -->
 <section class="wrap prose">
   <h2>Overview</h2>
-  <p>Travelers and airlines are starting to hand their side of a purchase to AI agents. When both sides of a market
-    send agents, the outcome depends on how those agents interact: who finds which seat, who concedes on price, and
-    whether the market as a whole ends up anywhere near its best.</p>
-  <p>A<span class="tau">τ</span>A is a benchmark for these <i>agentic economies</i>. User agents book trips for
-    travelers; provider agents sell flights for airlines; they negotiate directly over shared flight inventory. We score
-    every booking for both sides and compare the result with the best allocation we could find. Across ten models from
-    OpenAI, Google and Anthropic, agents complete bookings, but the market they reach together is far from Pareto
-    optimal.</p>
+  <p>Most agent benchmarks evaluate a single agent serving a single user. In real markets, task completion alone is
+    not enough: outcomes depend on how well agents satisfy multiple parties with competing objectives.</p>
+  <p>A<span class="tau">τ</span>A is a benchmark for multi-agent interaction in agentic economies, in which both users
+    and providers navigate the market through autonomous agents. We find that high booking rates do not translate into
+    good outcomes for both sides: even strong models remain far from Pareto optimal.</p>
 
   <details class="more"><summary>Models evaluated</summary>
     <p><b>OpenAI:</b> GPT-5.3 Codex, GPT-5.4, GPT-6 Astra. <b>Google:</b> Gemini 3.7 Flash, Gemini 3.8 Flash.
