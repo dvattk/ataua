@@ -110,7 +110,7 @@ b { color: var(--ink); font-weight: 650; }
 .step p { color: var(--text); }
 
 /* ---------------------------------------------------------------- why */
-.why { margin-top: 40px; padding-top: 72px; max-width: 1120px; }
+.why { margin-top: 40px; padding-top: 72px; border-top: 1px solid var(--line); max-width: 1120px; }
 .section-title { font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800; }
 .section-lede { color: var(--muted); font-size: 1.1rem; max-width: 640px; }
 .why-block { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; margin: 56px 0 80px; }
@@ -122,7 +122,7 @@ b { color: var(--ink); font-weight: 650; }
 .why-anim text { font-family: var(--sans); }
 
 /* ---------------------------------------------------------------- tokenomics */
-.tok { max-width: 1120px; padding-top: 72px; }
+.tok { max-width: 1120px; padding-top: 72px; border-top: 1px solid var(--line); }
 .tok-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: start; margin-top: 36px; }
 .big { border-left: 3px solid var(--max); padding: 4px 0 4px 16px; margin-bottom: 24px; }
 .big b { display: block; font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; color: var(--max); line-height: 1.1; }
@@ -135,7 +135,7 @@ b { color: var(--ink); font-weight: 650; }
 .key .sq { width: 9px; height: 9px; border: 2px solid var(--ink); border-radius: 2px; background: #fff; }
 
 /* ---------------------------------------------------------------- footer */
-.foot { padding: 40px 24px 72px; font-size: .88rem; color: var(--muted); max-width: 1120px; }
+.foot { padding: 40px 24px 72px; border-top: 1px solid var(--line); font-size: .88rem; color: var(--muted); max-width: 1120px; }
 .foot p { max-width: 760px; }
 .bib { position: relative; border: 1px solid var(--line); border-radius: var(--radius); background: var(--soft); margin-top: 18px; max-width: 760px; }
 .bib pre { margin: 0; padding: 16px 18px; overflow-x: auto; font: .8rem/1.6 var(--mono); color: var(--ink); }
