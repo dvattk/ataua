@@ -83,7 +83,7 @@
       `<b>${pricey[metric].toFixed(2)}</b>. The cheapest, <b>${cheap.provider}</b>, costs <b>${$(cheap.cost)}</b> and gets <b>${cheap[metric].toFixed(2)}</b>.`;
     yTitle.textContent = metric === "rp" ? "Provider reward" : "User reward";
     const sync = (attr, v) => document.querySelectorAll(`[${attr}]`).forEach((b) => b.setAttribute("aria-pressed", b.getAttribute(attr) === v ? "true" : "false"));
-    sync("data-tsupply", supply); sync("data-tmetric", metric); sync("data-tuser", user);
+    sync("data-tsupply", supply); sync("data-tmetric", metric); sel.value = user;
   }
 
   function render(now) {
@@ -115,17 +115,13 @@
   }
 
   // controls
-  const seg = document.querySelector(".tok-user");
-  USERS.forEach((u) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.textContent = u; b.dataset.tuser = u;
-    b.addEventListener("click", () => { user = u; target(); });
-    seg.appendChild(b);
-  });
+  const sel = document.querySelector(".tok-user");
+  USERS.forEach((u) => { const o = document.createElement("option"); o.value = o.textContent = u; sel.appendChild(o); });
+  sel.addEventListener("change", () => { user = sel.value; target(); });
   document.querySelectorAll("[data-tsupply]").forEach((b) => b.addEventListener("click", () => { supply = b.dataset.tsupply; target(); }));
   document.querySelectorAll("[data-tmetric]").forEach((b) => b.addEventListener("click", () => { metric = b.dataset.tmetric; target(); }));
 
-  fetch("assets/tokenomics.json?v=1794416715").then((r) => r.json()).then((d) => {
+  fetch("assets/tokenomics.json?v=1794416992").then((r) => r.json()).then((d) => {
     data = d;
     const q = new URLSearchParams(location.search);
     if (q.get("tsupply")) supply = q.get("tsupply");

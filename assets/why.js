@@ -4,7 +4,7 @@
   const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const C = { ink: "#181825", muted: "#666674", line: "#e7e5ee", soft: "#f7f6fb", max: "#a3577b", a: "#3b7ff2", b: "#d9774e" };
+  const C = { ink: "#181825", muted: "#666674", line: "#e7e5ee", soft: "#f7f6fb", max: "#4F46E5", a: "#4285F4", b: "#D97757" };
 
   function el(parent, tag, attrs, text) {
     const e = document.createElementNS(NS, tag);
@@ -49,10 +49,10 @@
   }
 
   // ---------------------------------------------------------------- shared pieces
-  const TINT = { [C.a]: "#e9f0fe", [C.b]: "#fbeee7" };
+  const TINT = { [C.a]: "#E8F0FE", [C.b]: "#FBEDE6" };
   // the Figure 2 robot, drawn small: head, eyes, mouth, antenna; headset for provider agents
   // colours match Figure 2: dark outline, lavender for user agents, pink for provider agents
-  const BOT = { ink: "#34343B", user: "#E6DFFA", provider: "#F4DFE9" };
+  const BOT = { ink: "#34343B", user: "#E6E3FF", provider: "#FFE9D6" };
   function robot(g, x, y, fill, s = 1, headset = false) {
     const col = BOT.ink;
     const r = el(g, "g", { transform: `translate(${x} ${y}) scale(${s})` });
@@ -80,7 +80,7 @@
   function chip(g, x, y, text, col = C.max) {
     const c = el(g, "g", {});
     const t = el(c, "text", { x: x + 10, y: y + 15, "font-size": 11, "font-weight": 700, fill: col, "letter-spacing": ".06em" }, text);
-    const r = el(c, "rect", { x, y, height: 22, rx: 11, fill: "#f6eef2" });
+    const r = el(c, "rect", { x, y, height: 22, rx: 11, fill: "#EEF0FF" });
     c.insertBefore(r, t);
     return { c, t, r, fit() { r.setAttribute("width", (t.getComputedTextLength() || 150) + 20); } };
   }
@@ -123,8 +123,8 @@
     el(bub, "rect", { x: 58, y: 128, width: 46, height: 26, rx: 13, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
     const typing = [71, 81, 91].map((x) => el(bub, "circle", { cx: x, cy: 141, r: 3, fill: C.muted }));
     const ok = el(talk, "g", {});
-    el(ok, "circle", { cx: 81, cy: 141, r: 13, fill: "#e7f5ea", stroke: "#2e9e44", "stroke-width": 1.8 });
-    el(ok, "path", { d: "M 75 141 L 79.5 145.5 L 87.5 136.5", fill: "none", stroke: "#2e9e44", "stroke-width": 2.4, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    el(ok, "circle", { cx: 81, cy: 141, r: 13, fill: "#E3F5EE", stroke: "#10A37F", "stroke-width": 1.8 });
+    el(ok, "path", { d: "M 75 141 L 79.5 145.5 L 87.5 136.5", fill: "none", stroke: "#10A37F", "stroke-width": 2.4, "stroke-linecap": "round", "stroke-linejoin": "round" });
     // parties: two travelers each
     const A = [0, 1].map(() => el(g, "circle", { r: 6.5, fill: C.a })), B = [0, 1].map(() => el(g, "circle", { r: 6.5, fill: C.b }));
     // reward bars: grow, and in part 2 a tick keeps the part-1 value for comparison
@@ -241,7 +241,7 @@
         const on = i === look;
         L.r.setAttribute("stroke", on ? C.max : C.line); L.r.setAttribute("stroke-width", on ? 2.4 : 1.5);
         L.link.setAttribute("stroke", on ? C.max : C.line);
-        L.badge.setAttribute("fill", on ? "#f6eef2" : C.soft);
+        L.badge.setAttribute("fill", on ? "#EEF0FF" : C.soft);
       });
       think.setAttribute("opacity", live && u > 600 && u < 1900 ? 1 : 0);
       qmark.setAttribute("transform", `rotate(${(Math.sin(t / 150) * 22).toFixed(1)} ${AG[0] + 34} ${AG[1] - 44})`);
