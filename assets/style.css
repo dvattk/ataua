@@ -132,6 +132,7 @@ b { color: var(--ink); font-weight: 650; }
 .tok-chart .chart-top { margin-bottom: 8px; }
 .tok-user { flex-wrap: wrap; }
 .tokplot { width: 100%; height: auto; display: block; overflow: visible; }
+.key .ln2 { width: 20px; border-top: 2px solid #c9c6d6; }
 .key .sq { width: 9px; height: 9px; border: 2px solid var(--ink); border-radius: 2px; background: #fff; }
 
 /* ---------------------------------------------------------------- footer */
