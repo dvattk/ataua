@@ -79,8 +79,8 @@
     document.querySelector(".tok-mult").textContent = `${(pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "")}×`;
     document.querySelector(".tok-mult-sub").textContent = `lower inference cost with the cheapest provider agent, for ${same === "less" ? "even higher" : same === "a little more" ? "slightly lower" : same} ${metric === "rp" ? "provider" : "user"} reward`;
     document.querySelector(".tok-caption").innerHTML =
-      `With <b>${user}</b> users, the priciest provider agent, <b>${pricey.provider}</b>, costs <b>${$(pricey.cost)}</b> per task and gets ${who} ` +
-      `<b>${pricey[metric].toFixed(2)}</b>. The cheapest, <b>${cheap.provider}</b>, costs <b>${$(cheap.cost)}</b> and gets <b>${cheap[metric].toFixed(2)}</b>.`;
+      `With <b>${user}</b> users, the priciest provider agent, <b>${pricey.provider}</b>, costs <b>${$(pricey.cost)}</b> per task. ` +
+      `The cheapest, <b>${cheap.provider}</b>, costs <b>${$(cheap.cost)}</b>.`;
     yTitle.textContent = metric === "rp" ? "Provider reward" : "User reward";
     const sync = (attr, v) => document.querySelectorAll(`[${attr}]`).forEach((b) => b.setAttribute("aria-pressed", b.getAttribute(attr) === v ? "true" : "false"));
     sync("data-tsupply", supply); sync("data-tmetric", metric); sel.value = user;
@@ -121,7 +121,7 @@
   document.querySelectorAll("[data-tsupply]").forEach((b) => b.addEventListener("click", () => { supply = b.dataset.tsupply; target(); }));
   document.querySelectorAll("[data-tmetric]").forEach((b) => b.addEventListener("click", () => { metric = b.dataset.tmetric; target(); }));
 
-  fetch("assets/tokenomics.json?v=1794434948").then((r) => r.json()).then((d) => {
+  fetch("assets/tokenomics.json?v=1794434998").then((r) => r.json()).then((d) => {
     data = d;
     const q = new URLSearchParams(location.search);
     if (q.get("tsupply")) supply = q.get("tsupply");
