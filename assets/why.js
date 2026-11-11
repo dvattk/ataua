@@ -165,12 +165,12 @@
       typing.forEach((c, i) => c.setAttribute("opacity", 0.3 + 0.7 * Math.max(0, Math.sin((t / 1000) * 7 - i * 0.9))));
       bars.forEach((b, i) => {
         const [lo, hi] = VAL[i];
-        const x = kf([[0, 0], [4300, 0], [5200, lo], [6300, lo], [6600, 0], [6900, lo], [10400, lo], [11300, hi]], t);
+        const x = kf([[0, 0], [4300, 0], [5200, lo], [10500, lo], [11400, hi]], t);     // bars stay put while the dots reset and move
         b.bar.setAttribute("width", BW * x);
         b.val.textContent = x > 0.02 ? x.toFixed(2) : "";
         const gx = BX + BW * lo;
         b.ghost.setAttribute("x1", gx); b.ghost.setAttribute("x2", gx);
-        b.ghost.setAttribute("opacity", t > 6900 && x > lo + 0.01 ? 1 : 0);                // the old value stays marked
+        b.ghost.setAttribute("opacity", t > 10500 && x > lo + 0.01 ? 1 : 0);                // the old value stays marked
       });
     };
   });
