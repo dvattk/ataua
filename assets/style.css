@@ -240,3 +240,35 @@ button, select { -webkit-tap-highlight-color: transparent; touch-action: manipul
 @media (max-width: 880px) { :root { --gut: 16px; } }
 .why, .tok, .foot { border-top: 0 !important;
   background: linear-gradient(var(--line), var(--line)) no-repeat var(--gut) 0 / calc(100% - 2 * var(--gut)) 1px; }
+
+/* ---------------------------------------------------------------- long-form sections (overview, design, scoring, MAX) */
+.prose { padding-top: 56px; }
+.prose.sec { padding-top: 72px; }
+.prose h2 { font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 800; margin-bottom: .55em; }
+.prose h3 { font-size: 1.2rem; font-weight: 700; margin: 40px 0 .5em; }
+.prose ul { padding-left: 1.2em; margin: 0 0 1em; }
+.prose li { margin: .35em 0; }
+.m, .eq { font-family: "Newsreader", Georgia, serif; font-style: italic; }
+.m { font-size: 1.08em; }
+.m sub, .eq sub { font-style: normal; font-family: var(--sans); font-size: .62em; }
+.eq { text-align: center; font-size: 1.35rem; color: var(--ink); margin: 18px 0 20px; overflow-x: auto; white-space: nowrap; padding: 4px 0; }
+.eq.sm { font-size: 1.08rem; white-space: normal; }
+.d-anim { position: relative; margin: 20px 0 22px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 10px; }
+.d-anim svg { display: block; width: 100%; height: auto; shape-rendering: geometricPrecision; text-rendering: geometricPrecision; }
+.d-anim .d-seg { display: flex; margin: 4px 4px 6px; }
+.d-anim .d-seg button { flex: 1; }
+.d-anim.supply .replay-mini { top: auto; bottom: 12px; }
+details.more { border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; background: #fff; }
+details.more > summary { list-style: none; cursor: pointer; padding: 11px 16px; font-weight: 600; font-size: .95rem; color: var(--ink);
+  display: flex; align-items: center; gap: 10px; -webkit-tap-highlight-color: transparent; }
+details.more > summary::-webkit-details-marker { display: none; }
+details.more > summary::before { content: ""; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+  transform: rotate(-45deg); transition: transform .2s; flex: none; margin-left: 2px; }
+details.more[open] > summary::before { transform: rotate(45deg); }
+details.more > summary:hover { background: var(--soft); border-radius: 10px; }
+details.more > :not(summary) { margin: 4px 18px 16px; font-size: .95rem; }
+details.more .bib { margin: 4px 14px 14px; }
+.results-head { padding-bottom: 8px; }
+.take li { margin: .7em 0; }
+.foot:empty { padding: 0 0 48px; }
+.eq .w { font-style: normal; font-family: var(--sans); font-size: .72em; color: var(--muted); }

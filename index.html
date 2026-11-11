@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794435087">
+<link rel="stylesheet" href="assets/style.css?v=1794436216">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794435087">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794436216">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -27,6 +27,169 @@
       <div class="scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill"></div><div class="knob"></div></div>
     </div>
   </figure>
+</section>
+
+
+<!-- ======================================================= overview -->
+<section class="wrap prose">
+  <h2>Overview</h2>
+  <p>Travelers and airlines are starting to hand their side of a purchase to AI agents. When both sides of a market
+    send agents, the outcome depends on how those agents interact: who finds which seat, who concedes on price, and
+    whether the market as a whole ends up anywhere near its best.</p>
+  <p>A<span class="tau">τ</span>A is a benchmark for these <i>agentic economies</i>. User agents book trips for
+    travelers; provider agents sell flights for airlines; they negotiate directly over shared flight inventory. We score
+    every booking for both sides and compare the result with the best allocation we could find. Across ten models from
+    OpenAI, Google and Anthropic, agents complete bookings, but the market they reach together is far from Pareto
+    optimal.</p>
+
+  <details class="more"><summary>Models evaluated</summary>
+    <p><b>OpenAI:</b> GPT-5.3 Codex, GPT-5.4, GPT-6 Astra. <b>Google:</b> Gemini 3.7 Flash, Gemini 3.8 Flash.
+      <b>Anthropic:</b> Claude Opus 4.8, Opus 5, Opus 5.5, Sonnet 5, Sonnet 5.5. In <b>symmetric</b> runs every agent
+      uses the same model; in <b>asymmetric</b> runs all user agents use one model and all provider agents another.</p>
+  </details>
+  <details class="more"><summary>Notation</summary>
+    <ul>
+      <li><span class="m">R<sub>u</sub></span>, <span class="m">R<sub>p</sub></span>: user and provider reward, both in [0, 1].</li>
+      <li><span class="m">N</span> users and <span class="m">K</span> airlines per task; we use <span class="m">N</span> = 5.</li>
+      <li><span class="m">B<sub>target</sub></span>, <span class="m">B<sub>walkaway</sub></span>: a user's preferred and maximum spend.</li>
+      <li><span class="m">r<sub>a</sub></span>, <span class="m">R<sub>a</sub></span>: airline <span class="m">a</span>'s net revenue and its reference revenue.</li>
+      <li>MAX: the best allocation our solver found for a task, used as a reference.</li>
+    </ul>
+  </details>
+  <details class="more"><summary>Cite this work</summary>
+    <div class="bib">
+      <button type="button" class="copy">Copy</button>
+<pre><code id="bibtex">@inproceedings{ataua2027,
+  title     = {A$\tau$A: A Benchmark for Multi-Agent Interaction in Agentic Economies},
+  author    = {Anonymous},
+  booktitle = {Under review},
+  year      = {2027}
+}</code></pre>
+    </div>
+  </details>
+</section>
+
+<!-- ======================================================= benchmark design -->
+<section class="wrap prose sec">
+  <h2>Building the market</h2>
+  <p>A market needs sellers with something to sell, buyers with something they want, and a rule for how scarce
+    things are. We build each from data, then let agents trade.</p>
+
+  <h3>Providers: airlines and their flights</h3>
+  <p>Each airline keeps a flight database: routes, departure times, fares and seats per cabin. We take travel
+    records between 20 U.S. airports from the BTS DB1B market survey and use the median observed fare for each route
+    and airline as a reference price. From these we generate 30 days of schedules.</p>
+  <figure class="d-anim inventory"><svg viewBox="0 0 680 260"></svg><button type="button" class="replay-mini">Replay</button></figure>
+  <details class="more"><summary>How the inventory is built</summary>
+    <p>We keep records for the domestic airlines in the generator's list, drop records with missing or non-positive
+      fares, and group records by origin, destination and ticketing airline. Fares are adjusted by cabin class, and
+      seat counts are set per supply condition. The resulting catalog has 1,746 itineraries across 44 airports and 23
+      airlines.</p>
+  </details>
+
+  <h3>Users: personas, emails and goals</h3>
+  <p>Each user has a persona that shapes their preferences and budget, a <b>target budget</b> they would like to
+    spend and a <b>walk-away budget</b> they will not exceed. Their preferences are not handed to the agent as a
+    checklist. They live in the user's personal emails, and the agent has to infer what is wanted and which requests
+    are non-negotiable. A <b>task</b> puts five users with related trips into the market at the same time.</p>
+  <figure class="d-anim users"><svg viewBox="0 0 680 300"></svg><button type="button" class="replay-mini">Replay</button></figure>
+  <details class="more"><summary>The 13 personas</summary>
+    <p><b>Normal:</b> budget conscious, premium traveler, business time-sensitive, price comparison, impulse buyer,
+      flexible traveler, explicit explorer. <b>Adversarial:</b> fake loyalty, competitor anchor, pressure discount,
+      social engineering, policy exploiter, info extraction. Adversarial personas stress-test provider agents against
+      social attacks.</p>
+  </details>
+  <details class="more"><summary>How emails are generated</summary>
+    <p>An LLM turns each user's structured profile into an inbox of 20–30 emails, mixing travel threads, financial
+      records and unrelated messages. Each inbox is reviewed against the source profile. The structured profile is
+      withheld from the agent and kept for scoring.</p>
+  </details>
+
+  <h3>Supply: scarce or abundant</h3>
+  <p>All users draw from the same inventory, so every booking removes a seat for everyone else. Under <b>abundant</b>
+    supply there are more seats than users need. Under <b>scarce</b> supply, users compete for the options they
+    prefer and some must compromise.</p>
+  <figure class="d-anim supply">
+    <div class="seg d-seg" role="group" aria-label="Seat supply">
+      <button type="button" data-dsupply="scarce" aria-pressed="true">Scarce supply</button>
+      <button type="button" data-dsupply="abundant" aria-pressed="false">Abundant supply</button>
+    </div>
+    <svg viewBox="0 0 680 280"></svg>
+  </figure>
+
+  <h3>Agents: who trades with whom</h3>
+  <p>Each of the <span class="m">N</span> users has a user agent, and each of the <span class="m">K</span> airlines
+    has a provider agent. A user agent can contact any provider agent to ask for offers, compare them and negotiate
+    price and services. It then picks an offer, and the provider agent books it under its airline's policy. There is
+    no platform in between. This is the market in the animation at the top of the page.</p>
+  <details class="more"><summary>Agent tools</summary>
+    <p>User agents read the user's inbox and payment details, message provider agents and accept offers. Provider
+      agents search their airline's inventory, quote fares within policy, apply discounts and add services, and make
+      bookings.</p>
+  </details>
+  <details class="more"><summary>Coordination modes</summary>
+    <p>A<span class="tau">τ</span>A also supports private channels between agents on the same side. In <b>User
+      Coordinate</b> mode, user agents compare offers and coordinate their negotiations. In <b>Provider Coordinate</b>
+      mode, agents for the same airline coordinate offers within inventory and policy. These channels are off in the
+      main (BASE) runs.</p>
+  </details>
+</section>
+
+<!-- ======================================================= scoring -->
+<section class="wrap prose sec">
+  <h2>Scoring both sides</h2>
+  <p>Every booking goal gets two scores, each in [0, 1]: one for the traveler and one for the airlines.</p>
+
+  <h3>User reward</h3>
+  <div class="eq">R<sub>u</sub> = I<sub>hard</sub> · I<sub>pax</sub> · C<sub>trip</sub> · S<sub>budget</sub> · S<sub>pref</sub></div>
+  <p>The reward is a product, so one failed factor sinks the whole booking. <span class="m">I<sub>hard</sub></span>
+    is zero if a hard requirement is broken. <span class="m">I<sub>pax</sub></span> checks the party size.
+    <span class="m">C<sub>trip</sub></span> is the share of required journeys that were booked.
+    <span class="m">S<sub>budget</sub></span> and <span class="m">S<sub>pref</sub></span> measure budget and
+    preference satisfaction.</p>
+  <figure class="d-anim reward"><svg viewBox="0 0 680 196"></svg><button type="button" class="replay-mini">Replay</button></figure>
+
+  <p>Budget satisfaction is full up to the target budget and falls linearly to zero at the walk-away budget:</p>
+  <figure class="d-anim budget"><svg viewBox="0 0 680 230"></svg></figure>
+  <details class="more"><summary>Budget and preference formulas</summary>
+    <div class="eq sm">S<sub>budget</sub>(c) = 1 if c ≤ B<sub>target</sub>; &nbsp;
+      (B<sub>walkaway</sub> − c) / (B<sub>walkaway</sub> − B<sub>target</sub>) in between; &nbsp; 0 if c ≥ B<sub>walkaway</sub></div>
+    <div class="eq sm">S<sub>pref</sub> = <sup>1</sup>⁄<sub>n</sub> Σ<sub>i</sub> Σ<sub>d</sub> w<sub>d</sub> s<sub>i,d</sub> / Σ<sub>d</sub> w<sub>d</sub>, &nbsp; w<sub>d</sub> = 1 / rank(d)</div>
+    <p>Here <span class="m">c</span> is net credit-card spending, and <span class="m">s<sub>i,d</sub></span> is
+      traveler <span class="m">i</span>'s satisfaction on preference <span class="m">d</span>. Higher-priority
+      preferences get more weight.</p>
+  </details>
+
+  <h3>Provider reward</h3>
+  <div class="eq">R<sub>p,a</sub> = min(1, r<sub>a</sub> / R<sub>a</sub>), &nbsp;&nbsp; R<sub>p</sub> = <span class="w">mean of</span> R<sub>p,a</sub> <span class="w">over booked airlines</span></div>
+  <p>Each airline's net revenue <span class="m">r<sub>a</sub></span> is compared with a reference revenue
+    <span class="m">R<sub>a</sub></span> for that user's trip. Discounts lower it; paid services raise it.</p>
+  <details class="more"><summary>Revenue accounting</summary>
+    <p>All active reservations with an airline count towards its revenue before the cap. With several airlines, each
+      is scored against its own full reference and the scores are averaged, so <span class="m">R<sub>p</sub></span>
+      reaches one only if every booked airline does.</p>
+  </details>
+</section>
+
+<!-- ======================================================= MAX -->
+<section class="wrap prose sec">
+  <h2>What is the best possible?</h2>
+  <p>A reward of one is not always reachable: seats and budgets are limited. So for every task we search for the
+    best complete allocation of seats to users, maximising a weighted mix of both rewards:</p>
+  <div class="eq">λ · R<sub>u</sub> + (1 − λ) · R<sub>p</sub>, &nbsp;&nbsp; λ ∈ {0, 0.2, 0.4, 0.5, 0.6, 0.8, 1}</div>
+  <p>Each weight gives one point. Sweeping λ from providers-only to users-only traces the <b>MAX</b> line, the
+    reference every model is compared with below.</p>
+  <figure class="d-anim maxsweep"><svg viewBox="0 0 640 400"></svg><button type="button" class="replay-mini">Replay</button></figure>
+  <details class="more"><summary>Solver details and caveats</summary>
+    <p>The search lets every user move up to ±3 days, keeps preference penalties, and respects budgets and shared
+      inventory. It covers all 100 tasks and seven weights per supply condition. Each point is a whole allocation.
+      Solver time limits and the restricted search space mean MAX is the best found, not a proven upper bound.</p>
+  </details>
+</section>
+
+<section class="wrap prose sec results-head">
+  <h2>Results</h2>
+  <p>Each dot below is one model playing both sides of the market, averaged over 500 booking goals.</p>
 </section>
 
 <!-- ======================================================= the chart, told in steps -->
@@ -141,21 +304,24 @@
   </div>
 </section>
 
-<footer class="wrap foot">
-  <div class="bib">
-    <button type="button" class="copy">Copy</button>
-<pre><code id="bibtex">@inproceedings{ataua2027,
-  title     = {A$\tau$A: A Benchmark for Multi-Agent Interaction in Agentic Economies},
-  author    = {Anonymous},
-  booktitle = {Under review},
-  year      = {2027}
-}</code></pre>
-  </div>
-</footer>
+<section class="wrap prose sec">
+  <h2>Takeaways</h2>
+  <ul class="take">
+    <li><b>Agents complete bookings, markets fall short.</b> No model reaches the MAX reference, under scarce or
+      abundant supply.</li>
+    <li><b>Individual decisions can undermine collective outcomes.</b> When seats are scarce, each agent's best move
+      can take the option another user needed.</li>
+    <li><b>Agents are good buyers but poor sellers.</b> Provider agents give away the full discount instead of using
+      the other levers they have.</li>
+    <li><b>Price is not quality.</b> A pricier provider agent does not reliably bring higher reward for either side.</li>
+  </ul>
+</section>
+<footer class="wrap foot"></footer>
 
-<script src="assets/player.js?v=1794435087" defer></script>
-<script src="assets/chart.js?v=1794435087" defer></script>
-<script src="assets/why.js?v=1794435087" defer></script>
-<script src="assets/tokenomics.js?v=1794435087" defer></script>
+<script src="assets/player.js?v=1794436216" defer></script>
+<script src="assets/chart.js?v=1794436216" defer></script>
+<script src="assets/why.js?v=1794436216" defer></script>
+<script src="assets/design.js?v=1794436216" defer></script>
+<script src="assets/tokenomics.js?v=1794436216" defer></script>
 </body>
 </html>
