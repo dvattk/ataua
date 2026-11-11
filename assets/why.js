@@ -163,8 +163,8 @@
     el(g, "text", { x: AG[0], y: AG[1] - 2, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "Provider");
     el(g, "text", { x: AG[0], y: AG[1] + 12, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "agent");
     const think = el(g, "g", {});
-    el(think, "circle", { cx: AG[0] + 30, cy: AG[1] - 34, r: 11, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
-    el(think, "text", { x: AG[0] + 30, y: AG[1] - 29.5, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: C.muted }, "?");
+    el(think, "circle", { cx: AG[0] + 36, cy: AG[1] - 42, r: 17, fill: "#fff", stroke: C.max, "stroke-width": 1.8 });
+    const qmark = el(think, "text", { x: AG[0] + 36, y: AG[1] - 34.5, "text-anchor": "middle", "font-size": 22, "font-weight": 800, fill: C.max }, "?");
     // the user agent who wants to book, and the tally of bookings
     const user = el(g, "circle", { r: 9, fill: C.a });
     const tag = el(g, "text", { "font-size": 11, "font-weight": 700, "font-family": "JetBrains Mono, monospace", fill: C.max, "text-anchor": "middle" }, "−30%");
@@ -184,6 +184,7 @@
         L.link.setAttribute("stroke", on ? C.max : C.line);
       });
       think.setAttribute("opacity", live && u > 600 && u < 2000 ? 1 : 0);
+      qmark.setAttribute("transform", `rotate(${(Math.sin(t / 160) * 25).toFixed(1)} ${AG[0] + 36} ${AG[1] - 42})`);   // the "?" wobbles while it thinks
       const f = live ? kf([[0, 0], [2000, 0], [2400, 1], [2900, 1], [3200, 0]], u) : 0;
       levers[1].fill.setAttribute("width", 92 * f);
       levers[1].pct.textContent = f > 0.02 ? `${Math.round(30 * f)}%` : "";
