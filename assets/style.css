@@ -87,11 +87,6 @@ b { color: var(--ink); font-weight: 650; }
 .pareto .corner, .tokplot .corner { font: 500 12px var(--sans); fill: #a7a7b3; }
 .pareto .max { fill: none; stroke: var(--max); stroke-width: 3.2; stroke-dasharray: 12 8; stroke-linejoin: round; }
 .pareto .maxlbl { font: 700 13px var(--sans); fill: var(--max); }
-.supply-seg button { display: inline-flex; align-items: center; gap: 7px; }
-.supply-seg svg { width: 22px; height: 14px; fill: currentColor; }
-.supply-seg svg .off { fill: none; stroke: currentColor; stroke-width: 1; opacity: .55; }
-.supply-seg button[aria-pressed="true"] svg { fill: var(--max); }
-.supply-seg button[aria-pressed="true"] svg .off { fill: none; stroke: var(--max); }
 .pareto .gaparea { fill: var(--gap); }
 .pareto .gap { stroke: var(--max); stroke-width: 1.6; stroke-dasharray: 3 4; }
 .pareto .gap.hero { stroke-dasharray: none; stroke-width: 2.2; }

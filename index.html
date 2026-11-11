@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794410538">
+<link rel="stylesheet" href="assets/style.css?v=1794410620">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794410538">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794410620">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -40,9 +40,9 @@
   <div class="story-chart">
     <div class="chart-box">
       <div class="chart-top">
-        <div class="seg supply-seg" role="group" aria-label="Seat supply">
-          <button type="button" data-supply="scarce" aria-pressed="true" title="Scarce supply: few open seats"><svg viewBox="0 0 22 14" width="22" height="14" aria-hidden="true"><rect x="2" y="1" width="5" height="5" rx="1.3"/><rect class="off" x="8.5" y="1" width="5" height="5" rx="1.3"/><rect class="off" x="15" y="1" width="5" height="5" rx="1.3"/><rect class="off" x="2" y="8" width="5" height="5" rx="1.3"/><rect class="off" x="8.5" y="8" width="5" height="5" rx="1.3"/><rect class="off" x="15" y="8" width="5" height="5" rx="1.3"/></svg>Scarce supply</button>
-          <button type="button" data-supply="abundant" aria-pressed="false" title="Abundant supply: plenty of open seats"><svg viewBox="0 0 22 14" width="22" height="14" aria-hidden="true"><rect x="2" y="1" width="5" height="5" rx="1.3"/><rect x="8.5" y="1" width="5" height="5" rx="1.3"/><rect x="15" y="1" width="5" height="5" rx="1.3"/><rect x="2" y="8" width="5" height="5" rx="1.3"/><rect x="8.5" y="8" width="5" height="5" rx="1.3"/><rect x="15" y="8" width="5" height="5" rx="1.3"/></svg>Abundant supply</button>
+        <div class="seg" role="group" aria-label="Seat supply">
+          <button type="button" data-supply="scarce" aria-pressed="true">Scarce supply</button>
+          <button type="button" data-supply="abundant" aria-pressed="false">Abundant supply</button>
         </div>
       </div>
       <svg class="pareto" viewBox="0 0 640 560" role="img" aria-label="Mean user reward against mean provider reward for each model assignment, with the MAX reference line"></svg>
@@ -58,43 +58,63 @@
           <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9.5-5.5z"/><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
         </button>
         <div class="segs" role="group" aria-label="Jump to step"></div>
-        <span class="time">1 / 5</span>
+        <span class="time">1 / 4</span>
       </div>
     </div>
   </div>
 
   <div class="story-steps">
-    <article class="step" data-step="1">
-      <p class="n">1</p>
+    <!-- video 1: scarce supply -->
+    <article class="step" data-video="scarce" data-step="1">
+      <p class="n">Scarce supply · 1</p>
       <h2>One dot, one whole market</h2>
       <p>Each dot is a full run: 100 markets of five travellers, with the same model on both sides. Up is how
         happy the travellers were (<b>user reward</b>), right is how well the airlines did (<b>provider
         reward</b>). The strongest models make travellers fairly happy.</p>
     </article>
-    <article class="step" data-step="2">
-      <p class="n">2</p>
+    <article class="step" data-video="scarce" data-step="2">
+      <p class="n">Scarce supply · 2</p>
       <h2>What was on the table</h2>
       <p>The dashed line is <b>MAX</b>: the best allocations a joint search found for every market, from
         "everything for the airlines" to "everything for the travellers". Every dot sits far to its left.</p>
     </article>
-    <article class="step" data-step="3">
-      <p class="n">3</p>
+    <article class="step" data-video="scarce" data-step="3">
+      <p class="n">Scarce supply · 3</p>
       <h2>The gap is on the airline side</h2>
       <p>Take <b>GPT-6 Astra</b>, the best for travellers at <b>0.74</b>. At that same traveller reward, the best
         allocation found gives airlines <b>0.63</b>, not <b>0.34</b>. Every model leaves at least <b>0.23</b> of
         provider reward on the table.</p>
     </article>
-    <article class="step" data-step="4">
-      <p class="n">4</p>
+    <article class="step" data-video="scarce" data-step="4">
+      <p class="n">Scarce supply · 4</p>
       <h2>Mixing models doesn't close it</h2>
       <p>Hollow dots use one model for all travellers and another for all airlines. Swapping who sits on which
         side moves dots around the same cluster. None comes close to the line.</p>
     </article>
-    <article class="step" data-step="5">
-      <p class="n">5</p>
-      <h2>Abundant supply helps travellers, not airlines</h2>
-      <p>Under abundant supply, travellers do much better: GPT-6 Astra reaches <b>0.97</b>, close to the line. The
-        airlines still trail. Apart from Astra, every model sits at least <b>0.34</b> short on the airline side.</p>
+    <!-- video 2: abundant supply -->
+    <article class="step" data-video="abundant" data-step="1">
+      <p class="n">Abundant supply · 1</p>
+      <h2>More seats, happier travellers</h2>
+      <p>Same runs with plenty of seats. Every model now makes travellers fairly happy (<b>0.78</b> or more), and
+        <b>GPT-6 Astra</b> reaches <b>0.97</b>. The airlines barely move.</p>
+    </article>
+    <article class="step" data-video="abundant" data-step="2">
+      <p class="n">Abundant supply · 2</p>
+      <h2>What was on the table</h2>
+      <p>With more seats, <b>MAX</b> moves up and out: there is more to share. The dots stay bunched on the left,
+        far from the line.</p>
+    </article>
+    <article class="step" data-video="abundant" data-step="3">
+      <p class="n">Abundant supply · 3</p>
+      <h2>Airlines still leave reward behind</h2>
+      <p><b>GPT-6 Astra</b> gets closest: airlines <b>0.38</b> where the line gives <b>0.46</b>. Every other model
+        leaves at least <b>0.35</b> of provider reward on the table.</p>
+    </article>
+    <article class="step" data-video="abundant" data-step="4">
+      <p class="n">Abundant supply · 4</p>
+      <h2>Mixing models doesn't close it</h2>
+      <p>Hollow dots mix one model for travellers with another for airlines. They land in the same cluster, well
+        short of the line.</p>
     </article>
   </div>
 </section>
@@ -187,9 +207,9 @@
   </div>
 </footer>
 
-<script src="assets/player.js?v=1794410538" defer></script>
-<script src="assets/chart.js?v=1794410538" defer></script>
-<script src="assets/why.js?v=1794410538" defer></script>
-<script src="assets/tokenomics.js?v=1794410538" defer></script>
+<script src="assets/player.js?v=1794410620" defer></script>
+<script src="assets/chart.js?v=1794410620" defer></script>
+<script src="assets/why.js?v=1794410620" defer></script>
+<script src="assets/tokenomics.js?v=1794410620" defer></script>
 </body>
 </html>

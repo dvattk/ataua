@@ -1,5 +1,5 @@
 // The main chart: mean provider reward (x) vs mean user reward (y), with the paper's MAX reference line.
-// Six steps that play by themselves while the chart is on screen (click to pause, or a segment to jump).
+// Two short videos (scarce supply, abundant supply) that play by themselves while on screen; named buttons switch.
 // Every change is tweened, so jumping back and forth animates smoothly.
 (function () {
   const svg = document.querySelector(".pareto");
@@ -198,14 +198,17 @@
     }
   }
 
-  // ---------------------------------------------------------------- steps (auto-play, like a short video)
-  let step = 0, seen = false, userSupply = null;   // userSupply: the reader picked a supply (pauses autoplay)              // dots drop in the moment the chart is first on screen
-  const steps = [...document.querySelectorAll(".story .step")];
+  // ---------------------------------------------------------------- two videos: scarce supply and abundant supply
+  // Each plays 4 steps by itself while on screen and loops; the named buttons switch video (restarts at step 1).
+  let step = 0, seen = false, video = "scarce";    // seen: dots drop in the moment the chart is first on screen
+  const allSteps = [...document.querySelectorAll(".story .step")];
+  const N = 4;
   const box = document.querySelector(".story .chart-box");
   const playBtn = box.querySelector(".play");
   const timeEl = box.querySelector(".time");
-  const HOLD = [2500, 3000, 3500, 3000, 4000];          // ms on each step (reading time)
-  const segFills = steps.map((_, i) => {
+  const supBtns = [...box.querySelectorAll("[data-supply]")];
+  const HOLD = [2500, 3000, 3500, 3000];          // ms on each step
+  const segFills = [...Array(N)].map((_, i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "seg-i"; b.setAttribute("aria-label", `Step ${i + 1}`);
     b.innerHTML = "<i></i>";
@@ -223,15 +226,14 @@
     }
     set("asymAll", step >= 4 ? 1 : 0, 600);
     set("gap", step >= 3 ? 1 : 0, 700);
-    const sup = userSupply || (step >= 5 ? "abundant" : "scarce");
-    set("supply", sup === "abundant" ? 1 : 0, 900);
-    supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === sup ? "true" : "false"));
-    steps.forEach((s) => s.classList.toggle("active", +s.dataset.step === step));
-    timeEl.textContent = `${step} / ${steps.length}`;
+    set("supply", video === "abundant" ? 1 : 0, 900);
+    supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === video ? "true" : "false"));
+    allSteps.forEach((s) => s.classList.toggle("active", s.dataset.video === video && +s.dataset.step === step));
+    timeEl.textContent = `${step} / ${N}`;
   }
   function go(n) {
-    n = Math.min(Math.max(n, 1), steps.length);
-    if (n !== step) { step = n; if (playing) userSupply = null; apply(); }
+    n = Math.min(Math.max(n, 1), N);
+    if (n !== step) { step = n; apply(); }
   }
 
   // clock: advances only while playing and on screen; loops back to step 1 after the last one
@@ -239,7 +241,7 @@
   function clock(now) {
     if (playing && visible && last !== null) {
       elapsed += now - last;
-      if (elapsed >= HOLD[step - 1]) { elapsed = 0; go(step === steps.length ? 1 : step + 1); }
+      if (elapsed >= HOLD[step - 1]) { elapsed = 0; go(step === N ? 1 : step + 1); }
     }
     last = now;
     segFills.forEach((f, i) => (f.style.width = i + 1 < step ? "100%" : i + 1 > step ? "0%" : `${Math.min(elapsed / HOLD[i], 1) * 100}%`));
@@ -249,17 +251,16 @@
     playing = on; box.classList.toggle("playing", on);
     playBtn.setAttribute("aria-label", on ? "Pause" : "Play");
   }
-  playBtn.addEventListener("click", () => { userPaused = playing; if (!playing) userSupply = null; setPlaying(!playing); apply(); });
-  const supBtns = [...box.querySelectorAll("[data-supply]")];
+  playBtn.addEventListener("click", () => { userPaused = playing; setPlaying(!playing); });
   supBtns.forEach((b) => b.addEventListener("click", () => {
-    userSupply = b.dataset.supply; userPaused = true; setPlaying(false); apply();
+    video = b.dataset.supply; step = 0; elapsed = 0; go(1); userPaused = false; setPlaying(true);
   }));
   box.querySelector(".pareto").addEventListener("click", (e) => { if (e.target.tagName !== "circle") { userPaused = playing; setPlaying(!playing); } });
   new IntersectionObserver((es) => es.forEach((e) => { visible = e.isIntersecting; if (visible && !seen) { seen = true; apply(); } if (visible && !userPaused) setPlaying(true); }),
     { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
-  fetch("assets/chart-data.json?v=1794410538").then((r) => r.json()).then((data) => {
+  fetch("assets/chart-data.json?v=1794410620").then((r) => r.json()).then((data) => {
     D = data;
     build();
     document.fonts && document.fonts.ready.then(() => items.forEach((it) => {
@@ -271,7 +272,7 @@
     go(q ? +q : 1);
     if (q || reduce) { seen = true; apply(); }
     if (q) { for (const k in tw) tw[k].start = -1e9; userPaused = true; }      // pinned: no auto-advance
-    if (reduce) { go(steps.length); userPaused = true; }
+    if (reduce) { go(N); userPaused = true; }
     requestAnimationFrame(clock);
     (function loop(now) { render(now); requestAnimationFrame(loop); })(performance.now());
   });
