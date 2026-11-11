@@ -61,10 +61,10 @@
     // cross the text
     const seatRow = (y) => [[432, y], [470, y]];
     const seatBox = (pos) => pos.map(([x, y]) => el(g, "rect", { x: x - 15, y: y - 13, width: 30, height: 26, rx: 6, fill: "#fff", stroke: C.ink, "stroke-width": 1.5 }));
-    box(g, 300, 26, 204, 76, "Delta · Aug 2", "Houston → New York");
+    box(g, 300, 26, 204, 76, "Delta", "Aug 2");
     const DELTA = seatRow(84), delta = seatBox(DELTA);
     const soldOut = el(g, "text", { x: 451, y: 44, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.max }, "sold out");
-    box(g, 300, 110, 204, 76, "Spirit · Delta", "a day or two later");
+    box(g, 300, 110, 204, 76, "Spirit · Delta", "1–2 days later");
     const SPIRIT = seatRow(168), spirit = seatBox(SPIRIT);
     box(g, 300, 194, 204, 76, "United", "other dates");
     const UNITED = seatRow(252), united = seatBox(UNITED);
