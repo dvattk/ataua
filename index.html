@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794415346">
+<link rel="stylesheet" href="assets/style.css?v=1794416715">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794415346">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794416715">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -124,18 +124,16 @@
         in dates and settings, so comparisons are descriptive.</p>
     </div>
     <div class="tok-chart">
-      <div class="chart-top">
-        <div class="seg tok-user" role="group" aria-label="Users' model"></div>
-      </div>
-      <div class="chart-top">
-        <div class="seg" role="group" aria-label="Seat supply">
-          <button type="button" data-tsupply="scarce" aria-pressed="true">Scarce supply</button>
-          <button type="button" data-tsupply="abundant" aria-pressed="false">Abundant supply</button>
-        </div>
-        <div class="seg" role="group" aria-label="Reward shown">
-          <button type="button" data-tmetric="rp" aria-pressed="true">Provider reward</button>
-          <button type="button" data-tmetric="ru" aria-pressed="false">User reward</button>
-        </div>
+      <div class="tok-controls">
+        <div class="tabs-row"><span class="tabs-lbl">Users</span><div class="tabs tok-user" role="group" aria-label="Users' model"></div></div>
+        <div class="tabs-row"><span class="tabs-lbl">Supply</span><div class="tabs" role="group" aria-label="Seat supply">
+          <button type="button" data-tsupply="scarce" aria-pressed="true">Scarce</button>
+          <button type="button" data-tsupply="abundant" aria-pressed="false">Abundant</button>
+        </div></div>
+        <div class="tabs-row"><span class="tabs-lbl">Reward</span><div class="tabs" role="group" aria-label="Reward shown">
+          <button type="button" data-tmetric="rp" aria-pressed="true">Provider</button>
+          <button type="button" data-tmetric="ru" aria-pressed="false">User</button>
+        </div></div>
       </div>
       <svg class="tokplot" viewBox="0 0 640 400" role="img" aria-label="Provider agent inference cost per task against provider reward, for each pairing of user and provider models"></svg>
       <div class="key">
@@ -159,9 +157,9 @@
   </div>
 </footer>
 
-<script src="assets/player.js?v=1794415346" defer></script>
-<script src="assets/chart.js?v=1794415346" defer></script>
-<script src="assets/why.js?v=1794415346" defer></script>
-<script src="assets/tokenomics.js?v=1794415346" defer></script>
+<script src="assets/player.js?v=1794416715" defer></script>
+<script src="assets/chart.js?v=1794416715" defer></script>
+<script src="assets/why.js?v=1794416715" defer></script>
+<script src="assets/tokenomics.js?v=1794416715" defer></script>
 </body>
 </html>

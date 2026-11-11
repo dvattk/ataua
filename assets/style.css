@@ -163,3 +163,13 @@ b { color: var(--ink); font-weight: 650; }
   opacity: 0; transition: opacity .25s; }
 .fig2-player:hover .controls, .fig2-player:focus-within .controls { opacity: 1; }
 @media (hover: none) { .fig2-player .controls { opacity: 1; position: static; } }
+
+/* tokenomics controls: plain text tabs, no boxes */
+.tok-controls { display: flex; flex-wrap: wrap; gap: 6px 28px; margin-bottom: 10px; }
+.tabs-row { display: flex; align-items: baseline; gap: 12px; }
+.tabs-lbl { font: 600 .74rem var(--sans); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.tabs button { font: 500 .92rem var(--sans); color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent;
+  padding: 2px 0; cursor: pointer; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-pressed="true"] { color: var(--ink); font-weight: 650; border-bottom-color: var(--max); }
