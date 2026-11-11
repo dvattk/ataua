@@ -114,13 +114,10 @@
     const bar = root.querySelector(".controls");
     const playBtn = bar.querySelector(".play");
     const scrub = bar.querySelector(".scrub"), fill = scrub.querySelector(".fill"), knob = scrub.querySelector(".knob");
-    const timeEl = bar.querySelector(".time");
-    const fmt = (ms) => { const s = Math.floor(ms / 1000); return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; };
     function showTime(t) {
       const f = Math.min(t / DUR, 1) * 100;
       fill.style.width = `${f}%`; knob.style.left = `${f}%`;
       scrub.setAttribute("aria-valuenow", Math.round(f));
-      timeEl.textContent = `${fmt(t)} / ${fmt(DUR)}`;
     }
 
     let t = 0, last = null, playing = false, userPaused = false, raf = 0;

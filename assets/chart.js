@@ -202,20 +202,20 @@
   // Each plays 4 steps by itself while on screen and loops; the named buttons switch video (restarts at step 1).
   let step = 0, seen = false, video = "scarce";    // seen: dots drop in the moment the chart is first on screen
   const allSteps = [...document.querySelectorAll(".story .step")];
-  const N = 4;
+  const N = 2;
   const box = document.querySelector(".story .chart-box");
   const supBtns = [...box.querySelectorAll("[data-supply]")];
-  const HOLD = [2500, 3000, 3500, 3000];          // ms on each step
+  const HOLD = [9000, 10000];          // ms on each step (slow enough to read)
 
   function apply() {
-    set("draw", step >= 2 ? 1 : 0, 900);
-    set("region", step >= 2 ? 1 : 0, 400, step >= 2 ? 700 : 0);
+    set("draw", step >= 1 ? 1 : 0, 1400, 1200);          // dots land first, then MAX draws
+    set("region", step >= 1 ? 1 : 0, 600, 2400);
     for (const it of items) {
       if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 600, it.idx * 50);
-      else set("asym" + it.idx, step >= 4 ? 1 : 0, 600, step >= 4 ? it.idx * 20 : 0);
+      else set("asym" + it.idx, step >= 2 ? 1 : 0, 600, step >= 2 ? 2600 + it.idx * 40 : 0);
     }
-    set("asymAll", step >= 4 ? 1 : 0, 600);
-    set("gap", step >= 3 ? 1 : 0, 700);
+    set("asymAll", step >= 2 ? 1 : 0, 600, step >= 2 ? 2600 : 0);
+    set("gap", step >= 2 ? 1 : 0, 1000, step >= 2 ? 300 : 0);
     set("supply", video === "abundant" ? 1 : 0, 900);
     supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === video ? "true" : "false"));
     allSteps.forEach((s) => s.classList.toggle("active", s.dataset.video === video && +s.dataset.step === step));
@@ -246,7 +246,7 @@
     { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
-  fetch("assets/chart-data.json?v=1794411033").then((r) => r.json()).then((data) => {
+  fetch("assets/chart-data.json?v=1794411870").then((r) => r.json()).then((data) => {
     D = data;
     build();
     document.fonts && document.fonts.ready.then(() => items.forEach((it) => {

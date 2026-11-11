@@ -8,31 +8,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794411033">
+<link rel="stylesheet" href="assets/style.css?v=1794411870">
 </head>
 <body>
 
 <header class="hero wrap">
   <p class="kicker">Anonymous preview · under review</p>
   <h1>A<span class="tau">τ</span>A: A Benchmark for Multi&#8209;Agent Interaction in Agentic Economies</h1>
-  <p class="q">When both sides of a market send AI agents, who wins?</p>
-  <p class="lede">We put travellers' agents and airlines' agents in one shared marketplace and score the outcome for
-    both sides. The agents book the trips. The market they build together is far from the best one available.</p>
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794411033">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794411870">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9.5-5.5z"/><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
       </button>
       <div class="scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="fill"></div><div class="knob"></div></div>
-      <span class="time">0:00 / 0:00</span>
     </div>
   </figure>
-  <p class="caption">Each traveller and each airline is represented by its own agent. User agents send requests
-    (solid) and airline agents respond (dashed); seats come out of shared inventory.</p>
 </section>
 
 <!-- ======================================================= the chart, told in steps -->
@@ -57,57 +51,29 @@
   </div>
 
   <div class="story-steps">
-    <!-- video 1: scarce supply -->
     <article class="step" data-video="scarce" data-step="1">
-      <p class="n">Scarce supply · 1</p>
-      <h2>One dot, one whole market</h2>
-      <p>Each dot is a full run: 100 markets of five travellers, with the same model on both sides. Up is how
-        happy the travellers were (<b>user reward</b>), right is how well the airlines did (<b>provider
-        reward</b>). The strongest models make travellers fairly happy.</p>
+      <p class="n">Scarce supply</p>
+      <h2>Far from what was possible</h2>
+      <p>Each dot is one model on both sides. The dashed <b>MAX</b> line is the best allocation found for each
+        market. Every model sits far to its left.</p>
     </article>
     <article class="step" data-video="scarce" data-step="2">
-      <p class="n">Scarce supply · 2</p>
-      <h2>What was on the table</h2>
-      <p>The dashed line is <b>MAX</b>: the best allocations a joint search found for every market, from
-        "everything for the airlines" to "everything for the travellers". Every dot sits far to its left.</p>
+      <p class="n">Scarce supply</p>
+      <h2>The gap is on the provider side</h2>
+      <p><b>GPT-6 Astra</b> gives providers <b>0.34</b> where MAX gives <b>0.63</b>. Every model leaves at least
+        <b>0.23</b> behind, and mixing models (hollow dots) doesn't help.</p>
     </article>
-    <article class="step" data-video="scarce" data-step="3">
-      <p class="n">Scarce supply · 3</p>
-      <h2>The gap is on the airline side</h2>
-      <p>Take <b>GPT-6 Astra</b>, the best for travellers at <b>0.74</b>. At that same traveller reward, the best
-        allocation found gives airlines <b>0.63</b>, not <b>0.34</b>. Every model leaves at least <b>0.23</b> of
-        provider reward on the table.</p>
-    </article>
-    <article class="step" data-video="scarce" data-step="4">
-      <p class="n">Scarce supply · 4</p>
-      <h2>Mixing models doesn't close it</h2>
-      <p>Hollow dots use one model for all travellers and another for all airlines. Swapping who sits on which
-        side moves dots around the same cluster. None comes close to the line.</p>
-    </article>
-    <!-- video 2: abundant supply -->
     <article class="step" data-video="abundant" data-step="1">
-      <p class="n">Abundant supply · 1</p>
-      <h2>More seats, happier travellers</h2>
-      <p>Same runs with plenty of seats. Every model now makes travellers fairly happy (<b>0.78</b> or more), and
-        <b>GPT-6 Astra</b> reaches <b>0.97</b>. The airlines barely move.</p>
+      <p class="n">Abundant supply</p>
+      <h2>More seats, happier users</h2>
+      <p>Every model reaches <b>0.78</b> user reward or more, and <b>GPT-6 Astra</b> hits <b>0.97</b>. MAX moves out
+        too, but the dots stay on the left.</p>
     </article>
     <article class="step" data-video="abundant" data-step="2">
-      <p class="n">Abundant supply · 2</p>
-      <h2>What was on the table</h2>
-      <p>With more seats, <b>MAX</b> moves up and out: there is more to share. The dots stay bunched on the left,
-        far from the line.</p>
-    </article>
-    <article class="step" data-video="abundant" data-step="3">
-      <p class="n">Abundant supply · 3</p>
-      <h2>Airlines still leave reward behind</h2>
-      <p><b>GPT-6 Astra</b> gets closest: airlines <b>0.38</b> where the line gives <b>0.46</b>. Every other model
-        leaves at least <b>0.35</b> of provider reward on the table.</p>
-    </article>
-    <article class="step" data-video="abundant" data-step="4">
-      <p class="n">Abundant supply · 4</p>
-      <h2>Mixing models doesn't close it</h2>
-      <p>Hollow dots mix one model for travellers with another for airlines. They land in the same cluster, well
-        short of the line.</p>
+      <p class="n">Abundant supply</p>
+      <h2>Providers still lose out</h2>
+      <p><b>GPT-6 Astra</b> comes closest: <b>0.38</b> against <b>0.46</b>. Every other model is at least
+        <b>0.35</b> short, and mixing models doesn't help.</p>
     </article>
   </div>
 </section>
@@ -200,9 +166,9 @@
   </div>
 </footer>
 
-<script src="assets/player.js?v=1794411033" defer></script>
-<script src="assets/chart.js?v=1794411033" defer></script>
-<script src="assets/why.js?v=1794411033" defer></script>
-<script src="assets/tokenomics.js?v=1794411033" defer></script>
+<script src="assets/player.js?v=1794411870" defer></script>
+<script src="assets/chart.js?v=1794411870" defer></script>
+<script src="assets/why.js?v=1794411870" defer></script>
+<script src="assets/tokenomics.js?v=1794411870" defer></script>
 </body>
 </html>
