@@ -1,6 +1,6 @@
 // Live version of Figure 2: same artwork and timeline as the slides (exported by export_web_anim.py).
 // Scene 1: one user agent talks to P1..P3, then more user / user-agent pairs join and everyone talks.
-// Scene 2: the view widens and the User Coordinate huddle chats in a loop, forever.
+// Scene 2: the view widens to the whole figure; the User and Provider Coordinate huddles chat in loops, forever.
 (function () {
   const SVGNS = "http://www.w3.org/2000/svg";
   const ease = (x) => x * x * (3 - 2 * x);
@@ -30,7 +30,10 @@
       clips.appendChild(cp);
       els[el.key] = { outer, inner, rect: r, clipId: cp.id, box: el.box };
     });
-    const scene1 = new Set(d.scene1), scene2 = new Set(d.scene2), chatKeys = new Set(d.chat.keys);
+    const scene1 = new Set(d.scene1), scene2 = new Set(d.scene2);
+    const chats = d.chats || [d.chat];                       // one looping chat per huddle
+    const chatOf = {};
+    chats.forEach((c) => c.keys.forEach((k) => (chatOf[k] = c)));
     const S2 = d.s1End + d.morph;
     const bg = stage.querySelector("rect.bg");
 
@@ -88,8 +91,8 @@
         const el = els[key];
         if (!keys.has(key)) { el.outer.style.display = "none"; continue; }
         let tl = local;
-        if (keys === scene2 && chatKeys.has(key) && local > d.chat.start)
-          tl = d.chat.start + ((local - d.chat.start) % d.chat.cycle);
+        const c = chatOf[key];
+        if (keys === scene2 && c && local > c.start) tl = c.start + ((local - c.start) % c.cycle);
         const s = state(el, ev[key], tl);
         el.outer.style.display = s.hidden ? "none" : "";
         if (s.hidden) continue;
@@ -110,7 +113,7 @@
     }
 
     // ---- video-style controls: play/pause, seek bar, time
-    const DUR = S2 + d.chat.start + d.chat.cycle;            // one full pass, then it loops
+    const DUR = S2 + Math.max(...chats.map((c) => c.start + c.cycle));            // one full pass, then it loops
     const bar = root.querySelector(".controls");
     const playBtn = bar.querySelector(".play");
     const scrub = bar.querySelector(".scrub"), fill = scrub.querySelector(".fill"), knob = scrub.querySelector(".knob");
@@ -163,7 +166,7 @@
     });
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) { t = S2 + d.chat.start; render(t); pause(true); return; }
+    if (reduce) { t = S2 + Math.max(...chats.map((c) => c.start)); render(t); pause(true); return; }
     const start = +(new URLSearchParams(location.search).get("t") || 0);   // e.g. ?t=25000 to jump ahead
     t = start;
     render(t);
