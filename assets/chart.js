@@ -204,18 +204,8 @@
   const allSteps = [...document.querySelectorAll(".story .step")];
   const N = 4;
   const box = document.querySelector(".story .chart-box");
-  const playBtn = box.querySelector(".play");
-  const timeEl = box.querySelector(".time");
   const supBtns = [...box.querySelectorAll("[data-supply]")];
   const HOLD = [2500, 3000, 3500, 3000];          // ms on each step
-  const segFills = [...Array(N)].map((_, i) => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "seg-i"; b.setAttribute("aria-label", `Step ${i + 1}`);
-    b.innerHTML = "<i></i>";
-    b.addEventListener("click", () => { go(i + 1); elapsed = 0; });
-    box.querySelector(".segs").appendChild(b);
-    return b.firstChild;
-  });
 
   function apply() {
     set("draw", step >= 2 ? 1 : 0, 900);
@@ -229,7 +219,6 @@
     set("supply", video === "abundant" ? 1 : 0, 900);
     supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === video ? "true" : "false"));
     allSteps.forEach((s) => s.classList.toggle("active", s.dataset.video === video && +s.dataset.step === step));
-    timeEl.textContent = `${step} / ${N}`;
   }
   function go(n) {
     n = Math.min(Math.max(n, 1), N);
@@ -244,14 +233,11 @@
       if (elapsed >= HOLD[step - 1]) { elapsed = 0; go(step === N ? 1 : step + 1); }
     }
     last = now;
-    segFills.forEach((f, i) => (f.style.width = i + 1 < step ? "100%" : i + 1 > step ? "0%" : `${Math.min(elapsed / HOLD[i], 1) * 100}%`));
     requestAnimationFrame(clock);
   }
   function setPlaying(on) {
     playing = on; box.classList.toggle("playing", on);
-    playBtn.setAttribute("aria-label", on ? "Pause" : "Play");
   }
-  playBtn.addEventListener("click", () => { userPaused = playing; setPlaying(!playing); });
   supBtns.forEach((b) => b.addEventListener("click", () => {
     video = b.dataset.supply; step = 0; elapsed = 0; go(1); userPaused = false; setPlaying(true);
   }));
@@ -260,7 +246,7 @@
     { threshold: 0.2 }).observe(box);
 
   // ---------------------------------------------------------------- go
-  fetch("assets/chart-data.json?v=1794410744").then((r) => r.json()).then((data) => {
+  fetch("assets/chart-data.json?v=1794410831").then((r) => r.json()).then((data) => {
     D = data;
     build();
     document.fonts && document.fonts.ready.then(() => items.forEach((it) => {
