@@ -193,3 +193,49 @@ b { color: var(--ink); font-weight: 650; }
 .tok-chart .key { justify-content: center; }
 .tok-grid { align-items: center; }
 @media (max-width: 880px) { .tok-controls { grid-template-columns: 1fr; } }
+
+/* ---------------------------------------------------------------- phones (iPhone + Android) */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+button, select { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+@media (max-width: 880px) {
+  .wrap { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+  .hero { padding-top: 36px; padding-bottom: 20px; }
+  .story { margin-top: 48px; }
+  .story .key { display: flex; justify-content: center; font-size: .76rem; gap: 4px 12px; }
+  .step h2 { font-size: 1.35rem; }
+  .why, .tok { padding-top: 48px; }
+  .why { margin-top: 24px; }
+  .why-block { margin: 28px 0 44px; }
+  .why-text h3 { font-size: 1.25rem; }
+  .section-title { font-size: 1.7rem; }
+  .big b { font-size: 2.2rem; }
+  .tok-caption { min-height: 0; }
+  .tok-grid { margin-top: 20px; }
+  .fig2-player .controls { padding: 6px 10px; }
+  /* comfortable tap targets; 16px stops iOS from zooming into the dropdown */
+  .seg button { min-height: 38px; }
+  .tok-controls .seg-select select { font-size: 16px; min-height: 38px; }
+  .replay-mini { min-height: 30px; }
+  .bib pre { font-size: .72rem; }
+  .foot { padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+}
+@media (max-width: 380px) {               /* small Android phones */
+  .hero h1 { font-size: 1.75rem; }
+  .seg button { padding-left: 8px; padding-right: 8px; font-size: .8rem; }
+}
+/* main chart symmetry: supply buttons span the chart, key centred */
+.story .chart-top .seg { display: flex; width: 100%; }
+.story .chart-top .seg button { flex: 1; }
+.story .key { justify-content: center; }
+/* page-wide symmetry: every two-column section uses the same split and gap (chart 1.25 : text 1), mirrored */
+.story { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 56px; }
+.why-block { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
+.tok-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 56px; }
+.bib { max-width: none; }
+.foot p { max-width: none; }
+@media (max-width: 880px) { .story, .why-block, .why-block.flip, .tok-grid { grid-template-columns: 1fr; gap: 20px; } }
+/* dividers line up with the content edges, not the padded box */
+:root { --gut: 24px; }
+@media (max-width: 880px) { :root { --gut: 16px; } }
+.why, .tok, .foot { border-top: 0 !important;
+  background: linear-gradient(var(--line), var(--line)) no-repeat var(--gut) 0 / calc(100% - 2 * var(--gut)) 1px; }
