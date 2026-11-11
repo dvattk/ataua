@@ -135,7 +135,7 @@
     target();
   }));
 
-  fetch("assets/tokenomics.json?v=1794412684").then((r) => r.json()).then((d) => {
+  fetch("assets/tokenomics.json?v=1794412805").then((r) => r.json()).then((d) => {
     data = d;
     const q = new URLSearchParams(location.search);
     if (q.get("tuser")) user = q.get("tuser");

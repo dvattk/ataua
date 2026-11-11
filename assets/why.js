@@ -57,12 +57,17 @@
     const g = el(svg, "g", { "font-family": "Inter, Arial, sans-serif" });
     const phase = el(g, "text", { x: 16, y: 22, "font-size": 12, "font-weight": 700, fill: C.max, "letter-spacing": ".06em" });
     // flights: one column on the right
-    box(g, 300, 30, 204, 86, "Delta · Aug 2", "Houston → New York");
-    const seatPos = [[432, 92], [470, 92]];
-    const seatRects = seatPos.map(([x, y]) => el(g, "rect", { x: x - 15, y: y - 13, width: 30, height: 26, rx: 6, fill: "#fff", stroke: C.ink, "stroke-width": 1.5 }));
-    const soldOut = el(g, "text", { x: 451, y: 48, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.max }, "sold out");
-    box(g, 300, 128, 204, 62, "Spirit · Delta", "a day or two later");
-    box(g, 300, 202, 204, 62, "United", "other dates · $1,631");
+    // three flights, each with two seats in a row under its name; dots enter along the seat row so they never
+    // cross the text
+    const seatRow = (y) => [[432, y], [470, y]];
+    const seatBox = (pos) => pos.map(([x, y]) => el(g, "rect", { x: x - 15, y: y - 13, width: 30, height: 26, rx: 6, fill: "#fff", stroke: C.ink, "stroke-width": 1.5 }));
+    box(g, 300, 26, 204, 76, "Delta · Aug 2", "Houston → New York");
+    const DELTA = seatRow(84), delta = seatBox(DELTA);
+    const soldOut = el(g, "text", { x: 451, y: 44, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.max }, "sold out");
+    box(g, 300, 110, 204, 76, "Spirit · Delta", "a day or two later");
+    const SPIRIT = seatRow(168), spirit = seatBox(SPIRIT);
+    box(g, 300, 194, 204, 76, "United · $1,631", "other dates");
+    const UNITED = seatRow(252), united = seatBox(UNITED);
     // agents
     const agent = (x, y, name, col) => {
       el(g, "circle", { cx: x, cy: y, r: 18, fill: "#fff", stroke: col, "stroke-width": 2 });
@@ -89,20 +94,26 @@
       return { bar, val };
     });
     const VAL = [[0.88, 0.93], [0.40, 0.93]];            // [what the agents did, coordinated]
-    const HOME = { A: [100, 80], B: [100, 200] }, SPIRIT = [278, 159], UNITED = [278, 233], BLOCKED = [268, 92];
-    const off = (p, i) => [p[0] + (i ? 9 : -9), p[1]];
-    // paths go through the lane left of the flight boxes (x = 268) so dots never cross a box
-    const KA = [[0, HOME.A], [400, HOME.A], [1800, "seat"], [6500, "seat"], [6501, HOME.A], [9300, HOME.A], [9900, [268, 166]], [10400, SPIRIT], [13000, SPIRIT]];
-    const KB = [[0, HOME.B], [400, HOME.B], [2200, BLOCKED], [3000, BLOCKED], [3400, [268, 240]], [4000, UNITED], [6500, UNITED], [6501, HOME.B],
-                [8900, HOME.B], [9500, [268, 92]], [10000, "seat"], [13000, "seat"]];
-    const pos = (frames, i, t) => kf(frames.map(([tt, v]) => [tt, v === "seat" ? seatPos[i] : off(v, i)]), t);
+    const HOME = { A: [100, 80], B: [100, 200] };
+    // a frame value is either a point shared by the party (dots side by side) or a seat row (one dot per seat);
+    // paths run through the lane left of the boxes (x = 268), then along the seat row
+    const lane = (row) => [268, row[0][1]];
+    const KA = [[0, HOME.A], [400, HOME.A], [1300, lane(DELTA)], [1800, DELTA], [6500, DELTA], [6501, HOME.A],
+                [9300, HOME.A], [9900, lane(SPIRIT)], [10400, SPIRIT], [13000, SPIRIT]];
+    const KB = [[0, HOME.B], [400, HOME.B], [2200, lane(DELTA)], [3000, lane(DELTA)], [3500, lane(UNITED)], [4000, UNITED], [6500, UNITED],
+                [6501, HOME.B], [8900, HOME.B], [9500, lane(DELTA)], [10000, DELTA], [13000, DELTA]];
+    const at = (v, i) => (Array.isArray(v[0]) ? v[i] : [v[0] + (i ? 9 : -9), v[1]]);
+    const pos = (frames, i, t) => kf(frames.map(([tt, v]) => [tt, at(v, i)]), t);
     return (t) => {
       phase.textContent = t < 6500 ? "WHAT THE AGENTS DID" : "A COORDINATED ALLOCATION";
       const vis = kf([[0, 1], [6200, 1], [6450, 0], [6550, 0], [6900, 1]], t);     // parties blink back home between parts
       A.forEach((c, i) => { const [x, y] = pos(KA, i, t); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("opacity", vis); });
       B.forEach((c, i) => { const [x, y] = pos(KB, i, t); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("opacity", vis); });
       soldOut.setAttribute("opacity", kf([[0, 0], [2200, 0], [2500, 1], [6200, 1], [6450, 0]], t));
-      seatRects.forEach((r) => r.setAttribute("stroke", t > 1800 && t < 6450 ? C.a : t > 10000 ? C.b : C.ink));
+      const paint = (rects, col) => rects.forEach((r) => r.setAttribute("stroke", col || C.ink));
+      paint(delta, t > 1800 && t < 6450 ? C.a : t > 10000 ? C.b : null);
+      paint(united, t > 4000 && t < 6450 ? C.b : null);
+      paint(spirit, t > 10400 ? C.a : null);
       talk.setAttribute("opacity", kf([[0, 0], [7100, 0], [7400, 1], [8700, 1], [9000, 0]], t));
       typing.forEach((c, i) => c.setAttribute("opacity", 0.3 + 0.7 * Math.max(0, Math.sin((t / 1000) * 6 - i * 0.9))));
       bars.forEach((b, i) => {
