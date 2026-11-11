@@ -180,3 +180,8 @@ b { color: var(--ink); font-weight: 650; }
 .tok-controls .seg button { padding: 5px 9px; }
 .seg-lbl > span { padding: 0 4px 0 8px; }
 .seg-select { padding-left: 10px; }
+/* control captions sit above their boxes, so they never read as options */
+.tok-controls { align-items: flex-end; gap: 14px; }
+.ctl { display: flex; flex-direction: column; gap: 4px; }
+.ctl-lbl { font: 600 .7rem var(--sans); color: var(--muted); text-transform: uppercase; letter-spacing: .08em; padding-left: 2px; }
+.seg-select { padding: 3px; }
