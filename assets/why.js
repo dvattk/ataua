@@ -179,7 +179,7 @@
   // The provider agent sits among the levers it could pull. Each time a user agent comes to book, it looks from
   // lever to lever, can't settle, and pulls the discount to the 30% maximum; the discount flies to the user.
   const disc = document.querySelector(".why-anim.discount");
-  if (disc) player(disc, 12000, (svg) => {
+  if (disc) player(disc, 18000, (svg) => {           // played 1.5x slower than its 12 s timeline
     svg.setAttribute("viewBox", "0 0 480 300");
     const g = el(svg, "g", { "font-family": "Inter, Arial, sans-serif" });
     chip(g, 14, 12, "WHICH LEVER TO PULL?").fit();
@@ -231,8 +231,9 @@
     el(tag, "text", { x: 0, y: 4.5, "text-anchor": "middle", "font-size": 12, "font-weight": 800, fill: "#fff" }, "−30%");
     const takeaway = el(g, "text", { x: 240, y: 290, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: C.ink }, "Every booking got the full 30% discount.");
     const LOOK = [0, 2, 3, 0, 2, 3];
-    const B = 3200, SPOT = [138, 152], DISC = [310 + 78, 50 + 66];
-    return (t) => {
+    const B = 3200, SPOT = [138, 152], DISC = [310 + 78, 50 + 66], SLOW = 1.5;
+    return (tt) => {
+      const t = tt / SLOW;
       const k = Math.min(Math.floor(t / B), 2), u = t - k * B, live = t < 3 * B;
       let look = -1;
       if (live && u > 700 && u < 1900) look = LOOK[Math.floor((u - 700) / 200) % LOOK.length];
