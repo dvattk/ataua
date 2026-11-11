@@ -125,9 +125,10 @@ b { color: var(--ink); font-weight: 650; }
 /* ---------------------------------------------------------------- tokenomics */
 .tok { max-width: 1120px; padding-top: 72px; border-top: 1px solid var(--line); }
 .tok-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 48px; align-items: start; margin-top: 36px; }
-.big { border-left: 3px solid var(--max); padding: 4px 0 4px 16px; margin-bottom: 24px; }
-.big b { display: block; font-size: 2.6rem; font-weight: 800; letter-spacing: -.03em; color: var(--max); line-height: 1.1; }
-.big span { font-size: .92rem; color: var(--muted); }
+.big { margin-bottom: 28px; }
+.big b { display: block; font: 400 5.4rem/1 "Newsreader", Georgia, serif; letter-spacing: -.04em; color: #312E81; }
+.big b i { font-style: normal; font-size: .52em; letter-spacing: 0; margin-left: .04em; }
+.big span { display: block; margin-top: 12px; font: 500 .82rem var(--mono); text-transform: uppercase; letter-spacing: .12em; color: #4b4b57; }
 .tok-caption { font-size: 1.05rem; min-height: 5.5em; }
 .small { font-size: .82rem; color: var(--muted); }
 .tok-chart .chart-top { margin-bottom: 8px; }
@@ -208,7 +209,7 @@ button, select { -webkit-tap-highlight-color: transparent; touch-action: manipul
   .why-block { margin: 28px 0 44px; }
   .why-text h3 { font-size: 1.25rem; }
   .section-title { font-size: 1.7rem; }
-  .big b { font-size: 2.2rem; }
+  .big { margin-top: 12px; } .big b { font-size: 4.2rem; }
   .tok-caption { min-height: 0; }
   .tok-grid { margin-top: 20px; }
   .fig2-player .controls { padding: 6px 10px; }

@@ -76,11 +76,8 @@
     const who = metric === "rp" ? "providers" : "users", d = pricey[metric] - cheap[metric];
     const same = Math.abs(d) < 0.03 ? "about the same" : d < 0 ? "less" : "a little more";
     pair.text = `${(pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "")}× the cost, ${same === "a little more" ? "+" + d.toFixed(2) : same} reward`;
-    document.querySelector(".tok-mult").textContent = `${(pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "")}×`;
-    document.querySelector(".tok-mult-sub").textContent = `lower inference cost with the cheapest provider agent, for ${same === "less" ? "even higher" : same === "a little more" ? "slightly lower" : same} ${metric === "rp" ? "provider" : "user"} reward`;
-    document.querySelector(".tok-caption").innerHTML =
-      `With <b>${user}</b> users, the priciest provider agent, <b>${pricey.provider}</b>, costs <b>${$(pricey.cost)}</b> per task. ` +
-      `The cheapest, <b>${cheap.provider}</b>, costs <b>${$(cheap.cost)}</b>.`;
+    document.querySelector(".tok-mult").innerHTML = `${(pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "")}<i>×</i>`;
+    document.querySelector(".tok-mult-sub").textContent = `lower cost · ${same === "less" ? "higher" : same === "a little more" ? "slightly lower" : same} ${metric === "rp" ? "provider" : "user"} reward`;
     yTitle.textContent = metric === "rp" ? "Provider reward" : "User reward";
     const sync = (attr, v) => document.querySelectorAll(`[${attr}]`).forEach((b) => b.setAttribute("aria-pressed", b.getAttribute(attr) === v ? "true" : "false"));
     sync("data-tsupply", supply); sync("data-tmetric", metric); sel.value = user;
@@ -121,7 +118,7 @@
   document.querySelectorAll("[data-tsupply]").forEach((b) => b.addEventListener("click", () => { supply = b.dataset.tsupply; target(); }));
   document.querySelectorAll("[data-tmetric]").forEach((b) => b.addEventListener("click", () => { metric = b.dataset.tmetric; target(); }));
 
-  fetch("assets/tokenomics.json?v=1794434998").then((r) => r.json()).then((d) => {
+  fetch("assets/tokenomics.json?v=1794435087").then((r) => r.json()).then((d) => {
     data = d;
     const q = new URLSearchParams(location.search);
     if (q.get("tsupply")) supply = q.get("tsupply");
