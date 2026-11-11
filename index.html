@@ -34,13 +34,15 @@
 <section class="wrap prose">
   <h2>Overview</h2>
   <p>This post covers our paper, <b>A<span class="tau">τ</span>A: A Benchmark for Multi-Agent Interaction in Agentic
-    Economies</b>. We build a simulator for studying multi-agent interaction in a realistic market, where a population
-    of user agents seeks a service from providers represented by provider agents. We use the airline industry, a
-    familiar domain that is easy to study.</p>
-  <p>Each user has a persona, preferences and a budget, and a user agent acts on their behalf. Each airline has a
-    provider agent that sells from its flight inventory under the airline's policy. User agents compete for the same
-    seats, and provider agents compete for the same users. Below, we walk through how the market is built, how we
-    score each booking for both sides, and what the best possible outcome looks like.</p>
+    Economies</b>. We build a simulator for studying multi-agent interaction in a realistic market, using the airline
+    industry as a familiar domain that is easy to study. The market has two kinds of agents: a <b>user agent</b> acts on
+    behalf of a traveler, and a <b>provider agent</b> acts on behalf of an airline.</p>
+  <p>Each user has a persona, preferences and a budget. A population of user agents interacts with the provider agents
+    simultaneously, so many users shop at the same time from the same inventory, and every booking changes what is left
+    for the others. Each provider agent sells its airline's seats under the airline's policy, deciding which offers to
+    make and how much to concede on price.</p>
+  <p>How well do these agents serve both sides when many of them meet in the same market? To answer this, we need a
+    simulator where we can study these interactions at scale. In the next section, we describe how we build it.</p>
 
   <details class="more"><summary>Cite this work</summary>
     <div class="bib">
