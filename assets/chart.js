@@ -205,18 +205,18 @@
   const N = 2;
   const box = document.querySelector(".story .chart-box");
   const supBtns = [...box.querySelectorAll("[data-supply]")];
-  const HOLD = [9000, 10000];          // ms on each step (slow enough to read)
+  const HOLD = [5500, 6500];          // ms on each step (slow enough to read)
 
   function apply() {
-    set("draw", step >= 1 ? 1 : 0, 1400, 1200);          // dots land first, then MAX draws
-    set("region", step >= 1 ? 1 : 0, 600, 2400);
+    set("draw", step >= 1 ? 1 : 0, 700, 450);          // dots land first, then MAX draws
+    set("region", step >= 1 ? 1 : 0, 350, 1100);
     for (const it of items) {
-      if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 600, it.idx * 50);
-      else set("asym" + it.idx, step >= 2 ? 1 : 0, 600, step >= 2 ? 2600 + it.idx * 40 : 0);
+      if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 400, it.idx * 30);
+      else set("asym" + it.idx, step >= 2 ? 1 : 0, 400, step >= 2 ? 1100 + it.idx * 25 : 0);
     }
-    set("asymAll", step >= 2 ? 1 : 0, 600, step >= 2 ? 2600 : 0);
-    set("gap", step >= 2 ? 1 : 0, 1000, step >= 2 ? 300 : 0);
-    set("supply", video === "abundant" ? 1 : 0, 900);
+    set("asymAll", step >= 2 ? 1 : 0, 400, step >= 2 ? 1100 : 0);
+    set("gap", step >= 2 ? 1 : 0, 600, step >= 2 ? 150 : 0);
+    set("supply", video === "abundant" ? 1 : 0, 500);
     supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === video ? "true" : "false"));
     allSteps.forEach((s) => s.classList.toggle("active", s.dataset.video === video && +s.dataset.step === step));
   }
