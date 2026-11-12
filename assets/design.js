@@ -65,10 +65,8 @@
     return el(g, "rect", { x, y, width: w, height: h, rx: 10, fill: "#fff", stroke: C.line, "stroke-width": 1.5, ...a });
   }
 
-  // ---------------------------------------------------------------- 1. provider inventory (12 s)
-  const inv = document.querySelector(".d-anim.inventory");
-  if (inv) player(inv, 12000, (svg) => {
-    const g = el(svg, "g", {});
+  // ---------------------------------------------------------------- 1. inventory, then users sampled around one itinerary
+  function buildInventory(g) {
     txt(g, 20, 26, "Observed fares (BTS DB1B)", { "font-weight": 650, fill: C.ink });
     txt(g, 400, 26, "Flight catalog", { "font-weight": 650, fill: C.ink });
     const AP = { SFO: [52, 110], LAX: [70, 170], DEN: [150, 112], ORD: [236, 82], IAH: [196, 196], ATL: [270, 172], PHL: [322, 92], JFK: [342, 64] };
@@ -110,13 +108,11 @@
       show(stat, fade(t, 7400) * (1 - fade(t, 11300)));
       routes.forEach(({ p }) => p.setAttribute("opacity", (1 - fade(t, 11300)).toFixed(2)));
     };
-  });
+  }
 
   // ---------------------------------------------------------------- 2a. generating users around a reference itinerary (12 s)
   // Same example as the paper's data-generation figure: one sampled itinerary, then n users with persona-set attributes.
-  const ugen = document.querySelector(".d-anim.usergen");
-  if (ugen) player(ugen, 12000, (svg) => {
-    const g = el(svg, "g", { transform: "translate(0 18)" });
+  function buildUserGen(g) {
     const person = (p, x, y, s = 1) => {
       const q = el(p, "g", { transform: `translate(${x} ${y}) scale(${s})`, fill: C.ink });
       el(q, "circle", { cx: 0, cy: -6, r: 4.6 });
@@ -130,15 +126,15 @@
     el(it, "line", { x1: 36, y1: 56, x2: 236, y2: 56, stroke: C.line });
     txt(it, 66, 76, "Origin", { "font-size": 11, fill: C.muted, "text-anchor": "middle" });
     txt(it, 206, 76, "Destination", { "font-size": 11, fill: C.muted, "text-anchor": "middle" });
-    txt(it, 66, 102, "PHL", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
-    txt(it, 206, 102, "IAH", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
+    txt(it, 66, 102, "IAH", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
+    txt(it, 206, 102, "JFK", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
     el(it, "path", { d: "M112 94 H158 M152 89 L158 94 L152 99", fill: "none", stroke: C.ink, "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    txt(it, 136, 128, "2024-07-31", { "font-size": 13, "font-weight": 600, fill: C.ink, "text-anchor": "middle" });
+    txt(it, 136, 128, "2024-08-02", { "font-size": 13, "font-weight": 600, fill: C.ink, "text-anchor": "middle" });
     const A = [46, 232], B = [226, 232];
     el(it, "circle", { cx: A[0], cy: A[1], r: 4, fill: "#2fbf71" });
     el(it, "circle", { cx: B[0], cy: B[1], r: 4, fill: C.bad });
-    txt(it, A[0], A[1] + 18, "PHL", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
-    txt(it, B[0], B[1] + 18, "IAH", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
+    txt(it, A[0], A[1] + 18, "IAH", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
+    txt(it, B[0], B[1] + 18, "JFK", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
     const COL = ["#1d4ed8", "#3b82f6", "#e07a2e", "#d4483b", "#e07a2e", "#3b82f6", "#d4483b"];
     const hubs = [[136, 196, true], [80, 156], [118, 148], [160, 152], [196, 162], [100, 182], [176, 186]];
     const routes = hubs.map(([hx, hy, direct], i) => {
@@ -147,7 +143,6 @@
       if (!direct) el(it, "circle", { cx: hx, cy: hy, r: 2.4, fill: COL[i] });
       return p;
     });
-    txt(it, 236, 270, "13 options", { "font-size": 10.5, fill: C.muted, "text-anchor": "end" });
     txt(it, 36, 270, "direct · connecting", { "font-size": 10.5, fill: C.muted });
     const arr = el(g, "path", { d: "M262 150 H284 M278 144 L284 150 L278 156", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
     const head = txt(g, 300, 14, "Sample n users", { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
@@ -190,6 +185,26 @@
         show(u.lab, fade(t, s + 1000));
       });
       show(more, fade(t, 7800) * out);
+    };
+  }
+
+  // combined figure: catalog (0-8.8 s), the Delta flight is picked as the reference itinerary, then users are sampled
+  const inv = document.querySelector(".d-anim.inventory");
+  if (inv) player(inv, 21600, (svg) => {
+    const gA = el(svg, "g", { transform: "translate(0 30)" }), gB = el(svg, "g", { transform: "translate(0 18)" });
+    const drawA = buildInventory(gA), drawB = buildUserGen(gB);
+    const pick = el(gA, "g", {});
+    el(pick, "rect", { x: 401, y: 41, width: 262, height: 58, rx: 12, fill: "none", stroke: C.max, "stroke-width": 2.4 });
+    el(pick, "rect", { x: 470, y: 30, width: 124, height: 20, rx: 10, fill: C.max });
+    txt(pick, 532, 44, "reference itinerary", { "font-size": 11, "text-anchor": "middle", fill: "#fff", "font-weight": 600 });
+    const SW = 9600;
+    return (t) => {
+      const oa = 1 - fade(t, SW - 500, 500);
+      show(gA, oa);
+      if (oa > 0) drawA(Math.min(t, 8400));
+      show(pick, fade(t, 8000, 400));
+      show(gB, t >= SW ? 1 : 0);
+      if (t >= SW) drawB(t - SW);
     };
   });
 
