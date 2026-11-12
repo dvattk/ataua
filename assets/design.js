@@ -120,7 +120,17 @@
       const g = $(id), bar = g.querySelector('rect[id^="budget-target"]'), W = +bar.getAttribute("width");
       return { build: box(g), bar, W, g };
     });
-    const B = { db: box($("database")), cat: box($("catalog")), it: box($("itinerary")), us: box($("users")) };
+    // the inventory is a deck of itineraries: cards fan out behind the front one, and a count runs up to 1,746
+    const cat = $("catalog"), cf = cat.querySelector("#catalog-frame");
+    const deck = [2, 1].map((k) => {
+      const r = cf.cloneNode(); r.removeAttribute("id"); r.setAttribute("fill", "#F3F3F3");
+      doc.insertBefore(r, cat); return { r, k };
+    });
+    const cnt = document.createElementNS(NSX, "text");
+    Object.entries({ x: 2130, y: 117, "font-size": 28, fill: "#555555", "text-anchor": "end" }).forEach(([a, v]) => cnt.setAttribute(a, v));
+    cat.appendChild(cnt);
+    $("catalog-to-itinerary").setAttribute("y1", 515);       // start below the deck
+    const B = { db: box($("database")), cat: box(cat), it: box($("itinerary")), us: box($("users")) };
     const A1 = arrow($("database-to-catalog")), A2 = arrow($("catalog-to-itinerary"));
     const br = [...$("sample-branches").children].map(arrow);
     const D = 14500, OUT = 13300;
@@ -130,6 +140,9 @@
       A1(t, 900, 700, out);
       B.cat(t, 1500, out);
       const ck = ease(fade(t, 2000, 900)); counters.forEach((f) => f(ck));
+      const fan = ease(fade(t, 1900, 700));
+      deck.forEach(({ r, k }) => { r.setAttribute("transform", `translate(${12 * k * fan} ${12 * k * fan})`); r.setAttribute("opacity", (fan * out).toFixed(3)); });
+      cnt.textContent = `${Math.round(1746 * ck).toLocaleString("en-US")} itineraries`;
       A2(t, 3000, 500, out);
       B.it(t, 3500, out);
       routes.forEach(({ p, L }, i) => p.style.strokeDashoffset = (L * (1 - ease(fade(t, 4200 + (i % 14) * 90, 900)))).toFixed(1));
