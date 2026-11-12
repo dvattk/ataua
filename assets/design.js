@@ -68,7 +68,7 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794460465").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794460288").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
@@ -155,9 +155,7 @@
     const T = (p, x, y, str, a = {}) => { const e = el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, str); e.style.whiteSpace = "pre"; return e; };
     const defs = el(svg, "defs", {});
     const f = el(defs, "filter", { id: "mailshadow", x: "-10%", y: "-10%", width: "120%", height: "130%" });
-    el(f, "feDropShadow", { dx: 0, dy: 8, stdDeviation: 12, "flood-color": "#1e1b4b", "flood-opacity": 0.13 });
-    const ft = el(defs, "filter", { id: "tagshadow", x: "-20%", y: "-40%", width: "140%", height: "200%" });
-    el(ft, "feDropShadow", { dx: 0, dy: 2, stdDeviation: 2.5, "flood-color": "#1e1b4b", "flood-opacity": 0.12 });
+    el(f, "feDropShadow", { dx: 0, dy: 6, stdDeviation: 10, "flood-color": "#1e1b4b", "flood-opacity": 0.08 });
     const style = (r, kind) => {
       if (kind === "hard") { r.setAttribute("fill", K.hard); }
       else if (kind === "soft") { r.setAttribute("fill", "#fff"); r.setAttribute("stroke", K.soft); r.setAttribute("stroke-dasharray", "3 2.5"); }
@@ -186,7 +184,7 @@
     const MX = 300, MY = 34, MW = 360, MH = 196;           // email card
     const sets = USERS.map((u) => {
       const root = el(svg, "g", {});
-      // left: who, and the hidden profile as tags, on a soft grey panel
+      // left: who, and the hidden profile as tags
       T(root, 24, 46, u.who, { "font-weight": 700, fill: C.ink, "font-size": 15 });
       T(root, 24, 66, u.persona, { fill: C.muted, "font-size": 12.5 });
       const lock = el(root, "g", { transform: "translate(24 92)" });
@@ -195,8 +193,8 @@
       T(root, 38, 92, "Profile, hidden from the agent", { fill: C.muted, "font-size": 11, "font-weight": 600, "letter-spacing": ".02em" });
       const tags = u.tags.map(([label, kind], i) => {
         const tg = el(root, "g", {}), y = 106 + i * 30;
-        const r = el(tg, "rect", { x: 24, y, width: 10, height: 22, rx: 11, filter: "url(#tagshadow)" });
-        style(r, kind); if (kind !== "hard" && kind !== "soft") r.setAttribute("fill", "#fff");
+        const r = el(tg, "rect", { x: 24, y, width: 10, height: 22, rx: 11 });
+        style(r, kind);
         const t = T(tg, 36, y + 15.5, label, { "font-size": 12.5, "font-weight": 600, fill: kind === "hard" ? K.hardInk : K.tagInk });
         const w = (t.getComputedTextLength() || label.length * 7) + 24; r.setAttribute("width", w);
         return { tg, r, w, x: 24, y, kind, label };
@@ -230,8 +228,7 @@
       // flying copies of the tags
       const ghosts = tags.map(({ label, kind, w }) => {
         const gg = el(root, "g", {});
-        const r = el(gg, "rect", { x: 0, y: 0, width: w, height: 22, rx: 11, filter: "url(#tagshadow)" }); style(r, kind);
-        if (kind !== "hard" && kind !== "soft") r.setAttribute("fill", "#fff");
+        const r = el(gg, "rect", { x: 0, y: 0, width: w, height: 22, rx: 11 }); style(r, kind);
         T(gg, 12, 15.5, label, { "font-size": 12.5, "font-weight": 600, fill: kind === "hard" ? K.hardInk : K.tagInk });
         return gg;
       });
@@ -271,7 +268,7 @@
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794460465").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794460288").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
