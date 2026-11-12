@@ -7,7 +7,19 @@
   const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
 
   async function init(root) {
-    const d = await (await fetch(root.dataset.src)).json();
+    let raw = await (await fetch(root.dataset.src)).text();
+    // palette preview: recolour the purple user side to the page accent's hue (keeps each shade's lightness)
+    if (document.documentElement.dataset.palette) {
+      const acc = getComputedStyle(document.documentElement).getPropertyValue("--accent").trim();
+      const hsl = (h) => { const n = parseInt(h.slice(1), 16), r = (n >> 16) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+        const mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2, dd = mx - mn; if (!dd) return [0, 0, l];
+        const sat = dd / (1 - Math.abs(2 * l - 1)); let hu = mx === r ? ((g - b) / dd) % 6 : mx === g ? (b - r) / dd + 2 : (r - g) / dd + 4;
+        return [(hu * 60 + 360) % 360, sat, l]; };
+      const [H, Sa] = hsl(acc), [, S0] = hsl("#6442D3");
+      raw = raw.replace(/#[0-9a-fA-F]{6}\b/g, (m) => { const [h, s2, l] = hsl(m);
+        return h >= 235 && h <= 275 && s2 > 0.15 ? `hsl(${H.toFixed(0)} ${(Math.min(1, s2 * Sa / S0) * 100).toFixed(0)}% ${(l * 100).toFixed(0)}%)` : m; });
+    }
+    const d = JSON.parse(raw);
     const stage = root.querySelector("svg.stage");
     stage.innerHTML = d.defs + '<defs class="clips"></defs><rect class="bg" fill="#fff"/><g class="world"></g>';
     const clips = stage.querySelector("defs.clips");
