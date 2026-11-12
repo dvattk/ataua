@@ -68,7 +68,7 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794497701").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794507726").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
