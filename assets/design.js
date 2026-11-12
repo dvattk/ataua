@@ -68,36 +68,81 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794452195").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794452309").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
     doc.setAttribute("aria-label", "Data generation: BTS DB1B fares build the provider inventory; a reference itinerary is sampled; users are sampled around it.");
     holder.replaceWith(doc);
     const $ = (id) => doc.querySelector(`:scope > [id="${id}"]`) || doc.querySelector(`:scope > g [id="${id}"]`);   // skip same-named icons in <defs>
-    const STEPS = [                       // [element, start ms, slide from (dx, dy)]
-      [$("database"), 0, [-30, 0]],
-      [$("database-to-catalog") || doc.querySelector('[id^="database-to"]'), 900, [-20, 0]],
-      [$("catalog"), 1200, [30, 0]],
-      [doc.querySelector('[id^="catalog-to-"]'), 2400, [0, -20]],
-      [$("itinerary"), 2700, [0, 30]],
-      [$("sample-branches"), 4300, [20, 0]],
-      [$("users"), 4600, [-30, 0]],
-    ].filter((s) => s[0]);
-    const cards = ["user-1", "user-2", "user-3"].map($).filter(Boolean);
-    const D = 14000, OUT = 13200;
+    const NSX = "http://www.w3.org/2000/svg";
+    // a box "builds": its frame is drawn as a line, then its contents fade in
+    const box = (g) => {
+      const frame = g.querySelector(':scope > rect[id$="-frame"]') || g.querySelector(":scope > rect");
+      frame.setAttribute("pathLength", "1"); frame.setAttribute("stroke-dasharray", "1 1");
+      const fill = frame.getAttribute("fill");
+      const kids = [...g.children].filter((c) => c !== frame && !/^user-\d$/.test(c.id));
+      return (t, t0, out) => {
+        const d = ease(fade(t, t0, 600));
+        frame.setAttribute("stroke-dashoffset", (1 - d).toFixed(3));
+        frame.setAttribute("fill-opacity", ease(fade(t, t0 + 300, 400)).toFixed(3));
+        const c = ease(fade(t, t0 + 400, 400));
+        kids.forEach((k) => k.setAttribute("opacity", c.toFixed(3)));
+        g.setAttribute("opacity", out.toFixed(3));
+      };
+    };
+    // an arrow draws, with a dot travelling along it; its arrowhead appears when it arrives
+    const dotLayer = document.createElementNS(NSX, "g"); doc.appendChild(dotLayer);
+    const arrow = (ln) => {
+      ln.setAttribute("pathLength", "1"); ln.setAttribute("stroke-dasharray", "1 1");
+      const mk = ln.getAttribute("marker-end");
+      const [x1, y1, x2, y2] = ["x1", "y1", "x2", "y2"].map((k) => +ln.getAttribute(k));
+      const dot = document.createElementNS(NSX, "circle");
+      dot.setAttribute("r", 11); dot.setAttribute("fill", "#4F46E5"); dotLayer.appendChild(dot);
+      return (t, t0, dur, out) => {
+        const k = ease(fade(t, t0, dur));
+        ln.setAttribute("stroke-dashoffset", (1 - k).toFixed(3));
+        ln.setAttribute("opacity", out.toFixed(3));
+        if (mk) { if (k > 0.98) ln.setAttribute("marker-end", mk); else ln.removeAttribute("marker-end"); }
+        dot.setAttribute("cx", (x1 + (x2 - x1) * k).toFixed(1)); dot.setAttribute("cy", (y1 + (y2 - y1) * k).toFixed(1));
+        dot.setAttribute("opacity", (k > 0.001 && k < 0.999 ? 1 : 0) * out);
+      };
+    };
+    // fares and seat counts count up
+    const counters = [...$("catalog").querySelectorAll("text")].filter((x) => /^\$\d|^\d+ seats$/.test(x.textContent.trim()))
+      .map((x) => { const v = +x.textContent.replace(/[^\d]/g, ""), f = x.textContent; return (k) => (x.textContent = f.replace(/\d+/, Math.round(v * k))); });
+    // map routes draw from the origin; airport markers pop in as routes land
+    const routes = [...$("itinerary").querySelectorAll("path.js-line")].map((p) => {
+      const L = p.getTotalLength ? p.getTotalLength() : 600; p.style.strokeDasharray = `${L} ${L}`; return { p, L };
+    });
+    const points = [...$("itinerary").querySelectorAll("path.point")];
+    const users = ["user-1", "user-2", "user-3"].map((id) => {
+      const g = $(id), bar = g.querySelector('rect[id^="budget-target"]'), W = +bar.getAttribute("width");
+      return { build: box(g), bar, W, g };
+    });
+    const B = { db: box($("database")), cat: box($("catalog")), it: box($("itinerary")), us: box($("users")) };
+    const A1 = arrow($("database-to-catalog")), A2 = arrow($("catalog-to-itinerary"));
+    const br = [...$("sample-branches").children].map(arrow);
+    const D = 14500, OUT = 13300;
     player(inv, D, () => (t) => {
-      const out = 1 - fade(t, OUT, 600);
-      STEPS.forEach(([node, t0, [dx, dy]]) => {
-        const k = ease(fade(t, t0, 650));
-        node.setAttribute("opacity", (k * out).toFixed(3));
-        node.setAttribute("transform", `translate(${(dx * (1 - k)).toFixed(1)} ${(dy * (1 - k)).toFixed(1)})`);
+      const out = 1 - fade(t, OUT, 700);
+      B.db(t, 0, out);
+      A1(t, 900, 700, out);
+      B.cat(t, 1500, out);
+      const ck = ease(fade(t, 2000, 900)); counters.forEach((f) => f(ck));
+      A2(t, 3000, 500, out);
+      B.it(t, 3500, out);
+      routes.forEach(({ p, L }, i) => p.style.strokeDashoffset = (L * (1 - ease(fade(t, 4200 + (i % 14) * 90, 900)))).toFixed(1));
+      points.forEach((q, i) => q.style.opacity = fade(t, 4900 + (i % 14) * 90, 300).toFixed(2));
+      br[0](t, 6000, 350, out); br[1](t, 6300, 450, out);
+      B.us(t, 6100, out);
+      users.forEach((u, i) => {
+        const t0 = 6700 + i * 900;
+        br[2 + i](t, t0, 350, out);
+        u.build(t, t0 + 300, 1);
+        u.bar.setAttribute("width", (u.W * ease(fade(t, t0 + 800, 700))).toFixed(1));
       });
-      cards.forEach((c, i) => {
-        const k = ease(fade(t, 5000 + i * 700, 600));
-        c.setAttribute("opacity", k.toFixed(3));
-        c.setAttribute("transform", `translate(${(-24 * (1 - k)).toFixed(1)} 0)`);
-      });
+      dotLayer.setAttribute("opacity", out.toFixed(3));
     });
   });
 
@@ -189,7 +234,7 @@
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794452195").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794452309").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
