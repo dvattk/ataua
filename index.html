@@ -76,11 +76,14 @@
     flight schedules over a 30-day period, with fares based on these reference prices and adjusted for each cabin
     class. The resulting catalog contains 1,746 itineraries across 44 airports and 23 airlines.</p>
   <figure class="d-anim inventory"><svg viewBox="0 0 680 590"></svg><button type="button" class="replay-mini">Replay</button></figure>
-  <details class="more"><summary>How the inventory is built</summary>
-    <p>We keep records for the domestic airlines in the generator's list, drop records with missing or non-positive
-      fares, and group records by origin, destination and ticketing airline. Fares are adjusted by cabin class, and
-      seat counts are set per supply condition. The resulting catalog has 1,746 itineraries across 44 airports and 23
-      airlines.</p>
+  <details class="more"><summary>Where prices, seats and connections come from</summary>
+    <p>Domestic routes come from DB1B records among 20 U.S. airports; we add international routes with real airports
+      and airlines, which is why the catalog spans 44 airports. Each route and airline starts from its median DB1B fare.
+      For each day of the 30-day window, that fare is scaled by a random factor between 0.85 and 1.15 and then by a
+      cabin multiplier: ×0.65 for basic economy, ×1.0 for economy and ×2.8 for business. Each cabin starts from the
+      airline's capacity, with 10–70% of seats randomly marked as already sold. The inventory holds single flights
+      only; agents find one-stop trips by joining two flights through the same airport with at least 45 minutes to
+      connect.</p>
   </details>
 
   <h3>Users: personas, emails and goals</h3>
