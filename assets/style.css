@@ -307,3 +307,20 @@ details.more .bib { margin: 4px 14px 14px; }
   .big b { font-size: 1.8rem; }
   .why, .tok { padding-top: 56px; }
 }
+
+/* ---------------------------------------------------------------- single column after Results too: text, then figure */
+.story { display: block; }
+.story-steps { display: grid; margin: 0 0 18px; }
+.story-chart { max-width: 760px; margin: 0 auto; }
+.why-block, .why-block.flip { display: block; }
+.why-block.flip .why-text { order: 0; }
+.why-text { margin-bottom: 18px; }
+.why-anim { max-width: 760px; margin: 0 auto; }
+.tok-grid { display: block; margin-top: 8px; }
+.tok-side { margin-bottom: 18px; }
+.tok-chart { max-width: 760px; margin: 0 auto; }
+.story { display: flex; flex-direction: column; }
+.story-steps { order: -1; width: 100%; }
+.story-chart { width: 100%; }
+.story-steps { min-height: 0; height: auto; align-content: start; }
+.story-steps .step { justify-content: flex-start; min-height: 0; height: auto; }
