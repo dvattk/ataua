@@ -367,3 +367,5 @@ ol.algo-lines li { margin: .15em 0; line-height: 1.6; }
 ol.algo-lines li::marker { color: var(--muted); font-size: .85em; }
 ol.algo-lines li.in { padding-left: 1.6em; }
 .algo-c { color: var(--muted); }
+ul.defs { margin: .2em 0 .8em; padding-left: 1.3em; }
+ul.defs li { margin: .3em 0; line-height: 1.6; }

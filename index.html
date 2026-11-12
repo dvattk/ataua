@@ -13,7 +13,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794508569">
+<link rel="stylesheet" href="assets/style.css?v=1794509312">
 </head>
 <body>
 
@@ -194,32 +194,18 @@
 
   <h3>Provider reward</h3>
   <p>The provider reward asks: <i>how much of the revenue this trip could bring did the airline actually earn?</i></p>
-  <div class="eq">$$R_p \;=\; \underset{\text{airlines booked}}{\mathrm{avg}}\;\min\!\Big(1,\;\frac{\text{revenue earned}}{\text{reference revenue}}\Big)$$</div>
-  <p>A provider agent that discounts more than it needs to, or sells no paid services, earns less.</p>
-  <details class="more"><summary>Provider reward components</summary>
-    <div class="comp">
-      <p>In full notation:</p>
-      $$R_{p,a} = \min\!\left(1, \frac{r_a}{R_a}\right), \qquad R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} R_{p,a}$$
-      <h4>Booked airlines, \(\mathcal{A}_{\mathrm{book}}\)</h4>
-      <p>The set of distinct airlines the user booked with. With one airline, \(R_p = R_{p,a}\). With no active
-        booking, \(R_p = 0\).</p>
-
-      <h4>Retained revenue, \(r_a\)</h4>
-      <p>Airfare and paid extras from the user's active bookings with airline \(a\), including payments by
-        certificates and gift cards. All of the user's reservations with that airline are summed before the cap.
-        Discounts lower \(r_a\); paid services such as seats, meals, bags and insurance raise it.</p>
-
-      <h4>Reference revenue, \(R_a\)</h4>
-      <p>The airline's highest candidate fare across cabins for the reference trip, times the number of travelers,
-        plus reference charges for seats, meals, baggage and insurance. It is a normalization reference, not the
-        most the user could have paid.</p>
-
-      <h4>Averaging</h4>
-      <p>Each airline is capped at one separately and scored against its own full reference, so \(R_p\) reaches one
-        only when every booked airline does. It measures average normalized airline performance, not total dollar
-        revenue.</p>
-    </div>
-  </details>
+  <div class="eq">$$R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} \min\!\left(1, \frac{r_a}{R_a}\right)$$</div>
+  <p>where</p>
+  <ul class="defs">
+    <li>\(\mathcal{A}_{\mathrm{book}}\) is the set of airlines the user booked with. If the user booked nothing,
+      \(R_p = 0\).</li>
+    <li>\(r_a\) is the revenue airline \(a\) earned from the user: fares and paid services such as seats, meals, bags
+      and insurance, after any discount.</li>
+    <li>\(R_a\) is the reference revenue for the user's trip on airline \(a\): its highest fare across cabins for the
+      trip, times the number of travelers, plus reference charges for paid services.</li>
+  </ul>
+  <p>Each airline's score is capped at one, so \(R_p\) reaches one only when every booked airline earns at least its
+    reference revenue. A provider agent that discounts more than it needs to, or sells no paid services, earns less.</p>
 </section>
 
 <section class="wrap prose sec results-head">
