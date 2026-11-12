@@ -69,9 +69,12 @@
     built from real U.S. fare records, and users differ in their personas, preferences and budgets.</p>
 
   <h3>Provider inventory</h3>
-  <p>Each airline keeps a flight database: routes, departure times, fares and seats per cabin. We take travel
-    records between 20 U.S. airports from the BTS DB1B market survey and use the median observed fare for each route
-    and airline as a reference price. From these we generate 30 days of schedules.</p>
+  <p>Each airline provider maintains a flight database listing the routes it serves, departure and arrival times,
+    fares, and the number of seats available in each cabin class. This inventory determines which flights a provider
+    can offer and how many travelers it can serve. To build it, we take travel records between 20 U.S. airports from
+    the BTS DB1B market survey and compute the median observed fare for each route and airline. We then generate
+    flight schedules over a 30-day period, with fares based on these reference prices and adjusted for each cabin
+    class. The resulting catalog contains 1,746 itineraries across 44 airports and 23 airlines.</p>
   <figure class="d-anim inventory"><svg viewBox="0 0 680 590"></svg><button type="button" class="replay-mini">Replay</button></figure>
   <details class="more"><summary>How the inventory is built</summary>
     <p>We keep records for the domestic airlines in the generator's list, drop records with missing or non-positive
