@@ -197,15 +197,12 @@
   <div class="eq">$$R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} \min\!\left(1, \frac{r_a}{R_a}\right)$$</div>
   <p>where</p>
   <ul class="defs">
-    <li>\(\mathcal{A}_{\mathrm{book}}\) is the set of airlines the user booked with. If the user booked nothing,
-      \(R_p = 0\).</li>
-    <li>\(r_a\) is the revenue airline \(a\) earned from the user: fares and paid services such as seats, meals, bags
-      and insurance, after any discount.</li>
-    <li>\(R_a\) is the reference revenue for the user's trip on airline \(a\): its highest fare across cabins for the
-      trip, times the number of travelers, plus reference charges for paid services.</li>
+    <li>\(\mathcal{A}_{\mathrm{book}}\) is the set of airlines the user booked with.</li>
+    <li>\(r_a\) is what the user paid airline \(a\): fares plus paid extras, after discounts.</li>
+    <li>\(R_a\) is a reference revenue for the trip: airline \(a\)'s highest fare times the number of travelers, plus standard extras.</li>
   </ul>
-  <p>Each airline's score is capped at one, so \(R_p\) reaches one only when every booked airline earns at least its
-    reference revenue. A provider agent that discounts more than it needs to, or sells no paid services, earns less.</p>
+  <p>Each airline scores at most one, and the scores are averaged. Discounting too much or selling no extras lowers
+    the reward.</p>
 </section>
 
 <section class="wrap prose sec results-head">
