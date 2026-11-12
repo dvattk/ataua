@@ -68,7 +68,7 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794451923").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794452035").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
@@ -169,8 +169,6 @@
       txt(b, x, 280, n, { "font-size": 9.5, "text-anchor": "middle", fill: C.muted });
       return b;
     });
-    txt(task, 644, 252, "5 users", { "font-size": 12, "text-anchor": "end", fill: C.muted });
-    txt(task, 644, 268, "pool of 20", { "font-size": 12, "text-anchor": "end", fill: C.muted });
     return (t) => {
       const k = Math.floor(t / PER), l = t % PER;
       const out = 1 - fade(l, PER - 450, 450);
@@ -192,7 +190,7 @@
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794451923").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794452035").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
