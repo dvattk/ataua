@@ -122,23 +122,6 @@
   <p>All users draw from the same inventory, so every booking removes a seat for everyone else. Under <b>abundant</b>
     supply there are more seats than users need. Under <b>scarce</b> supply, users compete for the options they
     prefer and some must compromise.</p>
-
-  <h3>Agents: who trades with whom</h3>
-  <p>Each of the <span class="m">N</span> users has a user agent, and each of the <span class="m">K</span> airlines
-    has a provider agent. A user agent can contact any provider agent to ask for offers, compare them and negotiate
-    price and services. It then picks an offer, and the provider agent books it under its airline's policy. There is
-    no platform in between. This is the market in the animation at the top of the page.</p>
-  <details class="more"><summary>Agent tools</summary>
-    <p>User agents read the user's inbox and payment details, message provider agents and accept offers. Provider
-      agents search their airline's inventory, quote fares within policy, apply discounts and add services, and make
-      bookings.</p>
-  </details>
-  <details class="more"><summary>Coordination modes</summary>
-    <p>A<span class="tau">τ</span>A also supports private channels between agents on the same side. In <b>User
-      Coordinate</b> mode, user agents compare offers and coordinate their negotiations. In <b>Provider Coordinate</b>
-      mode, agents for the same airline coordinate offers within inventory and policy. These channels are off in the
-      main (BASE) runs.</p>
-  </details>
 </section>
 
 <!-- ======================================================= scoring -->
