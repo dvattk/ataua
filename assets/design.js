@@ -112,6 +112,87 @@
     };
   });
 
+  // ---------------------------------------------------------------- 2a. generating users around a reference itinerary (12 s)
+  // Same example as the paper's data-generation figure: one sampled itinerary, then n users with persona-set attributes.
+  const ugen = document.querySelector(".d-anim.usergen");
+  if (ugen) player(ugen, 12000, (svg) => {
+    const g = el(svg, "g", { transform: "translate(0 18)" });
+    const person = (p, x, y, s = 1) => {
+      const q = el(p, "g", { transform: `translate(${x} ${y}) scale(${s})`, fill: C.ink });
+      el(q, "circle", { cx: 0, cy: -6, r: 4.6 });
+      el(q, "path", { d: "M -9 10 V 5 C -9 -2 9 -2 9 5 V 10 Z" });
+      return q;
+    };
+    // itinerary card
+    const it = el(g, "g", {});
+    card(it, 20, 22, 232, 256);
+    txt(it, 36, 46, "Reference itinerary", { "font-weight": 650, fill: C.max, "font-size": 12.5 });
+    el(it, "line", { x1: 36, y1: 56, x2: 236, y2: 56, stroke: C.line });
+    txt(it, 66, 76, "Origin", { "font-size": 11, fill: C.muted, "text-anchor": "middle" });
+    txt(it, 206, 76, "Destination", { "font-size": 11, fill: C.muted, "text-anchor": "middle" });
+    txt(it, 66, 102, "PHL", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
+    txt(it, 206, 102, "IAH", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
+    el(it, "path", { d: "M112 94 H158 M152 89 L158 94 L152 99", fill: "none", stroke: C.ink, "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    txt(it, 136, 128, "2024-07-31", { "font-size": 13, "font-weight": 600, fill: C.ink, "text-anchor": "middle" });
+    const A = [46, 232], B = [226, 232];
+    el(it, "circle", { cx: A[0], cy: A[1], r: 4, fill: "#2fbf71" });
+    el(it, "circle", { cx: B[0], cy: B[1], r: 4, fill: C.bad });
+    txt(it, A[0], A[1] + 18, "PHL", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
+    txt(it, B[0], B[1] + 18, "IAH", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
+    const COL = ["#1d4ed8", "#3b82f6", "#e07a2e", "#d4483b", "#e07a2e", "#3b82f6", "#d4483b"];
+    const hubs = [[136, 196, true], [80, 156], [118, 148], [160, 152], [196, 162], [100, 182], [176, 186]];
+    const routes = hubs.map(([hx, hy, direct], i) => {
+      const d = direct ? `M${A[0]} ${A[1]} Q ${hx} ${hy} ${B[0]} ${B[1]}` : `M${A[0]} ${A[1]} Q ${(A[0] + hx) / 2} ${hy - 10} ${hx} ${hy} Q ${(hx + B[0]) / 2} ${hy - 10} ${B[0]} ${B[1]}`;
+      const p = el(it, "path", { d, fill: "none", stroke: COL[i], "stroke-width": direct ? 2.2 : 1.4, "stroke-dasharray": direct ? "none" : "2 3", opacity: 0.9 });
+      if (!direct) el(it, "circle", { cx: hx, cy: hy, r: 2.4, fill: COL[i] });
+      return p;
+    });
+    txt(it, 236, 270, "13 options", { "font-size": 10.5, fill: C.muted, "text-anchor": "end" });
+    txt(it, 36, 270, "direct · connecting", { "font-size": 10.5, fill: C.muted });
+    const arr = el(g, "path", { d: "M262 150 H284 M278 144 L284 150 L278 156", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const head = txt(g, 300, 14, "Sample n users", { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
+    // users
+    const U = [
+      ["User 1", "Budget-conscious", "Economy · 1 passenger · 1 checked bag · no insurance", "$276", "$407", 276 / 407],
+      ["User 2", "Price-comparison shopper", "Basic economy · 2 passengers · 0 bags · no insurance", "$343", "$516", 343 / 516],
+      ["User 3", "Time-sensitive business", "Business · 2 passengers · 2 checked bags · insurance", "$2,452", "$4,400", 2452 / 4400],
+    ];
+    const X = 296, W = 364, Hc = 80;
+    const users = U.map(([name, persona, attrs, tgt, walk, f], i) => {
+      const y = 22 + i * (Hc + 8);
+      const c = el(g, "g", {});
+      card(c, X, y, W, Hc);
+      person(c, X + 20, y + 20, 1);
+      txt(c, X + 36, y + 24, name, { "font-weight": 700, fill: C.ink, "font-size": 13 });
+      txt(c, X + 92, y + 24, persona, { "font-size": 12, fill: C.muted });
+      const at = txt(c, X + 14, y + 44, attrs, { "font-size": 11.5, fill: C.text });
+      el(c, "rect", { x: X + 14, y: y + 52, width: W - 28, height: 6, rx: 3, fill: C.line });
+      const bar = el(c, "rect", { x: X + 14, y: y + 52, width: 0, height: 6, rx: 3, fill: "#55555f" });
+      const lab = el(c, "g", {});
+      txt(lab, X + 14, y + 72, `Target ${tgt}`, { "font-size": 11.5, "font-weight": 700, fill: C.ink });
+      txt(lab, X + W - 14, y + 72, `Walk-away ${walk}`, { "font-size": 11.5, "font-weight": 700, fill: C.ink, "text-anchor": "end" });
+      return { c, at, bar, lab, f, W: W - 28 };
+    });
+    const more = txt(g, X + W / 2, 294, "· · ·", { "font-size": 14, fill: C.muted, "text-anchor": "middle" });
+    return (t) => {
+      const out = 1 - fade(t, 11500, 450);
+      show(it, fade(t, 0, 500) * out);
+      routes.forEach((p, i) => show(p, fade(t, 500 + i * 180, 300)));
+      show(arr, fade(t, 1900) * out);
+      show(head, fade(t, 1900) * out);
+      users.forEach((u, i) => {
+        const s = 2300 + i * 1700;
+        const o = fade(t, s, 450) * out;
+        show(u.c, o);
+        u.c.setAttribute("transform", `translate(${(-24 * (1 - ease(fade(t, s, 600)))).toFixed(1)} 0)`);
+        show(u.at, fade(t, s + 350));
+        u.bar.setAttribute("width", (u.W * u.f * ease(fade(t, s + 700, 700))).toFixed(1));
+        show(u.lab, fade(t, s + 1000));
+      });
+      show(more, fade(t, 7800) * out);
+    };
+  });
+
   // ---------------------------------------------------------------- 2. users and tasks (18 s: three users, 6 s each)
   // Every user gets their own hidden profile (trip, hard constraints, soft preferences, budget); an LLM then writes
   // that user's emails from it. The task row shows the five users of one task; the highlighted one is on top.
