@@ -207,13 +207,12 @@
 
 <section class="wrap prose sec results-head">
   <h2>Results</h2>
-  <p>We evaluate five frontier models: GPT-6 Astra, GPT-5.4, Claude Opus 5.5, Claude Sonnet 5.5 and Gemini 3.8 Flash.
-    Each model plays both sides of the market. Every point is averaged over 100 tasks with five users each, 500
-    booking goals in total. <b>User reward</b> (vertical axis) and <b>provider reward</b> (horizontal axis) are the
-    two scores defined above.</p>
-  <p>The dashed <b>MAX</b> line is the best allocation we found for each task, giving a different weight to the two
-    rewards at each point, from providers only to users only. A model on the line could not raise one side's reward
-    without lowering the other's.</p>
+  <p>We evaluate frontier models from three families: GPT, Claude and Gemini. We run them in two settings. In the
+    <b>symmetric</b> setting, the same model acts as both the user agents and the provider agents. In the
+    <b>asymmetric</b> setting, the user agents and the provider agents use different models, for example Gemini users
+    buying from GPT providers.</p>
+  <p>Each point is averaged over 100 tasks with five users each, 500 booking goals in total, and placed by its user
+    reward and provider reward. The dashed <b>MAX</b> line indicates the maximum reward achievable.</p>
 </section>
 
 <!-- ======================================================= the chart, told in steps -->
