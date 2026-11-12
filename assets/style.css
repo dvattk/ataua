@@ -294,7 +294,7 @@ details.more .bib { margin: 4px 14px 14px; }
    Results, Why and Tokenomics now use the same sizes as Overview / Building the market / Scoring. */
 .section-title { font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 800; margin-bottom: .55em; }
 .step h2, .why-text h3 { font-size: 1.2rem; font-weight: 700; margin: 0 0 .5em; letter-spacing: -.01em; }
-.step p, .why-text p, .tok-caption { font-size: 1rem; line-height: 1.65; color: var(--text); }
+.step p, .why-text p, .tok-caption, .why-lead { font-size: 1rem; line-height: 1.65; color: var(--text); }
 .step .n { font: 600 .78rem var(--sans); letter-spacing: .02em; color: var(--muted); margin-bottom: 4px; }
 .step { transform: none; }                                  /* fade only, no sliding text */
 .story { margin-top: 24px; }

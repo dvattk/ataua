@@ -13,7 +13,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794498410">
+<link rel="stylesheet" href="assets/style.css?v=1794502093">
 </head>
 <body>
 
@@ -130,12 +130,13 @@
 <!-- ======================================================= scoring -->
 <section class="wrap prose sec">
   <h2>Evaluation</h2>
-  <p>We score each booking goal by user satisfaction and provider revenue, with both rewards in \([0, 1]\).</p>
+  <p>We score every booking goal from both sides, with each reward between 0 and 1.</p>
 
   <h3>User reward</h3>
-  <div class="eq">$$R_u = I_{\mathrm{pax}}\; C_{\mathrm{trip}}\; S_{\mathrm{budget}}\; S_{\mathrm{pref}}$$</div>
-  <p>The user reward combines passenger count, trip coverage, budget satisfaction and preference
-    satisfaction. Because it is a product, a single failed factor sets the reward to zero.</p>
+  <p>The user reward asks one question: <i>did the traveler get the trip they wanted, at a price they accept?</i></p>
+  <div class="eq">$$R_u \;=\; \underbrace{I_{\mathrm{pax}}}_{\substack{\text{everyone}\\\text{booked}}}\;\times\;\underbrace{C_{\mathrm{trip}}}_{\substack{\text{every leg}\\\text{covered}}}\;\times\;\underbrace{S_{\mathrm{budget}}}_{\substack{\text{within}\\\text{budget}}}\;\times\;\underbrace{S_{\mathrm{pref}}}_{\substack{\text{preferences}\\\text{met}}}$$</div>
+  <p>Because the four terms multiply, a missing traveler or a price at the walk-away budget sets the reward to
+    zero, whatever else went well.</p>
   <details class="more"><summary>User reward components</summary>
     <div class="comp">
 
@@ -169,11 +170,13 @@
   </details>
 
   <h3>Provider reward</h3>
-  <div class="eq">$$R_{p,a} = \min\!\left(1, \frac{r_a}{R_a}\right), \qquad R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} R_{p,a}$$</div>
-  <p>Each airline's revenue from the user is compared with a reference revenue for that user's trip, and the
-    provider reward averages this score over the airlines the user booked with.</p>
+  <p>The provider reward asks: <i>how much of the revenue this trip could bring did the airline actually earn?</i></p>
+  <div class="eq">$$R_p \;=\; \underset{\text{airlines booked}}{\mathrm{avg}}\;\min\!\Big(1,\;\frac{\text{revenue earned}}{\text{reference revenue}}\Big)$$</div>
+  <p>A provider agent that discounts more than it needs to, or sells no paid services, earns less.</p>
   <details class="more"><summary>Provider reward components</summary>
     <div class="comp">
+      <p>In full notation:</p>
+      $$R_{p,a} = \min\!\left(1, \frac{r_a}{R_a}\right), \qquad R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} R_{p,a}$$
       <h4>Booked airlines, \(\mathcal{A}_{\mathrm{book}}\)</h4>
       <p>The set of distinct airlines the user booked with. With one airline, \(R_p = R_{p,a}\). With no active
         booking, \(R_p = 0\).</p>
@@ -198,7 +201,13 @@
 
 <section class="wrap prose sec results-head">
   <h2>Results</h2>
-  <p>Each dot below is one model playing both sides of the market, averaged over 500 booking goals.</p>
+  <p>We evaluate five frontier models: GPT-6 Astra, GPT-5.4, Claude Opus 5.5, Claude Sonnet 5.5 and Gemini 3.8 Flash.
+    Each model plays both sides of the market. Every point is averaged over 100 tasks with five users each, 500
+    booking goals in total. <b>User reward</b> (vertical axis) and <b>provider reward</b> (horizontal axis) are the
+    two scores defined above.</p>
+  <p>The dashed <b>MAX</b> line is the best allocation we found for each task, giving a different weight to the two
+    rewards at each point, from providers only to users only. A model on the line could not raise one side's reward
+    without lowering the other's.</p>
 </section>
 
 <!-- ======================================================= the chart, told in steps -->
@@ -226,26 +235,22 @@
     <article class="step" data-video="scarce" data-step="1">
       <p class="n">Scarce supply</p>
       <h2>Users compete for limited seats</h2>
-      <p>Supply is limited: there are fewer seats than users want, so many user agents compete for the same
-        flights.</p>
+      <p>There are fewer seats than users want, so user agents compete for the same flights. Each booking leaves fewer options for the users still shopping.</p>
     </article>
     <article class="step" data-video="scarce" data-step="2">
       <p class="n">Scarce supply</p>
       <h2>Frontier models are not Pareto optimal</h2>
-      <p>No model reaches the Pareto frontier. For every model, an allocation exists that raises provider reward
-        without lowering user reward.</p>
+      <p>Every model lies inside the MAX line. GPT-6 Astra gives users the highest reward (0.74) but leaves providers at 0.34. At the same user reward, an allocation exists where providers reach 0.63. GPT-5.4 is furthest from the line, at 0.40 for users and 0.19 for providers.</p>
     </article>
     <article class="step" data-video="abundant" data-step="1">
       <p class="n">Abundant supply</p>
       <h2>Enough seats for every user</h2>
-      <p>Supply is abundant: there are more seats than users need, so user agents rarely compete for the same
-        flights.</p>
+      <p>There are more seats than users need, so user agents rarely compete for the same flights.</p>
     </article>
     <article class="step" data-video="abundant" data-step="2">
       <p class="n">Abundant supply</p>
-      <h2>Frontier models are not Pareto optimal</h2>
-      <p>When supply is abundant, no model reaches the Pareto frontier either. Every model's outcome could be
-        improved for providers at no cost to users.</p>
+      <h2>Users are served, providers are not</h2>
+      <p>With enough seats, models come close to the best user reward: GPT-6 Astra reaches 0.97 and Gemini 3.8 Flash 0.90. Provider reward stays at or below 0.38 for every model, while MAX reaches about 0.7 at the same user reward. Most of the remaining gap is on the provider side.</p>
     </article>
   </div>
 </section>
@@ -253,6 +258,7 @@
 <!-- ======================================================= why -->
 <section class="wrap why">
   <h2 class="section-title">Why the gap?</h2>
+  <p class="why-lead">Two patterns explain most of this gap: how agents compete for scarce seats, and how provider agents sell.</p>
 
   <div class="why-block">
     <div class="why-text">
