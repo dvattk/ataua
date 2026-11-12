@@ -120,7 +120,7 @@
       return q;
     };
     // itinerary card
-    const it = el(g, "g", {});
+    const it = el(g, "g", { transform: "translate(408 0)" });
     card(it, 20, 22, 232, 256);
     txt(it, 36, 46, "Reference itinerary", { "font-weight": 650, fill: C.max, "font-size": 12.5 });
     el(it, "line", { x1: 36, y1: 56, x2: 236, y2: 56, stroke: C.line });
@@ -144,15 +144,15 @@
       return p;
     });
     txt(it, 36, 270, "direct · connecting", { "font-size": 10.5, fill: C.muted });
-    const arr = el(g, "path", { d: "M262 150 H284 M278 144 L284 150 L278 156", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    const head = txt(g, 300, 14, "Sample n users", { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
+    const arr = el(g, "path", { d: "M420 150 H394 M400 144 L394 150 L400 156", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const head = txt(g, 24, 14, "Sample n users", { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
     // users
     const U = [
       ["User 1", "Budget-conscious", "Economy · 1 passenger · 1 checked bag · no insurance", "$276", "$407", 276 / 407],
       ["User 2", "Price-comparison shopper", "Basic economy · 2 passengers · 0 bags · no insurance", "$343", "$516", 343 / 516],
       ["User 3", "Time-sensitive business", "Business · 2 passengers · 2 checked bags · insurance", "$2,452", "$4,400", 2452 / 4400],
     ];
-    const X = 296, W = 364, Hc = 80;
+    const X = 20, W = 364, Hc = 80;
     const users = U.map(([name, persona, attrs, tgt, walk, f], i) => {
       const y = 22 + i * (Hc + 8);
       const c = el(g, "g", {});
@@ -179,7 +179,7 @@
         const s = 2300 + i * 1700;
         const o = fade(t, s, 450) * out;
         show(u.c, o);
-        u.c.setAttribute("transform", `translate(${(-24 * (1 - ease(fade(t, s, 600)))).toFixed(1)} 0)`);
+        u.c.setAttribute("transform", `translate(${(24 * (1 - ease(fade(t, s, 600)))).toFixed(1)} 0)`);
         show(u.at, fade(t, s + 350));
         u.bar.setAttribute("width", (u.W * u.f * ease(fade(t, s + 700, 700))).toFixed(1));
         show(u.lab, fade(t, s + 1000));
@@ -198,7 +198,7 @@
     el(pick, "rect", { x: 401, y: 41, width: 262, height: 58, rx: 12, fill: "none", stroke: C.max, "stroke-width": 2.4 });
     el(pick, "rect", { x: 470, y: 30, width: 124, height: 20, rx: 10, fill: C.max });
     txt(pick, 532, 44, "reference itinerary", { "font-size": 11, "text-anchor": "middle", fill: "#fff", "font-weight": 600 });
-    const link = el(all, "path", { d: "M532 256 V268 H136 V288 M131 282 L136 288 L141 282", fill: "none", stroke: C.max, "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const link = el(all, "path", { d: "M544 256 V288 M538 282 L544 288 L550 282", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
     const S = 8800;
     return (t) => {
       show(all, 1 - fade(t, 20400, 500));
@@ -296,123 +296,6 @@
       show(keys, fade(t, 4200));
       show(task, fade(t, 600));
       bots.forEach((b, i) => show(b, i === k ? 1 : 0.35));
-    };
-  });
-
-  // ---------------------------------------------------------------- 3. supply: shared seats (9 s, two named buttons)
-  const sup = document.querySelector(".d-anim.supply");
-  if (sup) {
-    let mode = "scarce", api = null;
-    api = player(sup, 9000, (svg) => {
-      const g = el(svg, "g", {});
-      card(g, 330, 26, 330, 122);
-      txt(g, 346, 50, "Delta · IAH → JFK · Aug 2", { "font-weight": 650, fill: C.ink });
-      const seatsG = el(g, "g", {});
-      card(g, 330, 166, 330, 84, { fill: C.soft });
-      txt(g, 346, 190, "Other flights, other dates", { "font-weight": 650, fill: C.muted });
-      const left = txt(g, 644, 50, "", { "text-anchor": "end", "font-size": 12, fill: C.muted, "font-family": "var(--mono)" });
-      const users = [0, 1, 2, 3, 4].map((i) => ({ g: robot(g, 0, 0, C.user, 0.9), y: 46 + i * 46 }));
-      const note = txt(g, 495, 268, "", { "text-anchor": "middle", "font-size": 12.5, fill: C.max, "font-weight": 600 });
-      let built = null, seats = [];
-      const build = () => {
-        seatsG.innerHTML = ""; seats = [];
-        const n = mode === "scarce" ? 3 : 10;
-        for (let s = 0; s < n; s++) seats.push(el(seatsG, "rect", { x: 346 + s * 30, y: 70, width: 22, height: 26, rx: 4, fill: "#fff", stroke: C.max, "stroke-width": 1.4 }));
-        built = mode;
-      };
-      return (t) => {
-        if (built !== mode) build();
-        const n = seats.length;
-        let taken = 0;
-        users.forEach((u, i) => {
-          const t0 = 600 + i * 1150, gets = i < n;
-          const dst = gets ? [357 + i * 30, 126] : [400 + (i - n) * 40, 230];
-          const [x, y] = kf([[t0, [40, u.y]], [t0 + 900, dst]], t);
-          u.g.setAttribute("transform", `translate(${x.toFixed(1)} ${y.toFixed(1)}) scale(${gets ? 0.9 : 0.8})`);
-          if (gets && t > t0 + 900) taken++;
-          u.g.setAttribute("opacity", (1 - fade(t, 8500)).toFixed(2));
-        });
-        seats.forEach((s, i) => s.setAttribute("fill", i < taken ? C.user : "#fff"));
-        left.textContent = `${n - taken} of ${n} seats left`;
-        note.textContent = t > 6500 ? (mode === "scarce" ? "Two users must settle for something else." : "Every user gets a seat on the flight they want.") : "";
-        note.setAttribute("opacity", fade(t, 6500).toFixed(2));
-      };
-    });
-    sup.querySelectorAll("[data-dsupply]").forEach((b) => b.addEventListener("click", () => {
-      mode = b.dataset.dsupply;
-      sup.querySelectorAll("[data-dsupply]").forEach((x) => x.setAttribute("aria-pressed", x === b ? "true" : "false"));
-      if (api.redraw) api.redraw(); else api.restart();
-    }));
-  }
-
-  // ---------------------------------------------------------------- 4. user reward: a product of factors (13.5 s, three cases)
-  const rw = document.querySelector(".d-anim.reward");
-  if (rw) player(rw, 13500, (svg) => {
-    const g = el(svg, "g", {});
-    const F = [["I", "hard"], ["I", "pax"], ["C", "trip"], ["S", "budget"], ["S", "pref"]];
-    const CASES = [
-      ["The booking matches the goal", [1, 1, 1, 0.92, 0.85], -1],
-      ["One traveler's return flight is missing", [1, 1, 0.75, 0.92, 0.85], 2],
-      ["Insurance added against the user's wishes", [0, 1, 1, 0.92, 0.85], 0],
-    ];
-    const title = txt(g, 340, 30, "", { "text-anchor": "middle", "font-weight": 650, fill: C.ink, "font-size": 14 });
-    const tiles = F.map(([s, sub], i) => {
-      const x = 40 + i * 122, tg = el(g, "g", {});
-      const r = el(tg, "rect", { x, y: 52, width: 100, height: 76, rx: 12, fill: "#fff", stroke: C.line, "stroke-width": 1.6 });
-      const lab = el(tg, "text", { x: x + 50, y: 80, "text-anchor": "middle", "font-size": 17, fill: C.ink, "font-family": "Newsreader, Georgia, serif", "font-style": "italic" });
-      lab.textContent = s;
-      el(lab, "tspan", { "font-size": 11, dy: 4, "font-style": "normal", "font-family": "var(--sans)" }).textContent = sub;
-      const v = txt(tg, x + 50, 112, "", { "text-anchor": "middle", "font-size": 16, "font-weight": 650, fill: C.ink, "font-family": "var(--mono)" });
-      if (i < 4) txt(g, x + 111, 96, "×", { "text-anchor": "middle", "font-size": 18, fill: C.muted });
-      return { r, v };
-    });
-    txt(g, 40, 168, "User reward", { "font-weight": 650, fill: C.ink });
-    el(g, "rect", { x: 140, y: 154, width: 420, height: 20, rx: 10, fill: C.soft, stroke: C.line });
-    const bar = el(g, "rect", { x: 140, y: 154, width: 0, height: 20, rx: 10, fill: C.max });
-    const val = txt(g, 640, 169, "", { "text-anchor": "end", "font-size": 16, "font-weight": 700, fill: C.max, "font-family": "var(--mono)" });
-    const D = 4500;
-    return (t) => {
-      const k = Math.min(Math.floor(t / D), 2), lt = t - k * D;
-      const prev = CASES[(k + 2) % 3][1], [name, vals, hi] = CASES[k];
-      title.textContent = name; title.setAttribute("opacity", fade(lt, 0, 300).toFixed(2));
-      let prod = 1;
-      tiles.forEach(({ r, v }, i) => {
-        const x = kf([[300, prev[i]], [1100, vals[i]]], lt);
-        v.textContent = x.toFixed(2); prod *= x;
-        const on = i === hi && lt > 300;
-        r.setAttribute("stroke", on ? (vals[i] === 0 ? C.bad : C.max) : C.line);
-        r.setAttribute("fill", on ? (vals[i] === 0 ? "#FDECEF" : C.tint) : "#fff");
-        v.setAttribute("fill", on && vals[i] === 0 ? C.bad : C.ink);
-      });
-      bar.setAttribute("width", (420 * prod).toFixed(1));
-      val.textContent = prod.toFixed(2);
-    };
-  });
-
-  // ---------------------------------------------------------------- 5. budget satisfaction curve (8 s)
-  const bud = document.querySelector(".d-anim.budget");
-  if (bud) player(bud, 8000, (svg) => {
-    const g = el(svg, "g", {});
-    const X0 = 70, X1 = 640, Y0 = 170, Y1 = 40, xT = 300, xW = 480;
-    el(g, "line", { x1: X0, y1: Y0, x2: X1, y2: Y0, stroke: C.ink, "stroke-width": 1.4 });
-    el(g, "line", { x1: X0, y1: Y0, x2: X0, y2: Y1 - 10, stroke: C.ink, "stroke-width": 1.4 });
-    txt(g, X0 - 10, Y1 + 4, "1", { "text-anchor": "end", "font-size": 12, fill: C.muted });
-    txt(g, X0 - 10, Y0 + 4, "0", { "text-anchor": "end", "font-size": 12, fill: C.muted });
-    el(g, "line", { x1: xT, y1: Y0, x2: xT, y2: Y1, stroke: C.line, "stroke-dasharray": "4 4" });
-    el(g, "line", { x1: xW, y1: Y0, x2: xW, y2: Y1, stroke: C.line, "stroke-dasharray": "4 4" });
-    txt(g, xT, Y0 + 22, "target budget", { "text-anchor": "middle", "font-size": 12, fill: C.muted });
-    txt(g, xW, Y0 + 22, "walk-away budget", { "text-anchor": "middle", "font-size": 12, fill: C.muted });
-    txt(g, (X0 + X1) / 2, Y0 + 46, "Credit-card spending", { "text-anchor": "middle", "font-size": 13, fill: C.ink, "font-weight": 600 });
-    txt(g, 22, (Y0 + Y1) / 2, "S budget", { "text-anchor": "middle", "font-size": 13, fill: C.ink, "font-weight": 600, transform: `rotate(-90 22 ${(Y0 + Y1) / 2})` });
-    el(g, "path", { d: `M${X0} ${Y1} H${xT} L${xW} ${Y0} H${X1}`, fill: "none", stroke: C.max, "stroke-width": 3, "stroke-linejoin": "round" });
-    const dot = el(g, "circle", { r: 7, fill: C.max, stroke: "#fff", "stroke-width": 2 });
-    const lab = txt(g, 0, 0, "", { "text-anchor": "middle", "font-size": 12.5, "font-weight": 700, fill: C.max, "font-family": "var(--mono)" });
-    return (t) => {
-      const x = kf([[0, X0 + 30], [1200, X0 + 30], [6200, X1 - 30], [7400, X1 - 30], [8000, X0 + 30]], t);
-      const s = x <= xT ? 1 : x >= xW ? 0 : (xW - x) / (xW - xT);
-      const y = Y0 - s * (Y0 - Y1);
-      dot.setAttribute("cx", x.toFixed(1)); dot.setAttribute("cy", y.toFixed(1));
-      lab.setAttribute("x", x.toFixed(1)); lab.setAttribute("y", (y - 14).toFixed(1)); lab.textContent = s.toFixed(2);
     };
   });
 

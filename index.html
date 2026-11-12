@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794449000">
+<link rel="stylesheet" href="assets/style.css?v=1794451000">
 </head>
 <body>
 
@@ -18,7 +18,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794449000">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794451000">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -98,13 +98,6 @@
   <p>All users draw from the same inventory, so every booking removes a seat for everyone else. Under <b>abundant</b>
     supply there are more seats than users need. Under <b>scarce</b> supply, users compete for the options they
     prefer and some must compromise.</p>
-  <figure class="d-anim supply">
-    <div class="seg d-seg" role="group" aria-label="Seat supply">
-      <button type="button" data-dsupply="scarce" aria-pressed="true">Scarce supply</button>
-      <button type="button" data-dsupply="abundant" aria-pressed="false">Abundant supply</button>
-    </div>
-    <svg viewBox="0 0 680 280"></svg>
-  </figure>
 
   <h3>Agents: who trades with whom</h3>
   <p>Each of the <span class="m">N</span> users has a user agent, and each of the <span class="m">K</span> airlines
@@ -136,10 +129,6 @@
     <span class="m">C<sub>trip</sub></span> is the share of required journeys that were booked.
     <span class="m">S<sub>budget</sub></span> and <span class="m">S<sub>pref</sub></span> measure budget and
     preference satisfaction.</p>
-  <figure class="d-anim reward"><svg viewBox="0 0 680 196"></svg><button type="button" class="replay-mini">Replay</button></figure>
-
-  <p>Budget satisfaction is full up to the target budget and falls linearly to zero at the walk-away budget:</p>
-  <figure class="d-anim budget"><svg viewBox="0 0 680 230"></svg></figure>
   <details class="more"><summary>Budget and preference formulas</summary>
     <div class="eq sm">S<sub>budget</sub>(c) = 1 if c ≤ B<sub>target</sub>; &nbsp;
       (B<sub>walkaway</sub> − c) / (B<sub>walkaway</sub> − B<sub>target</sub>) in between; &nbsp; 0 if c ≥ B<sub>walkaway</sub></div>
@@ -307,10 +296,10 @@
 </section>
 <footer class="wrap foot"></footer>
 
-<script src="assets/player.js?v=1794449000" defer></script>
-<script src="assets/chart.js?v=1794449000" defer></script>
-<script src="assets/why.js?v=1794449000" defer></script>
-<script src="assets/design.js?v=1794449000" defer></script>
-<script src="assets/tokenomics.js?v=1794449000" defer></script>
+<script src="assets/player.js?v=1794451000" defer></script>
+<script src="assets/chart.js?v=1794451000" defer></script>
+<script src="assets/why.js?v=1794451000" defer></script>
+<script src="assets/design.js?v=1794451000" defer></script>
+<script src="assets/tokenomics.js?v=1794451000" defer></script>
 </body>
 </html>

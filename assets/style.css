@@ -272,3 +272,6 @@ details.more .bib { margin: 4px 14px 14px; }
 .take li { margin: .7em 0; }
 .foot:empty { padding: 0 0 48px; }
 .eq .w { font-style: normal; font-family: var(--sans); font-size: .72em; color: var(--muted); }
+
+/* all sections share the results width */
+.prose { max-width: 1120px; }
