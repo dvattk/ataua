@@ -359,3 +359,11 @@ table.attrs td:nth-child(2) { color: var(--muted); }
 ol.algo { margin: .4em 0 0; padding-left: 1.4em; }
 ol.algo li { margin: .35em 0; line-height: 1.6; }
 ol.algo li::marker { font-weight: 700; color: var(--accent); }
+.algo-box { border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); margin: 1em 0; padding: .2em 0 .5em; font-size: .95rem; }
+.algo-title { border-bottom: 1px solid var(--ink); padding: .35em 0; margin-bottom: .4em; }
+.algo-io { margin: .2em 0; line-height: 1.6; }
+ol.algo-lines { margin: .3em 0 0; padding-left: 2em; }
+ol.algo-lines li { margin: .15em 0; line-height: 1.6; }
+ol.algo-lines li::marker { color: var(--muted); font-size: .85em; }
+ol.algo-lines li.in { padding-left: 1.6em; }
+.algo-c { color: var(--muted); }

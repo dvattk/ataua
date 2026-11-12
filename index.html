@@ -13,7 +13,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794508276">
+<link rel="stylesheet" href="assets/style.css?v=1794508569">
 </head>
 <body>
 
@@ -127,16 +127,29 @@
     inventory, so each booking reduces availability for the others.</p>
   <details class="more"><summary>How is scarcity generated?</summary>
     <div class="comp">
-      <p>Given the task's users and the full inventory, where \(s_{f,d,c}\) is the number of seats on flight \(f\),
-        date \(d\), cabin \(c\):</p>
-      <ol class="algo">
-        <li>Let \(W\) be every date within \(\pm 7\) days of any user's requested outbound or return date.</li>
-        <li>For every flight \(f\), date \(d \in W\) and cabin \(c\) with \(s_{f,d,c} > 0\), draw
-          $$X \sim \mathrm{Poisson}(\mu\, b_c), \qquad s_{f,d,c} \leftarrow \min(s_{f,d,c},\, X),$$
-          with \(\mu = 1\) and cabin multipliers \(b_{\text{basic}} = 0.3\), \(b_{\text{economy}} = 0.6\),
-          \(b_{\text{business}} = 1.5\).</li>
-        <li>Users book from the reduced inventory, which is restored before the next task.</li>
-      </ol>
+      <p>Scarcity is applied to the inventory once per task, before any agent acts. We keep every flight but thin out
+        its seats around the dates the users want to travel. Each flight, date and cabin gets a random number of seats,
+        drawn independently, so some options keep a few seats while many sell out entirely.</p>
+      <div class="algo-box">
+        <div class="algo-title"><b>Algorithm 1</b> Scarce inventory for one task</div>
+        <div class="algo-io"><b>Input:</b> seats \(s_{f,d,c}\) for flight \(f\), date \(d\), cabin \(c\); the task's
+          users \(U\); base mean \(\mu = 1\); cabin multipliers \(b_c\)</div>
+        <div class="algo-io"><b>Output:</b> reduced seats \(s'_{f,d,c}\)</div>
+        <ol class="algo-lines">
+          <li>\(W \leftarrow \{\, d \pm k \;:\; d\) a requested outbound or return date of some \(u \in U,\; k = 0,\dots,7 \,\}\)</li>
+          <li><b>for</b> each flight \(f\), date \(d \in W\), cabin \(c\) <b>with</b> \(s_{f,d,c} > 0\) <b>do</b></li>
+          <li class="in">\(X \sim \mathrm{Poisson}(\mu\, b_c)\)</li>
+          <li class="in">\(s'_{f,d,c} \leftarrow \min(s_{f,d,c},\, X)\)</li>
+          <li><b>end for</b></li>
+          <li>dates outside \(W\) keep their seats: \(s'_{f,d,c} \leftarrow s_{f,d,c}\)</li>
+          <li><b>return</b> \(s'\) &nbsp;<span class="algo-c">▷ restored to \(s\) before the next task</span></li>
+        </ol>
+      </div>
+      <p>The cabin multipliers are \(b_{\text{basic}} = 0.3\), \(b_{\text{economy}} = 0.6\) and
+        \(b_{\text{business}} = 1.5\), so the cheaper the cabin, the fewer seats it keeps on average. With these means,
+        a basic-economy option is left with no seats about 74% of the time, economy about 55% and business about 22%.
+        The cheap seats that most users want are therefore the ones they compete for, and an agent that books slowly
+        or poorly may find them gone.</p>
     </div>
   </details>
 </section>
