@@ -127,11 +127,10 @@
     inventory, so each booking reduces availability for the others.</p>
   <details class="more"><summary>How is scarcity generated?</summary>
     <div class="comp">
-      <p>Each task brings five users into the market. Before the agents start, we take every date within seven days
-        before or after any of these users' departure or return dates. On those dates, every flight in the inventory,
-        on every route, gets a new number of seats in each cabin, drawn at random. The draw uses a fixed random seed
-        for each task. The five users then shop at the same time from this one reduced inventory, so each booking
-        removes seats for the others. After the task ends, the full inventory is restored.</p>
+      <p>For each task, we take every date within seven days of any user's departure or return date. On these dates,
+        each flight and cabin gets a new number of seats, drawn from a Poisson distribution and capped at its original
+        number of seats. The mean of the Poisson distribution depends on the cabin: 0.3 for basic economy, 0.6 for
+        economy and 1.5 for business. All users of the task then book from this reduced inventory.</p>
       <div class="algo-box">
         <div class="algo-title"><b>Algorithm 1</b> Scarce inventory for one task</div>
         <div class="algo-io"><b>Input:</b> seats \(s_{f,d,c}\) for flight \(f\), date \(d\), cabin \(c\); the task's
@@ -147,10 +146,6 @@
           <li><b>return</b> \(s'\) &nbsp;<span class="algo-c">▷ all users of the task book from \(s'\)</span></li>
         </ol>
       </div>
-      <p>The cabin multipliers are \(b_{\text{basic}} = 0.3\), \(b_{\text{economy}} = 0.6\) and
-        \(b_{\text{business}} = 1.5\), so cheaper cabins keep fewer seats on average. A basic-economy option is left
-        with no seats about 74% of the time, economy about 55% and business about 22%. The cheap seats that most users
-        want are therefore the ones they compete for.</p>
     </div>
   </details>
 </section>
