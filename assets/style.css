@@ -324,3 +324,9 @@ details.more .bib { margin: 4px 14px 14px; }
 .story-chart { width: 100%; }
 .story-steps { min-height: 0; height: auto; align-content: start; }
 .story-steps .step { justify-content: flex-start; min-height: 0; height: auto; }
+
+/* ---------------------------------------------------------------- every figure on the page shares one width */
+:root { --fig: 800px; }
+.fig2-player, .d-anim, .d-anim.inventory, .d-anim.maxsweep, .story-chart, .why-anim, .tok-chart {
+  max-width: var(--fig); width: 100%; margin-left: auto; margin-right: auto;
+}
