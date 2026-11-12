@@ -254,7 +254,7 @@ button, select { -webkit-tap-highlight-color: transparent; touch-action: manipul
 .eq { text-align: center; font-size: 1.35rem; color: var(--ink); margin: 18px 0 20px; overflow-x: auto; white-space: nowrap; padding: 4px 0; }
 .eq.sm { font-size: 1.08rem; white-space: normal; }
 .d-anim { position: relative; margin: 20px 0 22px; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 10px; }
-.d-anim svg { display: block; width: 100%; height: auto; shape-rendering: geometricPrecision; text-rendering: geometricPrecision; }
+.d-anim > svg { display: block; width: 100%; height: auto; shape-rendering: geometricPrecision; text-rendering: geometricPrecision; }
 .d-anim .d-seg { display: flex; margin: 4px 4px 6px; }
 .d-anim .d-seg button { flex: 1; }
 .d-anim.supply .replay-mini { top: auto; bottom: 12px; }
@@ -277,5 +277,5 @@ details.more .bib { margin: 4px 14px 14px; }
 .prose { max-width: 1120px; }
 /* keep animations at a readable size inside the wide layout */
 .d-anim { max-width: 760px; margin-left: auto; margin-right: auto; }
-.d-anim.inventory { max-width: 680px; }
+.d-anim.inventory { max-width: 860px; }
 .d-anim.maxsweep { max-width: 600px; }

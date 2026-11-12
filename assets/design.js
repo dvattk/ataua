@@ -65,148 +65,40 @@
     return el(g, "rect", { x, y, width: w, height: h, rx: 10, fill: "#fff", stroke: C.line, "stroke-width": 1.5, ...a });
   }
 
-  // ---------------------------------------------------------------- 1. inventory, then users sampled around one itinerary
-  function buildInventory(g) {
-    txt(g, 20, 26, "Observed fares (BTS DB1B)", { "font-weight": 650, fill: C.ink });
-    txt(g, 400, 26, "Flight catalog", { "font-weight": 650, fill: C.ink });
-    const AP = { SFO: [52, 110], LAX: [70, 170], DEN: [150, 112], ORD: [236, 82], IAH: [196, 196], ATL: [270, 172], PHL: [322, 92], JFK: [342, 64] };
-    const R = [["SFO", "JFK"], ["LAX", "ORD"], ["DEN", "ATL"], ["IAH", "JFK"], ["ORD", "PHL"], ["LAX", "IAH"], ["SFO", "DEN"], ["ATL", "PHL"]];
-    const routes = R.map(([a, b], i) => {
-      const [x1, y1] = AP[a], [x2, y2] = AP[b], mx = (x1 + x2) / 2, my = Math.min(y1, y2) - 26;
-      const p = el(g, "path", { d: `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`, fill: "none", stroke: i === 3 ? C.max : "#c9c6d8", "stroke-width": i === 3 ? 2.4 : 1.4 });
-      const L = p.getTotalLength ? p.getTotalLength() : 300;
-      p.setAttribute("stroke-dasharray", L); return { p, L, i };
-    });
-    for (const k in AP) {
-      const [x, y] = AP[k];
-      el(g, "circle", { cx: x, cy: y, r: 4.5, fill: C.ink });
-      txt(g, x, y + 18, k, { "font-size": 11, "text-anchor": "middle", fill: C.muted, "font-family": "var(--mono)" });
-    }
-    const tag = el(g, "g", {});
-    el(tag, "rect", { x: 150, y: 214, width: 196, height: 26, rx: 13, fill: C.tint });
-    txt(tag, 248, 231, "IAH → JFK · median fare per airline", { "font-size": 12, "text-anchor": "middle", fill: C.max, "font-weight": 600 });
-    const arrow = el(g, "g", {});
-    el(arrow, "path", { d: "M362 140 H392 M384 133 L392 140 L384 147", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    const F = [["Delta", "DL 1021 · Aug 2 · 07:10", "$246", 6], ["United", "UA 388 · Aug 2 · 12:45", "$271", 4], ["Spirit", "NK 217 · Aug 3 · 09:30", "$139", 8]];
-    const cards = F.map(([air, sub, fare, seats], i) => {
-      const c = el(g, "g", {}), y = 44 + i * 62;
-      card(c, 404, y, 256, 52);
-      txt(c, 418, y + 21, air, { "font-weight": 650, fill: C.ink });
-      txt(c, 418, y + 39, sub, { "font-size": 11.5, fill: C.muted });
-      txt(c, 646, y + 21, fare, { "text-anchor": "end", "font-weight": 650, fill: C.ink, "font-family": "var(--mono)", "font-size": 12.5 });
-      const seatG = el(c, "g", {});
-      return { c, seatG };
-    });
-    const stat = el(g, "g", {});
-    txt(stat, 532, 246, "1,746 itineraries · 44 airports · 23 airlines", { "font-size": 12, "text-anchor": "middle", fill: C.muted, "font-weight": 600 });
-    return (t) => {
-      routes.forEach(({ p, L, i }) => p.setAttribute("stroke-dashoffset", (L * (1 - clamp01((t - i * 260) / 700))).toFixed(1)));
-      show(tag, fade(t, 2600) * (1 - fade(t, 11300)));
-      show(arrow, fade(t, 3600) * (1 - fade(t, 11300)));
-      cards.forEach(({ c, seatG }, i) => { show(c, fade(t, 4200 + i * 450) * (1 - fade(t, 11300))); show(seatG, fade(t, 5800 + i * 300)); });
-      show(stat, fade(t, 7400) * (1 - fade(t, 11300)));
-      routes.forEach(({ p }) => p.setAttribute("opacity", (1 - fade(t, 11300)).toFixed(2)));
-    };
-  }
-
-  // ---------------------------------------------------------------- 2a. generating users around a reference itinerary (12 s)
-  // Same example as the paper's data-generation figure: one sampled itinerary, then n users with persona-set attributes.
-  function buildUserGen(g) {
-    const person = (p, x, y, s = 1) => {
-      const q = el(p, "g", { transform: `translate(${x} ${y}) scale(${s})`, fill: C.ink });
-      el(q, "circle", { cx: 0, cy: -6, r: 4.6 });
-      el(q, "path", { d: "M -9 10 V 5 C -9 -2 9 -2 9 5 V 10 Z" });
-      return q;
-    };
-    // itinerary card
-    const it = el(g, "g", { transform: "translate(408 0)" });
-    card(it, 20, 22, 232, 256);
-    txt(it, 36, 46, "Reference itinerary", { "font-weight": 650, fill: C.max, "font-size": 12.5 });
-    el(it, "line", { x1: 36, y1: 56, x2: 236, y2: 56, stroke: C.line });
-    txt(it, 66, 76, "Origin", { "font-size": 11, fill: C.muted, "text-anchor": "middle" });
-    txt(it, 206, 76, "Destination", { "font-size": 11, fill: C.muted, "text-anchor": "middle" });
-    txt(it, 66, 102, "IAH", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
-    txt(it, 206, 102, "JFK", { "font-size": 24, "font-weight": 700, fill: C.ink, "text-anchor": "middle" });
-    el(it, "path", { d: "M112 94 H158 M152 89 L158 94 L152 99", fill: "none", stroke: C.ink, "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    txt(it, 136, 128, "2024-08-02", { "font-size": 13, "font-weight": 600, fill: C.ink, "text-anchor": "middle" });
-    const A = [46, 232], B = [226, 232];
-    el(it, "circle", { cx: A[0], cy: A[1], r: 4, fill: "#2fbf71" });
-    el(it, "circle", { cx: B[0], cy: B[1], r: 4, fill: C.bad });
-    txt(it, A[0], A[1] + 18, "IAH", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
-    txt(it, B[0], B[1] + 18, "JFK", { "font-size": 10, fill: C.muted, "text-anchor": "middle" });
-    const COL = ["#1d4ed8", "#3b82f6", "#e07a2e", "#d4483b", "#e07a2e", "#3b82f6", "#d4483b"];
-    const hubs = [[136, 196, true], [80, 156], [118, 148], [160, 152], [196, 162], [100, 182], [176, 186]];
-    const routes = hubs.map(([hx, hy, direct], i) => {
-      const d = direct ? `M${A[0]} ${A[1]} Q ${hx} ${hy} ${B[0]} ${B[1]}` : `M${A[0]} ${A[1]} Q ${(A[0] + hx) / 2} ${hy - 10} ${hx} ${hy} Q ${(hx + B[0]) / 2} ${hy - 10} ${B[0]} ${B[1]}`;
-      const p = el(it, "path", { d, fill: "none", stroke: COL[i], "stroke-width": direct ? 2.2 : 1.4, "stroke-dasharray": direct ? "none" : "2 3", opacity: 0.9 });
-      if (!direct) el(it, "circle", { cx: hx, cy: hy, r: 2.4, fill: COL[i] });
-      return p;
-    });
-    txt(it, 36, 270, "direct · connecting", { "font-size": 10.5, fill: C.muted });
-    const arr = el(g, "path", { d: "M420 150 H394 M400 144 L394 150 L400 156", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    const head = txt(g, 24, 14, "Sample n users", { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
-    // users
-    const U = [
-      ["User 1", "Budget-conscious", "Economy · 1 passenger · 1 checked bag · no insurance", "$276", "$407", 276 / 407],
-      ["User 2", "Price-comparison shopper", "Basic economy · 2 passengers · 0 bags · no insurance", "$343", "$516", 343 / 516],
-      ["User 3", "Time-sensitive business", "Business · 2 passengers · 2 checked bags · insurance", "$2,452", "$4,400", 2452 / 4400],
-    ];
-    const X = 20, W = 364, Hc = 80;
-    const users = U.map(([name, persona, attrs, tgt, walk, f], i) => {
-      const y = 22 + i * (Hc + 8);
-      const c = el(g, "g", {});
-      card(c, X, y, W, Hc);
-      person(c, X + 20, y + 20, 1);
-      txt(c, X + 36, y + 24, name, { "font-weight": 700, fill: C.ink, "font-size": 13 });
-      txt(c, X + 92, y + 24, persona, { "font-size": 12, fill: C.muted });
-      const at = txt(c, X + 14, y + 44, attrs, { "font-size": 11.5, fill: C.text });
-      el(c, "rect", { x: X + 14, y: y + 52, width: W - 28, height: 6, rx: 3, fill: C.line });
-      const bar = el(c, "rect", { x: X + 14, y: y + 52, width: 0, height: 6, rx: 3, fill: "#55555f" });
-      const lab = el(c, "g", {});
-      txt(lab, X + 14, y + 72, `Target ${tgt}`, { "font-size": 11.5, "font-weight": 700, fill: C.ink });
-      txt(lab, X + W - 14, y + 72, `Walk-away ${walk}`, { "font-size": 11.5, "font-weight": 700, fill: C.ink, "text-anchor": "end" });
-      return { c, at, bar, lab, f, W: W - 28 };
-    });
-    const more = txt(g, X + W / 2, 294, "· · ·", { "font-size": 14, fill: C.muted, "text-anchor": "middle" });
-    return (t) => {
-      const out = 1 - fade(t, 11500, 450);
-      show(it, fade(t, 0, 500) * out);
-      routes.forEach((p, i) => show(p, fade(t, 500 + i * 180, 300)));
-      show(arr, fade(t, 1900) * out);
-      show(head, fade(t, 1900) * out);
-      users.forEach((u, i) => {
-        const s = 2300 + i * 1700;
-        const o = fade(t, s, 450) * out;
-        show(u.c, o);
-        u.c.setAttribute("transform", `translate(${(24 * (1 - ease(fade(t, s, 600)))).toFixed(1)} 0)`);
-        show(u.at, fade(t, s + 350));
-        u.bar.setAttribute("width", (u.W * u.f * ease(fade(t, s + 700, 700))).toFixed(1));
-        show(u.lab, fade(t, s + 1000));
-      });
-      show(more, fade(t, 7800) * out);
-    };
-  }
-
-  // combined figure: catalog and fares on top, the picked flight's itinerary and the sampled users below; all stay on screen
+  // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
+  // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) player(inv, 21000, (svg) => {
-    const all = el(svg, "g", {});
-    const gA = el(all, "g", {}), gB = el(all, "g", { transform: "translate(0 272)" });
-    const drawA = buildInventory(gA), drawB = buildUserGen(gB);
-    const pick = el(gA, "g", {});
-    el(pick, "rect", { x: 401, y: 41, width: 262, height: 58, rx: 12, fill: "none", stroke: C.max, "stroke-width": 2.4 });
-    el(pick, "rect", { x: 470, y: 30, width: 124, height: 20, rx: 10, fill: C.max });
-    txt(pick, 532, 44, "reference itinerary", { "font-size": 11, "text-anchor": "middle", fill: "#fff", "font-weight": 600 });
-    const link = el(all, "path", { d: "M544 256 V288 M538 282 L544 288 L550 282", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    const S = 8800;
-    return (t) => {
-      show(all, 1 - fade(t, 20400, 500));
-      drawA(Math.min(t, 8400));
-      show(pick, fade(t, 8000, 400));
-      show(link, fade(t, 8400, 400));
-      show(gB, t >= S ? 1 : 0);
-      if (t >= S) drawB(Math.min(t - S, 9000));
-    };
+  if (inv) fetch("assets/datagen.svg?v=1794451923").then((r) => r.text()).then((src) => {
+    const holder = inv.querySelector("svg");
+    const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
+    doc.removeAttribute("width"); doc.removeAttribute("height");
+    doc.setAttribute("aria-label", "Data generation: BTS DB1B fares build the provider inventory; a reference itinerary is sampled; users are sampled around it.");
+    holder.replaceWith(doc);
+    const $ = (id) => doc.querySelector(`:scope > [id="${id}"]`) || doc.querySelector(`:scope > g [id="${id}"]`);   // skip same-named icons in <defs>
+    const STEPS = [                       // [element, start ms, slide from (dx, dy)]
+      [$("database"), 0, [-30, 0]],
+      [$("database-to-catalog") || doc.querySelector('[id^="database-to"]'), 900, [-20, 0]],
+      [$("catalog"), 1200, [30, 0]],
+      [doc.querySelector('[id^="catalog-to-"]'), 2400, [0, -20]],
+      [$("itinerary"), 2700, [0, 30]],
+      [$("sample-branches"), 4300, [20, 0]],
+      [$("users"), 4600, [-30, 0]],
+    ].filter((s) => s[0]);
+    const cards = ["user-1", "user-2", "user-3"].map($).filter(Boolean);
+    const D = 14000, OUT = 13200;
+    player(inv, D, () => (t) => {
+      const out = 1 - fade(t, OUT, 600);
+      STEPS.forEach(([node, t0, [dx, dy]]) => {
+        const k = ease(fade(t, t0, 650));
+        node.setAttribute("opacity", (k * out).toFixed(3));
+        node.setAttribute("transform", `translate(${(dx * (1 - k)).toFixed(1)} ${(dy * (1 - k)).toFixed(1)})`);
+      });
+      cards.forEach((c, i) => {
+        const k = ease(fade(t, 5000 + i * 700, 600));
+        c.setAttribute("opacity", k.toFixed(3));
+        c.setAttribute("transform", `translate(${(-24 * (1 - k)).toFixed(1)} 0)`);
+      });
+    });
   });
 
   // ---------------------------------------------------------------- 2. users and tasks (18 s: three users, 6 s each)
@@ -300,7 +192,7 @@
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794451665").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794451923").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
