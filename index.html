@@ -78,16 +78,16 @@
   <figure class="d-anim inventory"><svg viewBox="0 0 680 590"></svg><button type="button" class="replay-mini">Replay</button></figure>
 
   <h3>User inventory</h3>
-  <p>Real travelers differ in their preferences, budgets and shopping behavior. A budget-conscious traveler may look
-    for lower fares, while a premium traveler may prefer comfort. We give each user one of 13 personas, which shapes
-    their travel preferences and budget. Each user has a <b>target budget</b>, the amount they would prefer to spend,
-    and a <b>walk-away budget</b>, the limit on their credit card.</p>
-  <p>A booking request rarely states all of a user's preferences, but the user's personal emails reveal them. For
-    each user, we first fix a structured profile of <b>hard constraints</b>, which must be satisfied, and <b>soft
-    preferences</b>, which allow compromise. For example, a user may refuse travel insurance but prefer layovers
-    shorter than three hours. An LLM then writes the user's emails from this profile. The agent has to infer what
-    the user wants and which requests are non-negotiable. The profile is hidden from the agent and kept for
-    evaluation.</p>
+  <p>We create users with diverse personas, preferences and budgets. A persona shapes what a user wants. A
+    budget-conscious user leans toward basic economy and a lower budget, while a premium user is more likely to
+    prefer business class with a higher budget. Each user has a <b>target budget</b>, the amount they would prefer to
+    spend, and a <b>walk-away budget</b>, the limit on their credit card.</p>
+  <p>Real travelers rarely state all of their preferences in a booking request. Much of it can only be inferred from
+    their personal correspondence. We follow the same setup. Each user's preferences are fixed in a structured
+    profile of <b>hard constraints</b>, which must be satisfied, and <b>soft preferences</b>, which allow compromise.
+    For example, a user may refuse travel insurance but prefer layovers shorter than three hours. An LLM then writes
+    the user's personal emails from this profile. The user agent sees only the emails, so it has to infer what the
+    user wants and which requests are non-negotiable.</p>
   <figure class="d-anim users"><svg viewBox="0 0 680 300"></svg><button type="button" class="replay-mini">Replay</button></figure>
   <p>A <b>task</b> brings together five users who interact with the providers at the same time. To build one, we
     sample a reference itinerary (a route and travel date) from the provider inventory and create each user's
