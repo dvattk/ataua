@@ -112,55 +112,92 @@
     };
   });
 
-  // ---------------------------------------------------------------- 2. users and tasks (13 s)
+  // ---------------------------------------------------------------- 2. users and tasks (18 s: three users, 6 s each)
+  // Every user gets their own hidden profile (trip, hard constraints, soft preferences, budget); an LLM then writes
+  // that user's emails from it. The task row shows the five users of one task; the highlighted one is on top.
   const usr = document.querySelector(".d-anim.users");
-  if (usr) player(usr, 13000, (svg) => {
+  if (usr) player(usr, 18000, (svg) => {
     const g = el(svg, "g", {});
-    const pers = el(g, "g", {});
-    robot(pers, 64, 92, C.user, 1.5);
-    el(pers, "rect", { x: 14, y: 128, width: 100, height: 24, rx: 12, fill: C.tint });
-    txt(pers, 64, 144, "budget conscious", { "font-size": 11.5, "text-anchor": "middle", fill: C.max, "font-weight": 600 });
-    const mail = el(g, "g", {});
-    card(mail, 150, 34, 250, 150);
-    txt(mail, 166, 58, "Re: Houston → New York", { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
-    el(mail, "line", { x1: 166, y1: 68, x2: 384, y2: 68, stroke: C.line });
-    const L1 = [["Two of us, out Aug 2, back Aug 6.", null], ["Please no travel insurance", "hard"], ["this time, it's non-negotiable.", "hard"], ["Short layovers would be nice,", "soft"], ["ideally under three hours.", "soft"]];
-    const lines = L1.map(([s, k], i) => {
-      const lg = el(mail, "g", {}), y = 90 + i * 19;
-      txt(lg, 166, y, s, { "font-size": 12 });
-      const u = k ? el(lg, "line", { x1: 166, y1: y + 4, x2: 166, y2: y + 4, stroke: k === "hard" ? C.max : "#a5a1d6", "stroke-width": 2.2, "stroke-dasharray": k === "soft" ? "4 3" : "none" }) : null;
-      return { lg, u, w: s.length * 5.9 };
-    });
+    const SOFT = "#a5a1d6", PER = 6000;
+    const USERS = [
+      { persona: "budget conscious",
+        prof: [["Trip", "IAH ⇄ JFK, Aug 2–6"], ["Travelers", "2"], ["Hard", "No insurance", "hard"], ["Soft", "Layover ≤ 3 h", "soft"], ["Target", "$900"], ["Walk-away", "$1,150"]],
+        subj: "Re: Houston → New York",
+        mail: [["Two of us, out Aug 2, back Aug 6.", null], ["Please no travel insurance", "hard"], ["this time, it's non-negotiable.", "hard"], ["Short layovers would be nice,", "soft"], ["ideally under three hours.", "soft"]] },
+      { persona: "premium traveler",
+        prof: [["Trip", "IAH → JFK, Aug 2"], ["Travelers", "3"], ["Hard", "Insurance", "hard"], ["Soft", "Same itinerary", "soft"], ["Target", "$2,400"], ["Walk-away", "$3,100"]],
+        subj: "Family trip to New York",
+        mail: [["Booking for the three of us, Aug 2.", null], ["Insurance is a must, we never", "hard"], ["fly without it.", "hard"], ["It would be great if we are all", "soft"], ["on the same flights.", "soft"]] },
+      { persona: "time-sensitive",
+        prof: [["Trip", "IAH → JFK, Aug 2"], ["Travelers", "1"], ["Hard", "Insurance", "hard"], ["Soft", "Layover ≤ 2 h", "soft"], ["Target", "$650"], ["Walk-away", "$900"]],
+        subj: "Fwd: NYC client meeting",
+        mail: [["Just me, one-way on Aug 2.", null], ["Company policy: insurance on", "hard"], ["every trip, no exceptions.", "hard"], ["Tight connections are fine,", "soft"], ["under two hours if possible.", "soft"]] },
+    ];
+    const arrow = (d) => el(g, "path", { d, fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const a1 = arrow("M116 108 H134 M128 102 L134 108 L128 114");
+    const a2 = arrow("M342 108 H360 M354 102 L360 108 L354 114");
+    const llm = txt(g, 351, 94, "LLM", { "font-size": 10, "text-anchor": "middle", fill: C.muted, "font-weight": 600 });
     const keys = el(g, "g", {});
-    el(keys, "line", { x1: 166, y1: 200, x2: 186, y2: 200, stroke: C.max, "stroke-width": 2.2 });
-    txt(keys, 192, 204, "hard constraint", { "font-size": 11, fill: C.muted });
-    el(keys, "line", { x1: 290, y1: 200, x2: 310, y2: 200, stroke: "#a5a1d6", "stroke-width": 2.2, "stroke-dasharray": "4 3" });
-    txt(keys, 316, 204, "soft preference", { "font-size": 11, fill: C.muted });
-    const goal = el(g, "g", {});
-    card(goal, 440, 34, 220, 150, { stroke: C.max, "stroke-width": 1.6 });
-    txt(goal, 456, 58, "Booking goal", { "font-weight": 650, fill: C.max, "font-size": 12.5 });
-    [["Route", "IAH ⇄ JFK"], ["Dates", "Aug 2 – Aug 6"], ["Travelers", "2"], ["Target budget", "$900"], ["Walk-away", "$1,150"]].forEach(([k, v], i) => {
-      txt(goal, 456, 86 + i * 20, k, { "font-size": 12, fill: C.muted });
-      txt(goal, 644, 86 + i * 20, v, { "font-size": 12, "text-anchor": "end", fill: C.ink, "font-weight": 600 });
+    el(keys, "line", { x1: 380, y1: 200, x2: 400, y2: 200, stroke: C.max, "stroke-width": 2.2 });
+    txt(keys, 406, 204, "hard constraint", { "font-size": 11, fill: C.muted });
+    el(keys, "line", { x1: 504, y1: 200, x2: 524, y2: 200, stroke: SOFT, "stroke-width": 2.2, "stroke-dasharray": "4 3" });
+    txt(keys, 530, 204, "soft preference", { "font-size": 11, fill: C.muted });
+    const sets = USERS.map((u) => {
+      const pers = el(g, "g", {});
+      robot(pers, 62, 92, C.user, 1.5);
+      const w = u.persona.length * 6.1 + 18;
+      el(pers, "rect", { x: 62 - w / 2, y: 128, width: w, height: 24, rx: 12, fill: C.tint });
+      txt(pers, 62, 144, u.persona, { "font-size": 11.5, "text-anchor": "middle", fill: C.max, "font-weight": 600 });
+      const prof = el(g, "g", {});
+      card(prof, 140, 34, 196, 150, { stroke: C.max, "stroke-width": 1.6 });
+      txt(prof, 154, 58, "Profile", { "font-weight": 650, fill: C.max, "font-size": 12.5 });
+      txt(prof, 322, 58, "hidden from agent", { "font-size": 10, fill: C.muted, "text-anchor": "end" });
+      u.prof.forEach(([k, v, kind], i) => {
+        const y = 84 + i * 18.5;
+        txt(prof, 154, y, k, { "font-size": 11.5, fill: C.muted });
+        txt(prof, 322, y, v, { "font-size": 11.5, "text-anchor": "end", fill: C.ink, "font-weight": 600 });
+        if (kind) el(prof, "line", { x1: 322 - v.length * 6.05, y1: y + 4, x2: 322, y2: y + 4, stroke: kind === "hard" ? C.max : SOFT, "stroke-width": 2, "stroke-dasharray": kind === "soft" ? "4 3" : "none" });
+      });
+      const mail = el(g, "g", {});
+      card(mail, 366, 34, 294, 150);
+      txt(mail, 380, 58, u.subj, { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
+      el(mail, "line", { x1: 380, y1: 68, x2: 646, y2: 68, stroke: C.line });
+      const lines = u.mail.map(([s, k], i) => {
+        const lg = el(mail, "g", {}), y = 90 + i * 19;
+        txt(lg, 380, y, s, { "font-size": 12 });
+        const ul = k ? el(lg, "line", { x1: 380, y1: y + 4, x2: 380, y2: y + 4, stroke: k === "hard" ? C.max : SOFT, "stroke-width": 2.2, "stroke-dasharray": k === "soft" ? "4 3" : "none" }) : null;
+        return { lg, ul, w: s.length * 5.9 };
+      });
+      return { pers, prof, mail, lines };
     });
-    const arrows = [el(g, "path", { d: "M120 108 H142 M136 102 L142 108 L136 114", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" }),
-      el(g, "path", { d: "M408 108 H432 M426 102 L432 108 L426 114", fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" })];
     const task = el(g, "g", {});
-    el(task, "rect", { x: 150, y: 222, width: 510, height: 60, rx: 12, fill: C.soft, stroke: C.line });
-    txt(task, 166, 257, "A task", { "font-weight": 650, fill: C.ink });
-    const bots = [0, 1, 2, 3, 4].map((i) => robot(task, 260 + i * 52, 260, C.user, 0.95));
-    txt(task, 644, 257, "5 users from a pool of 20", { "font-size": 12, "text-anchor": "end", fill: C.muted });
+    el(task, "rect", { x: 20, y: 222, width: 640, height: 66, rx: 12, fill: C.soft, stroke: C.line });
+    txt(task, 36, 260, "A task", { "font-weight": 650, fill: C.ink });
+    const NAMES = ["budget conscious", "premium traveler", "time-sensitive", "price comparison", "flexible traveler"];
+    const bots = NAMES.map((n, i) => {
+      const b = el(task, "g", {}), x = 160 + i * 86;
+      robot(b, x, 252, C.user, 0.9);
+      txt(b, x, 280, n, { "font-size": 9.5, "text-anchor": "middle", fill: C.muted });
+      return b;
+    });
+    txt(task, 644, 252, "5 users", { "font-size": 12, "text-anchor": "end", fill: C.muted });
+    txt(task, 644, 268, "pool of 20", { "font-size": 12, "text-anchor": "end", fill: C.muted });
     return (t) => {
-      const out = 1 - fade(t, 12300);
-      show(pers, fade(t, 0, 500) * out);
-      show(arrows[0], fade(t, 900) * out);
-      show(mail, fade(t, 1200) * out);
-      lines.forEach(({ lg, u, w }, i) => { show(lg, fade(t, 1500 + i * 380)); if (u) u.setAttribute("x2", (166 + w * fade(t, 3800 + i * 300, 500)).toFixed(1)); });
-      show(keys, fade(t, 4400) * out);
-      show(arrows[1], fade(t, 5600) * out);
-      show(goal, fade(t, 5900) * out);
-      show(task, fade(t, 8000) * out);
-      bots.forEach((b, i) => show(b, fade(t, 8400 + i * 220)));
+      const k = Math.floor(t / PER), l = t % PER;
+      const out = 1 - fade(l, PER - 450, 450);
+      sets.forEach((s, i) => {
+        if (i !== k) { show(s.pers, 0); show(s.prof, 0); show(s.mail, 0); return; }
+        show(s.pers, fade(l, 0, 450) * out);
+        show(s.prof, fade(l, 500) * out);
+        show(s.mail, fade(l, 1700) * out);
+        s.lines.forEach(({ lg, ul, w }, j) => { show(lg, fade(l, 1900 + j * 300)); if (ul) ul.setAttribute("x2", (380 + w * fade(l, 3600 + j * 250, 450)).toFixed(1)); });
+      });
+      show(a1, fade(l, 300) * out);
+      show(a2, fade(l, 1400) * out);
+      show(llm, fade(l, 1400) * out);
+      show(keys, fade(t, 4200));
+      show(task, fade(t, 600));
+      bots.forEach((b, i) => show(b, i === k ? 1 : 0.35));
     };
   });
 
