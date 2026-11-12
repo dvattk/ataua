@@ -12,7 +12,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794459226">
+<link rel="stylesheet" href="assets/style.css?v=1794459387">
 </head>
 <body>
 
@@ -22,7 +22,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794459226">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794459387">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -96,7 +96,8 @@
       withheld from the agent and kept for scoring.</p>
   </details>
 
-  <h3>How large is the task space?</h3>
+  <details class="more"><summary>How large is the task space?</summary>
+  <div class="comp">
   <p>The inventory has 1,746 flights, each bookable on 14 dates, giving \(F = 1{,}746 \times 14 = 24{,}444\)
     flight–date options. Each user's booking is described by eight attributes:</p>
   <table class="attrs">
@@ -116,6 +117,8 @@
   <div class="eq">$$N_{\text{goal}} = F \times G = 24{,}444 \times 1{,}944 \approx 47.5 \text{ million}$$</div>
   <p>A task puts \(m\) users on the same reference flight, so the space grows as \(F \times G^{m}\). For a pool of 20
     users that is about \(10^{70}\) combinations. We evaluate a fixed sample of 100 tasks.</p>
+  </div>
+  </details>
 
   <h3>Supply: scarce or abundant</h3>
   <p>All users draw from the same inventory, so every booking removes a seat for everyone else. Under <b>abundant</b>
@@ -355,10 +358,10 @@
 </section>
 <footer class="wrap foot"></footer>
 
-<script src="assets/player.js?v=1794459226" defer></script>
-<script src="assets/chart.js?v=1794459226" defer></script>
-<script src="assets/why.js?v=1794459226" defer></script>
-<script src="assets/design.js?v=1794459226" defer></script>
-<script src="assets/tokenomics.js?v=1794459226" defer></script>
+<script src="assets/player.js?v=1794459387" defer></script>
+<script src="assets/chart.js?v=1794459387" defer></script>
+<script src="assets/why.js?v=1794459387" defer></script>
+<script src="assets/design.js?v=1794459387" defer></script>
+<script src="assets/tokenomics.js?v=1794459387" defer></script>
 </body>
 </html>
