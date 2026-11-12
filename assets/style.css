@@ -354,3 +354,8 @@ table.attrs td:nth-child(2) { color: var(--muted); }
 :root[data-palette="3"] { --accent:#8E3B6B; --max:#8E3B6B; --accent-soft:#F8EEF3; --accent-tint:#EFD8E4; --accent-mid:#C48AAB; --accent-deep:#5E2347; --soft:#FAF7F8; --line:#EEE5EA; }
 :root[data-palette="4"] { --accent:#3A5A40; --max:#3A5A40; --accent-soft:#EEF2EC; --accent-tint:#DCE5D8; --accent-mid:#8BA888; --accent-deep:#283D2C; --soft:#F7F7F2; --line:#E6E6DE; }
 :root[data-palette="5"] { --accent:#6442D3; --max:#6442D3; --accent-soft:#F0ECFB; --accent-tint:#E6E1FA; --accent-mid:#A899D8; --accent-deep:#3D2A8A; --soft:#F8F7FC; --line:#E8E5F2; }
+
+/* algorithm steps inside dropdowns */
+ol.algo { margin: .4em 0 0; padding-left: 1.4em; }
+ol.algo li { margin: .35em 0; line-height: 1.6; }
+ol.algo li::marker { font-weight: 700; color: var(--accent); }

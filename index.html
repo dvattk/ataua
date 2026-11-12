@@ -13,7 +13,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794502093">
+<link rel="stylesheet" href="assets/style.css?v=1794508276">
 </head>
 <body>
 
@@ -126,9 +126,18 @@
     them may then have to pay more for economy or look for another flight. In both settings users share the same
     inventory, so each booking reduces availability for the others.</p>
   <details class="more"><summary>How is scarcity generated?</summary>
-    <p>For every flight, date and cabin within seven days of the users' requested dates, the number of available
-      seats is redrawn from a Poisson distribution and capped at the original count. The Poisson mean is 0.3 seats in
-      basic economy, 0.6 in economy and 1.5 in business.</p>
+    <div class="comp">
+      <p>Given the task's users and the full inventory, where \(s_{f,d,c}\) is the number of seats on flight \(f\),
+        date \(d\), cabin \(c\):</p>
+      <ol class="algo">
+        <li>Let \(W\) be every date within \(\pm 7\) days of any user's requested outbound or return date.</li>
+        <li>For every flight \(f\), date \(d \in W\) and cabin \(c\) with \(s_{f,d,c} > 0\), draw
+          $$X \sim \mathrm{Poisson}(\mu\, b_c), \qquad s_{f,d,c} \leftarrow \min(s_{f,d,c},\, X),$$
+          with \(\mu = 1\) and cabin multipliers \(b_{\text{basic}} = 0.3\), \(b_{\text{economy}} = 0.6\),
+          \(b_{\text{business}} = 1.5\).</li>
+        <li>Users book from the reduced inventory, which is restored before the next task.</li>
+      </ol>
+    </div>
   </details>
 </section>
 
