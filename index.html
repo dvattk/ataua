@@ -125,6 +125,14 @@
     example, two users may want basic economy on the same flight, but the provider has only one such seat. One of
     them may then have to pay more for economy or look for another flight. In both settings users share the same
     inventory, so each booking reduces availability for the others.</p>
+  <details class="more"><summary>How is scarce supply created?</summary>
+    <p>For each task, we take every flight within a week of any user's requested dates. For each flight, date and
+      cabin, we redraw the number of available seats from a Poisson distribution, keeping it no higher than the
+      original count. Cheaper cabins get fewer seats on average: 0.3 in basic economy, 0.6 in economy and 1.5 in
+      business. About three in four basic-economy options and half of economy options therefore sell out, and the
+      cheapest seats are the ones users compete for. Under abundant supply, users book from the full inventory. In
+      both settings, the inventory is reset before the next task.</p>
+  </details>
 </section>
 
 <!-- ======================================================= scoring -->
