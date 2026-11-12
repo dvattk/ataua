@@ -128,15 +128,11 @@
   <p>We score each booking goal by user satisfaction and provider revenue, with both rewards in \([0, 1]\).</p>
 
   <h3>User reward</h3>
-  <div class="eq">$$R_u = I_{\mathrm{hard}}\; I_{\mathrm{pax}}\; C_{\mathrm{trip}}\; S_{\mathrm{budget}}\; S_{\mathrm{pref}}$$</div>
-  <p>The user reward combines booking requirements, passenger count, trip coverage, budget satisfaction and
-    preference satisfaction. Because it is a product, a single failed factor sets the reward to zero.</p>
+  <div class="eq">$$R_u = I_{\mathrm{pax}}\; C_{\mathrm{trip}}\; S_{\mathrm{budget}}\; S_{\mathrm{pref}}$$</div>
+  <p>The user reward combines passenger count, trip coverage, budget satisfaction and preference
+    satisfaction. Because it is a product, a single failed factor sets the reward to zero.</p>
   <details class="more"><summary>User reward components</summary>
     <div class="comp">
-      <h4>Booking requirements, \(I_{\mathrm{hard}}\)</h4>
-      <p>One when the user's explicit hard requirements are satisfied, or when none are annotated. Zero when an
-        annotated requirement is violated or cannot be verified. For example, buying insurance for a user who
-        prohibited it sets \(I_{\mathrm{hard}} = 0\).</p>
 
       <h4>Passenger count, \(I_{\mathrm{pax}}\)</h4>
       <p>One if the booked passenger count matches the requested party size, zero otherwise. Travelers are
