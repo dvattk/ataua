@@ -8,7 +8,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,400;6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/style.css?v=1794452052">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
+<link rel="stylesheet" href="assets/style.css?v=1794452195">
 </head>
 <body>
 
@@ -18,7 +22,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794452052">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794452195">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -121,32 +125,73 @@
 <!-- ======================================================= scoring -->
 <section class="wrap prose sec">
   <h2>Scoring both sides</h2>
-  <p>Every booking goal gets two scores, each in [0, 1]: one for the traveler and one for the airlines.</p>
+  <p>We score each booking goal by user satisfaction and provider revenue, with both rewards in \([0, 1]\).</p>
 
   <h3>User reward</h3>
-  <div class="eq">R<sub>u</sub> = I<sub>hard</sub> · I<sub>pax</sub> · C<sub>trip</sub> · S<sub>budget</sub> · S<sub>pref</sub></div>
-  <p>The reward is a product, so one failed factor sinks the whole booking. <span class="m">I<sub>hard</sub></span>
-    is zero if a hard requirement is broken. <span class="m">I<sub>pax</sub></span> checks the party size.
-    <span class="m">C<sub>trip</sub></span> is the share of required journeys that were booked.
-    <span class="m">S<sub>budget</sub></span> and <span class="m">S<sub>pref</sub></span> measure budget and
-    preference satisfaction.</p>
-  <details class="more"><summary>Budget and preference formulas</summary>
-    <div class="eq sm">S<sub>budget</sub>(c) = 1 if c ≤ B<sub>target</sub>; &nbsp;
-      (B<sub>walkaway</sub> − c) / (B<sub>walkaway</sub> − B<sub>target</sub>) in between; &nbsp; 0 if c ≥ B<sub>walkaway</sub></div>
-    <div class="eq sm">S<sub>pref</sub> = <sup>1</sup>⁄<sub>n</sub> Σ<sub>i</sub> Σ<sub>d</sub> w<sub>d</sub> s<sub>i,d</sub> / Σ<sub>d</sub> w<sub>d</sub>, &nbsp; w<sub>d</sub> = 1 / rank(d)</div>
-    <p>Here <span class="m">c</span> is net credit-card spending, and <span class="m">s<sub>i,d</sub></span> is
-      traveler <span class="m">i</span>'s satisfaction on preference <span class="m">d</span>. Higher-priority
-      preferences get more weight.</p>
+  <div class="eq">$$R_u = I_{\mathrm{hard}}\; I_{\mathrm{pax}}\; C_{\mathrm{trip}}\; S_{\mathrm{budget}}\; S_{\mathrm{pref}}$$</div>
+  <p>The user reward combines booking requirements, passenger count, trip coverage, budget satisfaction and
+    preference satisfaction. Because it is a product, a single failed factor sets the reward to zero.</p>
+  <details class="more"><summary>User reward components</summary>
+    <div class="comp">
+      <h4>Booking requirements, \(I_{\mathrm{hard}}\)</h4>
+      <p>One when the user's explicit hard requirements are satisfied, or when none are annotated. Zero when an
+        annotated requirement is violated or cannot be verified. For example, buying insurance for a user who
+        prohibited it sets \(I_{\mathrm{hard}} = 0\).</p>
+
+      <h4>Passenger count, \(I_{\mathrm{pax}}\)</h4>
+      <p>One if the booked passenger count matches the requested party size, zero otherwise. Travelers are
+        deduplicated when a trip is split across several reservations.</p>
+
+      <h4>Trip coverage, \(C_{\mathrm{trip}}\)</h4>
+      <p>The share of everyone's required journeys that were booked, whether in one reservation or several. With
+        party size \(n\), and \(n_{\mathrm{out}}\), \(n_{\mathrm{ret}}\) the travelers with a covered outbound and
+        return journey:</p>
+      $$C_{\mathrm{trip}} = \begin{cases} \dfrac{n_{\mathrm{out}}}{n}, & \text{one-way trip}, \\[6pt] \dfrac{n_{\mathrm{out}} + n_{\mathrm{ret}}}{2n}, & \text{round trip}. \end{cases}$$
+      <p>Two people flying to Paris and back need four journeys. If one person's return is missing,
+        \(C_{\mathrm{trip}} = 3/4\). Connecting flights do not add journeys; coverage checks that each traveler's
+        flights connect the requested airports.</p>
+
+      <h4>Budget satisfaction, \(S_{\mathrm{budget}}\)</h4>
+      <p>Let \(c\) be net credit-card spending, \(B_{\mathrm{target}}\) the user's preferred budget and
+        \(B_{\mathrm{walkaway}}\) the spending level at which satisfaction reaches zero:</p>
+      $$S_{\mathrm{budget}}(c) = \begin{cases} 1, & c \le B_{\mathrm{target}}, \\[4pt] \dfrac{B_{\mathrm{walkaway}} - c}{B_{\mathrm{walkaway}} - B_{\mathrm{target}}}, & B_{\mathrm{target}} < c < B_{\mathrm{walkaway}}, \\[8pt] 0, & c \ge B_{\mathrm{walkaway}}. \end{cases}$$
+      <p>Payments with certificates or gift cards do not count towards \(c\).</p>
+
+      <h4>Preference satisfaction, \(S_{\mathrm{pref}}\)</h4>
+      <p>Each traveler's ranked preferences are scored and weighted by inverse rank, so higher-priority requests
+        count more, then averaged across the \(n\) travelers:</p>
+      $$S_{\mathrm{pref}} = \frac{1}{n} \sum_{i=1}^{n} \frac{\sum_{d \in \mathcal{D}} w_d\, s_{i,d}}{\sum_{d \in \mathcal{D}} w_d}, \qquad w_d = \frac{1}{\tilde r(d)}$$
+      <p>Here \(s_{i,d} \in [0, 1]\) is traveler \(i\)'s satisfaction on dimension \(d\), and \(\tilde r(d)\) is the
+        dimension's rank, with tied dimensions sharing a rank. The dimensions are cabin class, routing, departure
+        time, payment order, seat, checked bags, travel insurance, airline blacklist, meals and date flexibility.</p>
+    </div>
   </details>
 
   <h3>Provider reward</h3>
-  <div class="eq">R<sub>p,a</sub> = min(1, r<sub>a</sub> / R<sub>a</sub>), &nbsp;&nbsp; R<sub>p</sub> = <span class="w">mean of</span> R<sub>p,a</sub> <span class="w">over booked airlines</span></div>
-  <p>Each airline's net revenue <span class="m">r<sub>a</sub></span> is compared with a reference revenue
-    <span class="m">R<sub>a</sub></span> for that user's trip. Discounts lower it; paid services raise it.</p>
-  <details class="more"><summary>Revenue accounting</summary>
-    <p>All active reservations with an airline count towards its revenue before the cap. With several airlines, each
-      is scored against its own full reference and the scores are averaged, so <span class="m">R<sub>p</sub></span>
-      reaches one only if every booked airline does.</p>
+  <div class="eq">$$R_{p,a} = \min\!\left(1, \frac{r_a}{R_a}\right), \qquad R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} R_{p,a}$$</div>
+  <p>Each airline's revenue from the user is compared with a reference revenue for that user's trip, and the
+    provider reward averages this score over the airlines the user booked with.</p>
+  <details class="more"><summary>Provider reward components</summary>
+    <div class="comp">
+      <h4>Booked airlines, \(\mathcal{A}_{\mathrm{book}}\)</h4>
+      <p>The set of distinct airlines the user booked with. With one airline, \(R_p = R_{p,a}\). With no active
+        booking, \(R_p = 0\).</p>
+
+      <h4>Retained revenue, \(r_a\)</h4>
+      <p>Airfare and paid extras from the user's active bookings with airline \(a\), including payments by
+        certificates and gift cards. All of the user's reservations with that airline are summed before the cap.
+        Discounts lower \(r_a\); paid services such as seats, meals, bags and insurance raise it.</p>
+
+      <h4>Reference revenue, \(R_a\)</h4>
+      <p>The airline's highest candidate fare across cabins for the reference trip, times the number of travelers,
+        plus reference charges for seats, meals, baggage and insurance. It is a normalization reference, not the
+        most the user could have paid.</p>
+
+      <h4>Averaging</h4>
+      <p>Each airline is capped at one separately and scored against its own full reference, so \(R_p\) reaches one
+        only when every booked airline does. It measures average normalized airline performance, not total dollar
+        revenue.</p>
+    </div>
   </details>
 </section>
 
@@ -155,7 +200,7 @@
   <h2>What is the best possible?</h2>
   <p>A reward of one is not always reachable: seats and budgets are limited. So for every task we search for the
     best complete allocation of seats to users, maximising a weighted mix of both rewards:</p>
-  <div class="eq">λ · R<sub>u</sub> + (1 − λ) · R<sub>p</sub>, &nbsp;&nbsp; λ ∈ {0, 0.2, 0.4, 0.5, 0.6, 0.8, 1}</div>
+  <div class="eq">$$\lambda\, R_u + (1 - \lambda)\, R_p, \qquad \lambda \in \{0, 0.2, 0.4, 0.5, 0.6, 0.8, 1\}$$</div>
   <p>Each weight gives one point. Sweeping λ from providers-only to users-only traces the <b>MAX</b> line, the
     reference every model is compared with below.</p>
   <details class="more"><summary>Solver details and caveats</summary>
@@ -296,10 +341,10 @@
 </section>
 <footer class="wrap foot"></footer>
 
-<script src="assets/player.js?v=1794452052" defer></script>
-<script src="assets/chart.js?v=1794452052" defer></script>
-<script src="assets/why.js?v=1794452052" defer></script>
-<script src="assets/design.js?v=1794452052" defer></script>
-<script src="assets/tokenomics.js?v=1794452052" defer></script>
+<script src="assets/player.js?v=1794452195" defer></script>
+<script src="assets/chart.js?v=1794452195" defer></script>
+<script src="assets/why.js?v=1794452195" defer></script>
+<script src="assets/design.js?v=1794452195" defer></script>
+<script src="assets/tokenomics.js?v=1794452195" defer></script>
 </body>
 </html>

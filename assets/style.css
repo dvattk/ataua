@@ -279,3 +279,10 @@ details.more .bib { margin: 4px 14px 14px; }
 .d-anim { max-width: 760px; margin-left: auto; margin-right: auto; }
 .d-anim.inventory { max-width: 860px; }
 .d-anim.maxsweep { max-width: 600px; }
+/* KaTeX equations and the component dropdowns */
+.eq { font-style: normal; white-space: normal; }
+.eq .katex-display { margin: 0; }
+.katex { font-size: 1.08em; }
+.comp h4 { font-size: 1rem; font-weight: 700; color: var(--ink); margin: 18px 0 6px; }
+.comp h4:first-child { margin-top: 6px; }
+.comp .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
