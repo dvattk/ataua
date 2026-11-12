@@ -68,7 +68,7 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794459932").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794460288").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
@@ -146,116 +146,129 @@
     });
   });
 
-  // ---------------------------------------------------------------- 2. users: persona -> hidden profile -> emails (18 s, three users)
-  // Drawn in the paper figure's style (light cards, centred headers, Arial) so it sits well under the data figure.
+  // ---------------------------------------------------------------- 2. users: the hidden profile becomes the prose of an email (21 s, three users)
+  // Each profile tag lifts off and lands on the phrase of the email that expresses it.
   const usr = document.querySelector(".d-anim.users");
-  if (usr) player(usr, 18000, (svg) => {
-    svg.setAttribute("viewBox", "0 0 680 250");
-    const P = { ink: "#222222", mid: "#555555", line: "#777777", fill: "#FAFAFA", hard: C.max, hardBg: "#E3E1FB", soft: "#8B86D6" };
-    const F = { "font-family": "Arial, Helvetica, sans-serif" };
-    const T = (p, x, y, s, a = {}) => { const e = el(p, "text", { x, y, "font-size": 12, fill: P.ink, ...F, ...a }, s); e.style.whiteSpace = "pre"; return e; };
-    const frame = (p, x, y, w, h, title) => {
-      el(p, "rect", { x, y, width: w, height: h, rx: 9, fill: P.fill, stroke: P.line, "stroke-width": 1.2 });
-      T(p, x + w / 2, y + 22, title, { "font-size": 13.5, "font-weight": "bold", "text-anchor": "middle" });
-      el(p, "line", { x1: x + 12, y1: y + 33, x2: x + w - 12, y2: y + 33, stroke: P.line, "stroke-width": 0.7 });
-    };
-    const person = (p, x, y, s) => {
-      const q = el(p, "g", { transform: `translate(${x} ${y}) scale(${s})`, fill: P.ink });
-      el(q, "circle", { cx: 0, cy: -7, r: 6 }); el(q, "path", { d: "M-11 12 V7 C-11 -1 11 -1 11 7 V12 Z" });
+  if (usr) player(usr, 21000, (svg) => {
+    svg.setAttribute("viewBox", "0 0 680 270");
+    const K = { tag: "#F1F0F6", tagInk: "#3f3f4a", hard: "#E3E1FB", hardInk: "#3730A3", soft: "#8B86D6" };
+    const T = (p, x, y, str, a = {}) => { const e = el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, str); e.style.whiteSpace = "pre"; return e; };
+    const defs = el(svg, "defs", {});
+    const f = el(defs, "filter", { id: "mailshadow", x: "-10%", y: "-10%", width: "120%", height: "130%" });
+    el(f, "feDropShadow", { dx: 0, dy: 6, stdDeviation: 10, "flood-color": "#1e1b4b", "flood-opacity": 0.08 });
+    const style = (r, kind) => {
+      if (kind === "hard") { r.setAttribute("fill", K.hard); }
+      else if (kind === "soft") { r.setAttribute("fill", "#fff"); r.setAttribute("stroke", K.soft); r.setAttribute("stroke-dasharray", "3 2.5"); }
+      else r.setAttribute("fill", K.tag);
     };
     const USERS = [
-      { n: 1, persona: "Budget-conscious",
-        prof: [["Trip", "IAH ⇄ JFK, Aug 2–6"], ["Travelers", "2"], ["Hard", "No insurance", "hard"], ["Soft", "Layover ≤ 3 h", "soft"], ["Target", "$900"], ["Walk-away", "$1,150"]],
-        subj: "Re: Houston → New York",
-        mail: [[["Two of us, out Aug 2, back Aug 6."]], [["Please, "], ["no travel insurance", "hard"], ["."]], [["Short layovers", "soft"], [" would be nice,"]], [["ideally under three hours."]]] },
-      { n: 2, persona: "Premium traveler",
-        prof: [["Trip", "IAH → JFK, Aug 2"], ["Travelers", "3"], ["Hard", "Insurance", "hard"], ["Soft", "Same itinerary", "soft"], ["Target", "$2,400"], ["Walk-away", "$3,100"]],
-        subj: "Family trip to New York",
-        mail: [[["Booking for the three of us, Aug 2."]], [["Insurance is a must", "hard"], [" for us."]], [["It would be great to be"]], [["on the same flights", "soft"], ["."]]] },
-      { n: 3, persona: "Time-sensitive business",
-        prof: [["Trip", "IAH → JFK, Aug 2"], ["Travelers", "1"], ["Hard", "Insurance", "hard"], ["Soft", "Layover ≤ 2 h", "soft"], ["Target", "$650"], ["Walk-away", "$900"]],
-        subj: "Fwd: NYC client meeting",
-        mail: [[["Just me, one way on Aug 2."]], [["Policy: "], ["insurance on every trip", "hard"], ["."]], [["Short connections", "soft"], [" are fine,"]], [["under two hours if possible."]]] },
+      { who: "User 1", persona: "Budget-conscious", subj: "Re: Houston → New York",
+        tags: [["IAH ⇄ JFK · Aug 2–6"], ["2 travelers"], ["No insurance", "hard"], ["Layover ≤ 3 h", "soft"], ["$900 – $1,150"]],
+        mail: [[["Two of us", 1], [", out "], ["Aug 2, back Aug 6", 0], ["."]],
+               [["Please, "], ["no travel insurance", 2], [" this time."]],
+               [["Short layovers", 3], [" would be nice, ideally under 3 h."]],
+               [["Hoping for "], ["about $900, $1,150 at most", 4], ["."]]] },
+      { who: "User 2", persona: "Premium traveler", subj: "Family trip to New York",
+        tags: [["IAH → JFK · Aug 2"], ["3 travelers"], ["Insurance", "hard"], ["Same itinerary", "soft"], ["$2,400 – $3,100"]],
+        mail: [[["Booking for "], ["the three of us", 1], [" on "], ["Aug 2", 0], ["."]],
+               [["Insurance is a must", 2], [", we never fly without it."]],
+               [["It would be great to be "], ["on the same flights", 3], ["."]],
+               [["Around "], ["$2,400, no more than $3,100", 4], ["."]]] },
+      { who: "User 3", persona: "Time-sensitive business", subj: "Fwd: NYC client meeting",
+        tags: [["IAH → JFK · Aug 2"], ["1 traveler"], ["Insurance", "hard"], ["Layover ≤ 2 h", "soft"], ["$650 – $900"]],
+        mail: [[["Just me", 1], [", one way on "], ["Aug 2", 0], ["."]],
+               [["Policy: "], ["insurance on every trip", 2], ["."]],
+               [["Short connections", 3], [" are fine, under two hours."]],
+               [["Budget is "], ["$650, $900 at the very most", 4], ["."]]] },
     ];
-    const g = el(svg, "g", {});
-    const arrow = (x, y) => el(g, "path", { d: `M${x} ${y} H${x + 20} M${x + 14} ${y - 5} L${x + 20} ${y} L${x + 14} ${y + 5}`, fill: "none", stroke: P.ink, "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    const a1 = arrow(166, 110), a2 = arrow(398, 110);
-    const llm = T(g, 408, 100, "LLM", { "font-size": 10, "text-anchor": "middle", fill: P.mid, "font-weight": "bold" });
-    // legend
-    const keys = el(g, "g", {});
-    el(keys, "rect", { x: 436, y: 214, width: 26, height: 14, rx: 4, fill: P.hardBg });
-    T(keys, 468, 225, "hard constraint", { "font-size": 11, fill: P.mid });
-    el(keys, "rect", { x: 566, y: 214, width: 26, height: 14, rx: 4, fill: "none", stroke: P.soft, "stroke-dasharray": "3 2" });
-    T(keys, 598, 225, "soft preference", { "font-size": 11, fill: P.mid });
-    // which user is on screen
-    const dots = [0, 1, 2].map((i) => el(g, "circle", { cx: 87 + (i - 1) * 14, cy: 184, r: 3.5, fill: P.ink }));
+    const MX = 300, MY = 34, MW = 360, MH = 196;           // email card
     const sets = USERS.map((u) => {
-      const user = el(g, "g", {});
-      frame(user, 14, 30, 146, 172, `User ${u.n}`);
-      el(user, "circle", { cx: 87, cy: 100, r: 26, fill: "#E3E3E3" });
-      person(user, 87, 102, 1.25);
-      T(user, 87, 154, u.persona, { "text-anchor": "middle", fill: P.mid, "font-size": u.persona.length > 18 ? 10.5 : 12 });
-      const prof = el(g, "g", {});
-      frame(prof, 192, 30, 200, 172, "User profile");
-      T(prof, 292, 196, "hidden from the agent", { "font-size": 9.5, "text-anchor": "middle", fill: P.mid, "font-style": "italic" });
-      const rows = u.prof.map(([k, v, kind], i) => {
-        const r = el(prof, "g", {}), y = 84 + i * 19;
-        T(r, 206, y, k, { fill: P.mid, "font-size": 11.5 });
-        const tv = T(r, 378, y, v, { "text-anchor": "end", "font-weight": "bold", "font-size": 11.5 });
-        if (kind) {
-          const w = (tv.getComputedTextLength() || v.length * 6.2) + 12;
-          const pill = el(r, "rect", { x: 378 - w + 6, y: y - 12.5, width: w, height: 17, rx: 5 });
-          if (kind === "hard") pill.setAttribute("fill", P.hardBg);
-          else { pill.setAttribute("fill", "none"); pill.setAttribute("stroke", P.soft); pill.setAttribute("stroke-dasharray", "3 2"); }
-          r.insertBefore(pill, tv);
-        }
-        return r;
+      const root = el(svg, "g", {});
+      // left: who, and the hidden profile as tags
+      T(root, 24, 46, u.who, { "font-weight": 700, fill: C.ink, "font-size": 15 });
+      T(root, 24, 66, u.persona, { fill: C.muted, "font-size": 12.5 });
+      const lock = el(root, "g", { transform: "translate(24 92)" });
+      el(lock, "rect", { x: 0, y: -8, width: 9, height: 7, rx: 1.5, fill: C.muted });
+      el(lock, "path", { d: "M2 -8 V-10.5 a2.5 2.5 0 0 1 5 0 V-8", fill: "none", stroke: C.muted, "stroke-width": 1.3 });
+      T(root, 38, 92, "Profile, hidden from the agent", { fill: C.muted, "font-size": 11, "font-weight": 600, "letter-spacing": ".02em" });
+      const tags = u.tags.map(([label, kind], i) => {
+        const tg = el(root, "g", {}), y = 106 + i * 30;
+        const r = el(tg, "rect", { x: 24, y, width: 10, height: 22, rx: 11 });
+        style(r, kind);
+        const t = T(tg, 36, y + 15.5, label, { "font-size": 12.5, "font-weight": 600, fill: kind === "hard" ? K.hardInk : K.tagInk });
+        const w = (t.getComputedTextLength() || label.length * 7) + 24; r.setAttribute("width", w);
+        return { tg, r, w, x: 24, y, kind, label };
       });
-      const mail = el(g, "g", {});
-      frame(mail, 424, 30, 242, 172, "Email");
-      T(mail, 438, 82, "Subject: " + u.subj, { "font-size": 10.5, fill: P.mid });
-      el(mail, "line", { x1: 436, y1: 92, x2: 654, y2: 92, stroke: P.line, "stroke-width": 0.5, "stroke-dasharray": "2 3" });
-      const lines = u.mail.map((segs, i) => {
-        const lg = el(mail, "g", {}), y = 114 + i * 23;
-        let x = 438;
-        const marks = [];
-        segs.forEach(([s, kind]) => {
-          const t = T(lg, x, y, s, { "font-size": 11.5 });
-          const w = t.getComputedTextLength() || s.length * 6;
-          if (kind) {
-            const m = el(lg, "rect", { x: x - 2, y: y - 12.5, width: w + 4, height: 17, rx: 4 });
-            if (kind === "hard") m.setAttribute("fill", P.hardBg);
-            else { m.setAttribute("fill", "none"); m.setAttribute("stroke", P.soft); m.setAttribute("stroke-dasharray", "3 2"); }
-            lg.insertBefore(m, t); marks.push(m);
+      // right: the email
+      const mail = el(root, "g", {});
+      el(mail, "rect", { x: MX, y: MY, width: MW, height: MH, rx: 14, fill: "#fff", stroke: C.line, filter: "url(#mailshadow)" });
+      el(mail, "circle", { cx: MX + 26, cy: MY + 28, r: 11, fill: C.user });
+      T(mail, MX + 26, MY + 32, u.who.slice(-1), { "font-size": 11, "font-weight": 700, fill: C.max, "text-anchor": "middle" });
+      T(mail, MX + 46, MY + 25, u.subj, { "font-weight": 700, fill: C.ink, "font-size": 13 });
+      T(mail, MX + 46, MY + 41, "to: travel agent", { fill: C.muted, "font-size": 11 });
+      el(mail, "line", { x1: MX + 16, y1: MY + 56, x2: MX + MW - 16, y2: MY + 56, stroke: C.line });
+      const phrases = [];
+      const lines = u.mail.map((segs, li) => {
+        const lg = el(mail, "g", {}), y = MY + 86 + li * 28;
+        let x = MX + 18;
+        segs.forEach(([str, ti]) => {
+          const t = T(lg, x, y, str, { "font-size": 13 });
+          const w = t.getComputedTextLength() || str.length * 6.6;
+          if (ti !== undefined) {
+            const kind = u.tags[ti][1];
+            const hl = el(lg, "rect", { x: x - 3, y: y - 14, width: w + 6, height: 20, rx: 5 });
+            style(hl, kind); lg.insertBefore(hl, t);
+            if (kind === "hard") t.setAttribute("fill", K.hardInk);
+            phrases[ti] = { hl, x: x - 3, y: y - 14, w: w + 6, li };
           }
           x += w;
         });
-        return { lg, marks };
+        return lg;
       });
-      return { user, prof, rows, mail, lines };
+      // flying copies of the tags
+      const ghosts = tags.map(({ label, kind, w }) => {
+        const gg = el(root, "g", {});
+        const r = el(gg, "rect", { x: 0, y: 0, width: w, height: 22, rx: 11 }); style(r, kind);
+        T(gg, 12, 15.5, label, { "font-size": 12.5, "font-weight": 600, fill: kind === "hard" ? K.hardInk : K.tagInk });
+        return gg;
+      });
+      return { root, tags, mail, lines, phrases, ghosts };
     });
-    dots.forEach((d) => g.appendChild(d));                 // keep the dots above the user card
-    const PER = 6000;
+    const PER = 7000, T0 = 1300, STEP = 850, FLY = 650;
     return (t) => {
       const k = Math.min(Math.floor(t / PER), 2), l = t - k * PER;
-      const out = 1 - fade(l, PER - 450, 450);
+      const out = 1 - fade(l, PER - 500, 500);
       sets.forEach((s, i) => {
-        if (i !== k) { [s.user, s.prof, s.mail].forEach((n) => show(n, 0)); return; }
-        show(s.user, fade(l, 0, 400) * out);
-        show(s.prof, fade(l, 500, 400) * out);
-        s.rows.forEach((r, j) => show(r, fade(l, 700 + j * 160, 300)));
-        show(s.mail, fade(l, 2000, 400) * out);
-        s.lines.forEach(({ lg, marks }, j) => { show(lg, fade(l, 2300 + j * 350, 350)); marks.forEach((m) => show(m, fade(l, 3900, 400))); });
+        if (i !== k) { show(s.root, 0); return; }
+        show(s.root, fade(l, 0, 450) * out);
+        s.tags.forEach(({ tg }, j) => {
+          const leave = T0 + j * STEP;
+          show(tg, fade(l, 150 + j * 110, 300) * (1 - 0.65 * fade(l, leave, 200)));
+        });
+        show(s.mail, fade(l, 500, 450));
+        // a line appears when its first phrase lands
+        s.lines.forEach((lg, li) => {
+          const first = Math.min(...s.phrases.map((p, j) => (p && p.li === li ? j : 99)));
+          show(lg, fade(l, T0 + first * STEP + FLY - 250, 300));
+        });
+        s.ghosts.forEach((gg, j) => {
+          const tg = s.tags[j], ph = s.phrases[j], t0 = T0 + j * STEP;
+          const q = clamp01((l - t0) / FLY), e = ease(q);
+          const x0 = tg.x, y0 = tg.y, x1 = ph.x, y1 = ph.y + (ph.y > 0 ? -1 : 0);
+          const cx = (x0 + x1) / 2, cy = Math.min(y0, y1) - 40;          // gentle arc
+          const bx = (1 - e) * (1 - e) * x0 + 2 * (1 - e) * e * cx + e * e * x1;
+          const by = (1 - e) * (1 - e) * y0 + 2 * (1 - e) * e * cy + e * e * y1;
+          gg.setAttribute("transform", `translate(${bx.toFixed(1)} ${by.toFixed(1)})`);
+          show(gg, q > 0 && q < 1 ? 1 - Math.pow(q, 4) : 0);
+          show(ph.hl, fade(l, t0 + FLY - 120, 260));
+        });
       });
-      show(a1, fade(l, 350) * out); show(a2, fade(l, 1700) * out); show(llm, fade(l, 1700) * out);
-      show(keys, fade(l, 3900) * out);
-      dots.forEach((d, i) => d.setAttribute("fill-opacity", i === k ? 1 : 0.2));
     };
   });
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794459932").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794460288").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
