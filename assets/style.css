@@ -369,3 +369,9 @@ ol.algo-lines li.in { padding-left: 1.6em; }
 .algo-c { color: var(--muted); }
 ul.defs { margin: .2em 0 .8em; padding-left: 1.3em; }
 ul.defs li { margin: .3em 0; line-height: 1.6; }
+
+/* results chart: only the active step takes space, so no blank gap above the chart */
+.story { gap: 0; }
+.story-steps { position: relative; margin: 0; }
+.story-steps:has(.step.active) { margin-bottom: 18px; }
+.story-steps .step:not(.active) { position: absolute; top: 0; left: 0; right: 0; }
