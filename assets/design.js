@@ -5,8 +5,8 @@
   const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const C = { ink: "#181825", text: "#2c2c38", muted: "#666674", line: "#e7e5ee", soft: "#f7f6fb", max: "#4F46E5",
-    tint: "#EEF0FF", user: "#E6E3FF", provider: "#FFE9D6", bot: "#34343B", bad: "#B4233C" };
+  const C = { ink: "#181825", text: "#2c2c38", muted: "#666674", line: "#e7e5ee", soft: "#f7f6fb", max: "var(--accent)",
+    tint: "var(--accent-soft)", user: "var(--accent-tint)", provider: "#FFE9D6", bot: "#34343B", bad: "#B4233C" };
 
   function el(p, tag, a, text) {
     const e = document.createElementNS(NS, tag);
@@ -68,7 +68,7 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794460288").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794497701").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
@@ -98,7 +98,7 @@
       const mk = ln.getAttribute("marker-end");
       const [x1, y1, x2, y2] = ["x1", "y1", "x2", "y2"].map((k) => +ln.getAttribute(k));
       const dot = document.createElementNS(NSX, "circle");
-      dot.setAttribute("r", 11); dot.setAttribute("fill", "#4F46E5"); dotLayer.appendChild(dot);
+      dot.setAttribute("r", 11); dot.setAttribute("fill", "var(--accent)"); dotLayer.appendChild(dot);
       return (t, t0, dur, out) => {
         const k = ease(fade(t, t0, dur));
         ln.setAttribute("stroke-dashoffset", (1 - k).toFixed(3));
@@ -151,7 +151,7 @@
   const usr = document.querySelector(".d-anim.users");
   if (usr) player(usr, 21000, (svg) => {
     svg.setAttribute("viewBox", "0 0 680 270");
-    const K = { tag: "#F1F0F6", tagInk: "#3f3f4a", hard: "#E3E1FB", hardInk: "#3730A3", soft: "#8B86D6" };
+    const K = { tag: "#F1F0F6", tagInk: "#3f3f4a", hard: "var(--accent-tint)", hardInk: "var(--accent-deep)", soft: "var(--accent-mid)" };
     const T = (p, x, y, str, a = {}) => { const e = el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, str); e.style.whiteSpace = "pre"; return e; };
     const defs = el(svg, "defs", {});
     const f = el(defs, "filter", { id: "mailshadow", x: "-10%", y: "-10%", width: "120%", height: "130%" });
@@ -268,7 +268,7 @@
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794460288").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794497701").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {

@@ -7,12 +7,15 @@
   --soft: #f7f6fb;
   --bg: #ffffff;
   --max: #4F46E5;          /* accent: MAX line and highlights (indigo) */
-  --gap: rgba(79, 70, 229, .08);
+  --gap: color-mix(in srgb, var(--accent) 8%, transparent);
   --openai: #10A37F;
   --google: #4285F4;
   --anthropic: #D97757;
   --accent: #4F46E5;
   --accent-soft: #EEF0FF;
+  --accent-tint: #E3E1FB;
+  --accent-mid: #8B86D6;
+  --accent-deep: #3730A3;
   --radius: 14px;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -344,3 +347,10 @@ table.attrs td:nth-child(2) { color: var(--muted); }
 
 /* result figures are taller than the method figures: keep them narrower so they fit on screen */
 .story-chart, .why-anim, .tok-chart { max-width: 640px; }
+
+/* palette previews: ?palette=1..5 (default page is unchanged) */
+:root[data-palette="1"] { --accent:#0F766E; --max:#0F766E; --accent-soft:#E7F3F1; --accent-tint:#CDE9E4; --accent-mid:#5FB3A6; --accent-deep:#134E4A; --soft:#F5F8F7; --line:#E2EAE7; }
+:root[data-palette="2"] { --accent:#1D3557; --max:#1D3557; --accent-soft:#EBF0F6; --accent-tint:#D5DFEC; --accent-mid:#7D97B8; --accent-deep:#13243B; --soft:#F6F8FB; --line:#E3E8EF; }
+:root[data-palette="3"] { --accent:#8E3B6B; --max:#8E3B6B; --accent-soft:#F8EEF3; --accent-tint:#EFD8E4; --accent-mid:#C48AAB; --accent-deep:#5E2347; --soft:#FAF7F8; --line:#EEE5EA; }
+:root[data-palette="4"] { --accent:#3A5A40; --max:#3A5A40; --accent-soft:#EEF2EC; --accent-tint:#DCE5D8; --accent-mid:#8BA888; --accent-deep:#283D2C; --soft:#F7F7F2; --line:#E6E6DE; }
+:root[data-palette="5"] { --accent:#6442D3; --max:#6442D3; --accent-soft:#F0ECFB; --accent-tint:#E6E1FA; --accent-mid:#A899D8; --accent-deep:#3D2A8A; --soft:#F8F7FC; --line:#E8E5F2; }
