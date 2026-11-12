@@ -12,7 +12,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794454256">
+<link rel="stylesheet" href="assets/style.css?v=1794459226">
 </head>
 <body>
 
@@ -22,7 +22,7 @@
 </header>
 
 <section class="wrap wide">
-  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794454256">
+  <figure class="fig2-player" data-src="assets/marketplace-anim.json?v=1794459226">
     <div class="stage-wrap"><svg class="stage" role="img" aria-label="Animated diagram: users delegate to user agents, airlines to provider agents; user agents send requests and provider agents respond; more users join; then user agents coordinate privately." xmlns="http://www.w3.org/2000/svg"></svg></div>
     <div class="controls">
       <button type="button" class="play" aria-label="Play">
@@ -95,6 +95,27 @@
       records and unrelated messages. Each inbox is reviewed against the source profile. The structured profile is
       withheld from the agent and kept for scoring.</p>
   </details>
+
+  <h3>How large is the task space?</h3>
+  <p>The inventory has 1,746 flights, each bookable on 14 dates, giving \(F = 1{,}746 \times 14 = 24{,}444\)
+    flight–date options. Each user's booking is described by eight attributes:</p>
+  <table class="attrs">
+    <thead><tr><th>Attribute</th><th>Values</th><th>Count</th></tr></thead>
+    <tbody>
+      <tr><td>Cabin class</td><td>basic economy, economy, business</td><td>3</td></tr>
+      <tr><td>Passengers</td><td>1, 2</td><td>2</td></tr>
+      <tr><td>Checked bags</td><td>0, 1, 2</td><td>3</td></tr>
+      <tr><td>Insurance</td><td>yes, no</td><td>2</td></tr>
+      <tr><td>Seat preference</td><td>aisle, window, none</td><td>3</td></tr>
+      <tr><td>Flight type</td><td>one-way, round-trip</td><td>2</td></tr>
+      <tr><td>Payment style</td><td>single card, single certificate, mixed</td><td>3</td></tr>
+      <tr><td>Membership tier</td><td>regular, silver, gold</td><td>3</td></tr>
+    </tbody>
+  </table>
+  <div class="eq">$$G = 3 \times 2 \times 3 \times 2 \times 3 \times 2 \times 3 \times 3 = 1{,}944$$</div>
+  <div class="eq">$$N_{\text{goal}} = F \times G = 24{,}444 \times 1{,}944 \approx 47.5 \text{ million}$$</div>
+  <p>A task puts \(m\) users on the same reference flight, so the space grows as \(F \times G^{m}\). For a pool of 20
+    users that is about \(10^{70}\) combinations. We evaluate a fixed sample of 100 tasks.</p>
 
   <h3>Supply: scarce or abundant</h3>
   <p>All users draw from the same inventory, so every booking removes a seat for everyone else. Under <b>abundant</b>
@@ -334,10 +355,10 @@
 </section>
 <footer class="wrap foot"></footer>
 
-<script src="assets/player.js?v=1794454256" defer></script>
-<script src="assets/chart.js?v=1794454256" defer></script>
-<script src="assets/why.js?v=1794454256" defer></script>
-<script src="assets/design.js?v=1794454256" defer></script>
-<script src="assets/tokenomics.js?v=1794454256" defer></script>
+<script src="assets/player.js?v=1794459226" defer></script>
+<script src="assets/chart.js?v=1794459226" defer></script>
+<script src="assets/why.js?v=1794459226" defer></script>
+<script src="assets/design.js?v=1794459226" defer></script>
+<script src="assets/tokenomics.js?v=1794459226" defer></script>
 </body>
 </html>
