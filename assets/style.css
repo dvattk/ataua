@@ -337,3 +337,10 @@ table.attrs th { font-weight: 650; color: var(--ink); border-bottom: 1.5px solid
 table.attrs td:last-child, table.attrs th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 table.attrs td:nth-child(2) { color: var(--muted); }
 @media (max-width: 880px) { table.attrs { font-size: .86rem; } table.attrs th, table.attrs td { padding: 6px 4px; } }
+
+/* section names: modest size, one step above subsections */
+.prose h2, .section-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -.01em; }
+@media (max-width: 640px) { .prose h2, .section-title { font-size: 1.35rem; } }
+
+/* result figures are taller than the method figures: keep them narrower so they fit on screen */
+.story-chart, .why-anim, .tok-chart { max-width: 640px; }
