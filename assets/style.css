@@ -286,3 +286,24 @@ details.more .bib { margin: 4px 14px 14px; }
 .comp h4 { font-size: 1rem; font-weight: 700; color: var(--ink); margin: 18px 0 6px; }
 .comp h4:first-child { margin-top: 6px; }
 .comp .katex-display { overflow-x: auto; overflow-y: hidden; padding: 4px 0; }
+
+/* ---------------------------------------------------------------- one typographic system for the whole page
+   Results, Why and Tokenomics now use the same sizes as Overview / Building the market / Scoring. */
+.section-title { font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 800; margin-bottom: .55em; }
+.step h2, .why-text h3 { font-size: 1.2rem; font-weight: 700; margin: 0 0 .5em; letter-spacing: -.01em; }
+.step p, .why-text p, .tok-caption { font-size: 1rem; line-height: 1.65; color: var(--text); }
+.step .n { font: 600 .78rem var(--sans); letter-spacing: .02em; color: var(--muted); margin-bottom: 4px; }
+.step { transform: none; }                                  /* fade only, no sliding text */
+.story { margin-top: 24px; }
+.why, .tok { padding-top: 72px; margin-top: 0; }
+.why-block { margin: 32px 0 48px; }
+.big { margin-bottom: 14px; }
+.big b { font: 800 2.1rem/1.1 var(--sans); letter-spacing: -.02em; color: var(--max); }
+.big b i { font-size: .7em; margin-left: .02em; }
+.big span { margin-top: 4px; font: 500 .95rem var(--sans); text-transform: none; letter-spacing: 0; color: var(--muted); }
+.tok-caption { min-height: 0; }
+@media (max-width: 880px) {
+  .step h2, .why-text h3 { font-size: 1.12rem; }
+  .big b { font-size: 1.8rem; }
+  .why, .tok { padding-top: 56px; }
+}
