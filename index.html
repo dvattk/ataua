@@ -127,9 +127,9 @@
     inventory, so each booking reduces availability for the others.</p>
   <details class="more"><summary>How is scarcity generated?</summary>
     <div class="comp">
-      <p>We apply scarcity once per task, before any agent acts. For dates close to when the users want to travel, we
-        reduce the number of available seats on every flight. The new number of seats is drawn at random for each
-        flight, date and cabin, so some options keep a few seats and many have none left.</p>
+      <p>We apply scarcity once per task, before any agent acts. We reduce the seats on every flight that departs within
+        seven days of a user's travel dates. For each flight, date and cabin, the new number of seats is drawn at
+        random, so some options keep a few seats and many have none left.</p>
       <div class="algo-box">
         <div class="algo-title"><b>Algorithm 1</b> Scarce inventory for one task</div>
         <div class="algo-io"><b>Input:</b> seats \(s_{f,d,c}\) for flight \(f\), date \(d\), cabin \(c\); the task's
