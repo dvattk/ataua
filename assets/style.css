@@ -378,3 +378,10 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 
 /* hero animation: larger than the in-text figures */
 .fig2-player { max-width: 1040px; }
+
+/* authors under the title */
+.authors { margin: 18px 0 6px; font-size: 1.02rem; line-height: 1.7; color: var(--ink); }
+.authors span { white-space: nowrap; }
+.authors sup, .affils sup { font-size: .68em; color: var(--accent); margin-left: 1px; }
+.affils { margin: 0; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+.affils span { white-space: nowrap; margin-right: 12px; }
