@@ -3,19 +3,19 @@
   --ink: #181825;
   --text: #2c2c38;
   --muted: #666674;
-  --line: #e7e5ee;
-  --soft: #f7f6fb;
+  --line: #EEE5EA;
+  --soft: #FAF7F8;
   --bg: #ffffff;
-  --max: #4F46E5;          /* accent: MAX line and highlights (indigo) */
+  --max: #8E3B6B;          /* accent: MAX line and highlights (plum) */
   --gap: color-mix(in srgb, var(--accent) 8%, transparent);
   --openai: #10A37F;
   --google: #4285F4;
   --anthropic: #D97757;
-  --accent: #4F46E5;
-  --accent-soft: #EEF0FF;
-  --accent-tint: #E3E1FB;
-  --accent-mid: #8B86D6;
-  --accent-deep: #3730A3;
+  --accent: #8E3B6B;
+  --accent-soft: #F8EEF3;
+  --accent-tint: #EFD8E4;
+  --accent-mid: #C48AAB;
+  --accent-deep: #5E2347;
   --radius: 14px;
   --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
