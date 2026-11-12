@@ -39,15 +39,14 @@
 <section class="wrap prose">
   <h2>Overview</h2>
   <p>This post covers our paper, <b>A<span class="tau">τ</span>A: A Benchmark for Multi-Agent Interaction in Agentic
-    Economies</b>. We build a simulator for studying multi-agent interaction in a realistic market, using the airline
-    industry as a familiar domain that is easy to study. The market has two kinds of agents: a <b>user agent</b> acts on
-    behalf of a traveler, and a <b>provider agent</b> acts on behalf of an airline.</p>
-  <p>Each user has a persona, preferences and a budget. A population of user agents interacts with the provider agents
-    simultaneously, so many users shop at the same time from the same inventory, and every booking changes what is left
-    for the others. Each provider agent sells its airline's seats under the airline's policy, deciding which offers to
-    make and how much to concede on price.</p>
-  <p>How well do these agents serve both sides when many of them meet in the same market? To answer this, we need a
-    simulator where we can study these interactions at scale. In the next section, we describe how we build it.</p>
+    Economies</b>, a simulator for studying multi-agent interaction in a realistic market.</p>
+  <p>In a real market, decisions do not happen in isolation. Many users with different preferences and budgets compete
+    for limited inventory, while providers decide what to offer and at what price. Each transaction changes what
+    remains available to others, making the outcome for any participant dependent on the decisions of others.</p>
+  <p>With <b>A<span class="tau">τ</span>A</b>, we simulate these dynamics by bringing user agents and provider agents
+    together in a shared market, each acting on behalf of the party they represent. We study how well agents achieve
+    their respective objectives through these interactions and how their individual decisions shape outcomes across
+    the market. In the next section, we describe how the simulator works.</p>
 
   <details class="more"><summary>Cite this work</summary>
     <div class="bib">
