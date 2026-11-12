@@ -68,7 +68,7 @@
   // ---------------------------------------------------------------- 1. data generation: the paper's figure, revealed in its reverse-C order
   // database -> provider inventory -> reference itinerary -> sampled users (assets/datagen.svg is the paper's SVG)
   const inv = document.querySelector(".d-anim.inventory");
-  if (inv) fetch("assets/datagen.svg?v=1794459387").then((r) => r.text()).then((src) => {
+  if (inv) fetch("assets/datagen.svg?v=1794459932").then((r) => r.text()).then((src) => {
     const holder = inv.querySelector("svg");
     const doc = new DOMParser().parseFromString(src, "image/svg+xml").documentElement;
     doc.removeAttribute("width"); doc.removeAttribute("height");
@@ -146,95 +146,116 @@
     });
   });
 
-  // ---------------------------------------------------------------- 2. users and tasks (18 s: three users, 6 s each)
-  // Every user gets their own hidden profile (trip, hard constraints, soft preferences, budget); an LLM then writes
-  // that user's emails from it. The task row shows the five users of one task; the highlighted one is on top.
+  // ---------------------------------------------------------------- 2. users: persona -> hidden profile -> emails (18 s, three users)
+  // Drawn in the paper figure's style (light cards, centred headers, Arial) so it sits well under the data figure.
   const usr = document.querySelector(".d-anim.users");
   if (usr) player(usr, 18000, (svg) => {
-    const g = el(svg, "g", {});
-    const SOFT = "#a5a1d6", PER = 6000;
+    svg.setAttribute("viewBox", "0 0 680 250");
+    const P = { ink: "#222222", mid: "#555555", line: "#777777", fill: "#FAFAFA", hard: C.max, hardBg: "#E3E1FB", soft: "#8B86D6" };
+    const F = { "font-family": "Arial, Helvetica, sans-serif" };
+    const T = (p, x, y, s, a = {}) => { const e = el(p, "text", { x, y, "font-size": 12, fill: P.ink, ...F, ...a }, s); e.style.whiteSpace = "pre"; return e; };
+    const frame = (p, x, y, w, h, title) => {
+      el(p, "rect", { x, y, width: w, height: h, rx: 9, fill: P.fill, stroke: P.line, "stroke-width": 1.2 });
+      T(p, x + w / 2, y + 22, title, { "font-size": 13.5, "font-weight": "bold", "text-anchor": "middle" });
+      el(p, "line", { x1: x + 12, y1: y + 33, x2: x + w - 12, y2: y + 33, stroke: P.line, "stroke-width": 0.7 });
+    };
+    const person = (p, x, y, s) => {
+      const q = el(p, "g", { transform: `translate(${x} ${y}) scale(${s})`, fill: P.ink });
+      el(q, "circle", { cx: 0, cy: -7, r: 6 }); el(q, "path", { d: "M-11 12 V7 C-11 -1 11 -1 11 7 V12 Z" });
+    };
     const USERS = [
-      { persona: "budget conscious",
+      { n: 1, persona: "Budget-conscious",
         prof: [["Trip", "IAH ⇄ JFK, Aug 2–6"], ["Travelers", "2"], ["Hard", "No insurance", "hard"], ["Soft", "Layover ≤ 3 h", "soft"], ["Target", "$900"], ["Walk-away", "$1,150"]],
         subj: "Re: Houston → New York",
-        mail: [["Two of us, out Aug 2, back Aug 6.", null], ["Please no travel insurance", "hard"], ["this time, it's non-negotiable.", "hard"], ["Short layovers would be nice,", "soft"], ["ideally under three hours.", "soft"]] },
-      { persona: "premium traveler",
+        mail: [[["Two of us, out Aug 2, back Aug 6."]], [["Please, "], ["no travel insurance", "hard"], ["."]], [["Short layovers", "soft"], [" would be nice,"]], [["ideally under three hours."]]] },
+      { n: 2, persona: "Premium traveler",
         prof: [["Trip", "IAH → JFK, Aug 2"], ["Travelers", "3"], ["Hard", "Insurance", "hard"], ["Soft", "Same itinerary", "soft"], ["Target", "$2,400"], ["Walk-away", "$3,100"]],
         subj: "Family trip to New York",
-        mail: [["Booking for the three of us, Aug 2.", null], ["Insurance is a must, we never", "hard"], ["fly without it.", "hard"], ["It would be great if we are all", "soft"], ["on the same flights.", "soft"]] },
-      { persona: "time-sensitive",
+        mail: [[["Booking for the three of us, Aug 2."]], [["Insurance is a must", "hard"], [" for us."]], [["It would be great to be"]], [["on the same flights", "soft"], ["."]]] },
+      { n: 3, persona: "Time-sensitive business",
         prof: [["Trip", "IAH → JFK, Aug 2"], ["Travelers", "1"], ["Hard", "Insurance", "hard"], ["Soft", "Layover ≤ 2 h", "soft"], ["Target", "$650"], ["Walk-away", "$900"]],
         subj: "Fwd: NYC client meeting",
-        mail: [["Just me, one-way on Aug 2.", null], ["Company policy: insurance on", "hard"], ["every trip, no exceptions.", "hard"], ["Tight connections are fine,", "soft"], ["under two hours if possible.", "soft"]] },
+        mail: [[["Just me, one way on Aug 2."]], [["Policy: "], ["insurance on every trip", "hard"], ["."]], [["Short connections", "soft"], [" are fine,"]], [["under two hours if possible."]]] },
     ];
-    const arrow = (d) => el(g, "path", { d, fill: "none", stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round", "stroke-linejoin": "round" });
-    const a1 = arrow("M116 108 H134 M128 102 L134 108 L128 114");
-    const a2 = arrow("M342 108 H360 M354 102 L360 108 L354 114");
-    const llm = txt(g, 351, 94, "LLM", { "font-size": 10, "text-anchor": "middle", fill: C.muted, "font-weight": 600 });
+    const g = el(svg, "g", {});
+    const arrow = (x, y) => el(g, "path", { d: `M${x} ${y} H${x + 20} M${x + 14} ${y - 5} L${x + 20} ${y} L${x + 14} ${y + 5}`, fill: "none", stroke: P.ink, "stroke-width": 1.8, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const a1 = arrow(166, 110), a2 = arrow(398, 110);
+    const llm = T(g, 408, 100, "LLM", { "font-size": 10, "text-anchor": "middle", fill: P.mid, "font-weight": "bold" });
+    // legend
     const keys = el(g, "g", {});
-    el(keys, "line", { x1: 380, y1: 200, x2: 400, y2: 200, stroke: C.max, "stroke-width": 2.2 });
-    txt(keys, 406, 204, "hard constraint", { "font-size": 11, fill: C.muted });
-    el(keys, "line", { x1: 504, y1: 200, x2: 524, y2: 200, stroke: SOFT, "stroke-width": 2.2, "stroke-dasharray": "4 3" });
-    txt(keys, 530, 204, "soft preference", { "font-size": 11, fill: C.muted });
+    el(keys, "rect", { x: 436, y: 214, width: 26, height: 14, rx: 4, fill: P.hardBg });
+    T(keys, 468, 225, "hard constraint", { "font-size": 11, fill: P.mid });
+    el(keys, "rect", { x: 566, y: 214, width: 26, height: 14, rx: 4, fill: "none", stroke: P.soft, "stroke-dasharray": "3 2" });
+    T(keys, 598, 225, "soft preference", { "font-size": 11, fill: P.mid });
+    // which user is on screen
+    const dots = [0, 1, 2].map((i) => el(g, "circle", { cx: 87 + (i - 1) * 14, cy: 184, r: 3.5, fill: P.ink }));
     const sets = USERS.map((u) => {
-      const pers = el(g, "g", {});
-      robot(pers, 62, 92, C.user, 1.5);
-      const w = u.persona.length * 6.1 + 18;
-      el(pers, "rect", { x: 62 - w / 2, y: 128, width: w, height: 24, rx: 12, fill: C.tint });
-      txt(pers, 62, 144, u.persona, { "font-size": 11.5, "text-anchor": "middle", fill: C.max, "font-weight": 600 });
+      const user = el(g, "g", {});
+      frame(user, 14, 30, 146, 172, `User ${u.n}`);
+      el(user, "circle", { cx: 87, cy: 100, r: 26, fill: "#E3E3E3" });
+      person(user, 87, 102, 1.25);
+      T(user, 87, 154, u.persona, { "text-anchor": "middle", fill: P.mid, "font-size": u.persona.length > 18 ? 10.5 : 12 });
       const prof = el(g, "g", {});
-      card(prof, 140, 34, 196, 150, { stroke: C.max, "stroke-width": 1.6 });
-      txt(prof, 154, 58, "Profile", { "font-weight": 650, fill: C.max, "font-size": 12.5 });
-      txt(prof, 322, 58, "hidden from agent", { "font-size": 10, fill: C.muted, "text-anchor": "end" });
-      u.prof.forEach(([k, v, kind], i) => {
-        const y = 84 + i * 18.5;
-        txt(prof, 154, y, k, { "font-size": 11.5, fill: C.muted });
-        txt(prof, 322, y, v, { "font-size": 11.5, "text-anchor": "end", fill: C.ink, "font-weight": 600 });
-        if (kind) el(prof, "line", { x1: 322 - v.length * 6.05, y1: y + 4, x2: 322, y2: y + 4, stroke: kind === "hard" ? C.max : SOFT, "stroke-width": 2, "stroke-dasharray": kind === "soft" ? "4 3" : "none" });
+      frame(prof, 192, 30, 200, 172, "User profile");
+      T(prof, 292, 196, "hidden from the agent", { "font-size": 9.5, "text-anchor": "middle", fill: P.mid, "font-style": "italic" });
+      const rows = u.prof.map(([k, v, kind], i) => {
+        const r = el(prof, "g", {}), y = 84 + i * 19;
+        T(r, 206, y, k, { fill: P.mid, "font-size": 11.5 });
+        const tv = T(r, 378, y, v, { "text-anchor": "end", "font-weight": "bold", "font-size": 11.5 });
+        if (kind) {
+          const w = (tv.getComputedTextLength() || v.length * 6.2) + 12;
+          const pill = el(r, "rect", { x: 378 - w + 6, y: y - 12.5, width: w, height: 17, rx: 5 });
+          if (kind === "hard") pill.setAttribute("fill", P.hardBg);
+          else { pill.setAttribute("fill", "none"); pill.setAttribute("stroke", P.soft); pill.setAttribute("stroke-dasharray", "3 2"); }
+          r.insertBefore(pill, tv);
+        }
+        return r;
       });
       const mail = el(g, "g", {});
-      card(mail, 366, 34, 294, 150);
-      txt(mail, 380, 58, u.subj, { "font-weight": 650, fill: C.ink, "font-size": 12.5 });
-      el(mail, "line", { x1: 380, y1: 68, x2: 646, y2: 68, stroke: C.line });
-      const lines = u.mail.map(([s, k], i) => {
-        const lg = el(mail, "g", {}), y = 90 + i * 19;
-        txt(lg, 380, y, s, { "font-size": 12 });
-        const ul = k ? el(lg, "line", { x1: 380, y1: y + 4, x2: 380, y2: y + 4, stroke: k === "hard" ? C.max : SOFT, "stroke-width": 2.2, "stroke-dasharray": k === "soft" ? "4 3" : "none" }) : null;
-        return { lg, ul, w: s.length * 5.9 };
+      frame(mail, 424, 30, 242, 172, "Email");
+      T(mail, 438, 82, "Subject: " + u.subj, { "font-size": 10.5, fill: P.mid });
+      el(mail, "line", { x1: 436, y1: 92, x2: 654, y2: 92, stroke: P.line, "stroke-width": 0.5, "stroke-dasharray": "2 3" });
+      const lines = u.mail.map((segs, i) => {
+        const lg = el(mail, "g", {}), y = 114 + i * 23;
+        let x = 438;
+        const marks = [];
+        segs.forEach(([s, kind]) => {
+          const t = T(lg, x, y, s, { "font-size": 11.5 });
+          const w = t.getComputedTextLength() || s.length * 6;
+          if (kind) {
+            const m = el(lg, "rect", { x: x - 2, y: y - 12.5, width: w + 4, height: 17, rx: 4 });
+            if (kind === "hard") m.setAttribute("fill", P.hardBg);
+            else { m.setAttribute("fill", "none"); m.setAttribute("stroke", P.soft); m.setAttribute("stroke-dasharray", "3 2"); }
+            lg.insertBefore(m, t); marks.push(m);
+          }
+          x += w;
+        });
+        return { lg, marks };
       });
-      return { pers, prof, mail, lines };
+      return { user, prof, rows, mail, lines };
     });
-    const task = el(g, "g", {});
-    el(task, "rect", { x: 20, y: 222, width: 640, height: 66, rx: 12, fill: C.soft, stroke: C.line });
-    const NAMES = ["budget conscious", "premium traveler", "time-sensitive", "price comparison", "flexible traveler"];
-    const bots = NAMES.map((n, i) => {
-      const b = el(task, "g", {}), x = 160 + i * 86;
-      robot(b, x, 252, C.user, 0.9);
-      txt(b, x, 280, n, { "font-size": 9.5, "text-anchor": "middle", fill: C.muted });
-      return b;
-    });
+    dots.forEach((d) => g.appendChild(d));                 // keep the dots above the user card
+    const PER = 6000;
     return (t) => {
-      const k = Math.floor(t / PER), l = t % PER;
+      const k = Math.min(Math.floor(t / PER), 2), l = t - k * PER;
       const out = 1 - fade(l, PER - 450, 450);
       sets.forEach((s, i) => {
-        if (i !== k) { show(s.pers, 0); show(s.prof, 0); show(s.mail, 0); return; }
-        show(s.pers, fade(l, 0, 450) * out);
-        show(s.prof, fade(l, 500) * out);
-        show(s.mail, fade(l, 1700) * out);
-        s.lines.forEach(({ lg, ul, w }, j) => { show(lg, fade(l, 1900 + j * 300)); if (ul) ul.setAttribute("x2", (380 + w * fade(l, 3600 + j * 250, 450)).toFixed(1)); });
+        if (i !== k) { [s.user, s.prof, s.mail].forEach((n) => show(n, 0)); return; }
+        show(s.user, fade(l, 0, 400) * out);
+        show(s.prof, fade(l, 500, 400) * out);
+        s.rows.forEach((r, j) => show(r, fade(l, 700 + j * 160, 300)));
+        show(s.mail, fade(l, 2000, 400) * out);
+        s.lines.forEach(({ lg, marks }, j) => { show(lg, fade(l, 2300 + j * 350, 350)); marks.forEach((m) => show(m, fade(l, 3900, 400))); });
       });
-      show(a1, fade(l, 300) * out);
-      show(a2, fade(l, 1400) * out);
-      show(llm, fade(l, 1400) * out);
-      show(keys, fade(t, 4200));
-      show(task, fade(t, 600));
-      bots.forEach((b, i) => show(b, i === k ? 1 : 0.35));
+      show(a1, fade(l, 350) * out); show(a2, fade(l, 1700) * out); show(llm, fade(l, 1700) * out);
+      show(keys, fade(l, 3900) * out);
+      dots.forEach((d, i) => d.setAttribute("fill-opacity", i === k ? 1 : 0.2));
     };
   });
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794459387").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794459932").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
