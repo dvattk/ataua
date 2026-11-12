@@ -375,3 +375,6 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .story-steps { position: relative; margin: 0; }
 .story-steps:has(.step.active) { margin-bottom: 18px; }
 .story-steps .step:not(.active) { position: absolute; top: 0; left: 0; right: 0; }
+
+/* hero animation: larger than the in-text figures */
+.fig2-player { max-width: 1040px; }
