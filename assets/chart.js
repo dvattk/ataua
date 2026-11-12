@@ -232,9 +232,14 @@
       elapsed += now - last;
       if (elapsed >= HOLD[step - 1]) { elapsed = 0; go(step === N ? 1 : step + 1); }
     }
+    segFills.forEach((f, i) => { f.style.width = (i < step - 1 ? 100 : i === step - 1 ? Math.min(100, (elapsed / HOLD[step - 1]) * 100) : 0) + "%"; });
+    if (timeEl) timeEl.textContent = `${Math.max(step, 1)} / ${N}`;
     last = now;
     requestAnimationFrame(clock);
   }
+  const segFills = [...box.querySelectorAll(".seg-i i")], timeEl = box.querySelector(".chart-controls .time");
+  box.querySelectorAll(".seg-i").forEach((b) => b.addEventListener("click", () => { elapsed = 0; go(+b.dataset.goto); }));
+  box.querySelector(".chart-controls .play").addEventListener("click", () => { userPaused = playing; setPlaying(!playing); });
   function setPlaying(on) {
     playing = on; box.classList.toggle("playing", on);
   }
