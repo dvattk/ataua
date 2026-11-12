@@ -95,7 +95,6 @@
       txt(c, 418, y + 39, sub, { "font-size": 11.5, fill: C.muted });
       txt(c, 646, y + 21, fare, { "text-anchor": "end", "font-weight": 650, fill: C.ink, "font-family": "var(--mono)", "font-size": 12.5 });
       const seatG = el(c, "g", {});
-      for (let s = 0; s < seats; s++) el(seatG, "rect", { x: 646 - (seats - s) * 11 + 2, y: y + 31, width: 8, height: 10, rx: 2, fill: C.user, stroke: C.max, "stroke-width": 1 });
       return { c, seatG };
     });
     const stat = el(g, "g", {});
@@ -301,7 +300,7 @@
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
-  if (mx) fetch("assets/chart-data.json?v=1794450941").then((r) => r.json()).then((data) => {
+  if (mx) fetch("assets/chart-data.json?v=1794451665").then((r) => r.json()).then((data) => {
     const pts = data.max.scarce.slice().sort((a, b) => a.lam - b.lam);
     const dots = data.points.filter((p) => p.supply === "scarce" && p.sym);
     player(mx, 12000, (svg) => {
