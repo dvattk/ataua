@@ -419,3 +419,4 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .hero .logos img[alt="Sierra"] { height: 26px; }
 .hero .logos img[alt="Mercor"] { height: 26px; }
 .hero .logos img[alt="Mila"] { height: 30px; }
+.hero .logos img { filter: none; opacity: 1; }
