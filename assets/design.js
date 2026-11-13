@@ -143,7 +143,7 @@
   // Each profile tag lifts off and lands on the phrase of the email that expresses it.
   const usr = document.querySelector(".d-anim.users");
   if (usr) player(usr, 14000, (svg) => {
-    svg.setAttribute("viewBox", "0 0 680 272");
+    svg.setAttribute("viewBox", "0 0 680 300");
     const K = { tag: "#F1F0F6", tagInk: "#3f3f4a", hard: "var(--accent-tint)", hardInk: "var(--accent-deep)", soft: "var(--accent-mid)" };
     const T = (p, x, y, str, a = {}) => { const e = el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, str); e.style.whiteSpace = "pre"; return e; };
     const defs = el(svg, "defs", {});
@@ -242,6 +242,13 @@
         return gg;
       });
       return { root, tags, mail, lines, phrases, ghosts };
+    });
+    // key: filled tag = hard constraint, dashed tag = soft preference
+    const key = el(svg, "g", {});
+    [["hard", "Hard constraint: must be satisfied"], ["soft", "Soft preference: allows compromise"]].forEach(([kind, label], i) => {
+      const x = 24 + i * 250;
+      const r = el(key, "rect", { x, y: 280, width: 26, height: 14, rx: 7 }); style(r, kind);
+      T(key, x + 34, 291.5, label, { "font-size": 12, fill: C.muted });
     });
     const PER = 7000, T0 = 1300, STEP = 850, FLY = 650;
     return (t) => {
