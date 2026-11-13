@@ -426,3 +426,13 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .d-anim > .anim-controls { margin: 10px -10px -10px; }
 .why-anim > .anim-controls { margin: 8px -8px -8px; }
 .anim-controls .scrub .knob { opacity: 1; }
+
+/* step bar above each animation: play/pause, then one segment per step (assets/anim-player.js) */
+.anim-steps { padding: 4px 4px 8px; border: 0; background: none; align-items: flex-start; }
+.anim-steps .segs { gap: 8px; min-width: 0; }
+.anim-steps .seg-i { height: auto; min-width: 0; padding: 14px 0 0; text-align: left; }
+.anim-steps .seg-i::before, .anim-steps .seg-i i { top: 4px; }
+.anim-steps .seg-i span { display: block; font: 500 .74rem var(--sans); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.anim-steps .seg-i.on span { color: var(--ink); }
+.anim-steps .seg-i:hover span { color: var(--ink); }
+.anim-steps .play { margin-top: -4px; }

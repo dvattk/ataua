@@ -157,7 +157,7 @@
         b.ghost.setAttribute("opacity", t > 10500 && x > lo + 0.01 ? 1 : 0);                // the old value stays marked
       });
     };
-  });
+  }, 1, [[0, "What the agents did"], [6500, "A coordinated allocation"]]);
 
   // ---------------------------------------------------------------- 2. a provider agent at its computer
   // The provider agent sits at a computer. For each booking request on screen, it moves the mouse straight to
@@ -269,7 +269,7 @@
       const n = live ? k + (u > 2500 ? 1 : 0) : 3;
       count.textContent = !live ? "Every booking got the full 30% discount." : n ? `Bookings at the full 30%: ${n} of ${n}` : "";
     };
-  });
+  }, 1, [[0, "Request 1"], [3600, "Request 2"], [7200, "Request 3"], [10800, "Result"]]);
 
   // ---------------------------------------------------------------- copy BibTeX
   const copy = document.querySelector(".bib .copy");
