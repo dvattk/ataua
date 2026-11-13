@@ -288,13 +288,12 @@
 
   <div class="tok-grid">
     <div class="tok-side">
-      <p class="tok-caption">Users may run their agents only now and then, but a provider agent serves many users, so small
-        differences in cost per request add up. We fix the users' model and compare the inference cost per task of each
-        provider model with the reward of both sides, under scarce and abundant supply. Each dot is one provider model.</p>
-      <p class="tok-caption">Provider inference cost is about <b>twice as high</b> under scarce supply as under abundant
-        supply. Gemini Flash providers are the cheapest in every group, with no consistent loss in either reward. With
-        Astra users, both Gemini Flash providers beat Opus 5 on both rewards at a much lower cost. A higher provider
-        inference cost does not consistently bring a higher reward for either side.</p>
+      <p class="tok-caption">A provider agent serves a whole population of users, so every extra cent per conversation is
+        multiplied many times. A cheaper model would save a lot, but it may also sell worse. To test this, we keep the
+        users' model fixed and compare each provider model's inference cost per task with its reward, under scarce and
+        abundant supply. <b>A higher cost does not consistently buy a higher reward, for either side.</b> Gemini Flash
+        providers are the cheapest in every group, with no consistent loss in either reward, and with Astra users both
+        Gemini Flash providers beat Opus 5 on both rewards at a much lower cost.</p>
     </div>
     <div class="tok-chart">
       <div class="tok-controls">
