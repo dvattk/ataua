@@ -385,3 +385,15 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .authors sup, .affils sup { font-size: .68em; color: var(--accent); margin-left: 1px; }
 .affils { margin: 0; font-size: .88rem; line-height: 1.6; color: var(--muted); }
 .affils span { white-space: nowrap; margin-right: 12px; }
+
+/* hero, centred: big name, subtitle, authors, affiliations */
+.hero { text-align: center; padding-top: 88px; padding-bottom: 40px; }
+.hero h1 { display: flex; flex-direction: column; align-items: center; gap: 14px; margin: 0 auto 30px; }
+.hero h1 .name { font-size: clamp(3.4rem, 9vw, 5.6rem); font-weight: 800; letter-spacing: -.04em; line-height: 1; color: var(--accent); }
+.hero h1 .sub { font-size: clamp(1.4rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: var(--ink); max-width: 760px; }
+.hero .authors { max-width: 860px; margin: 0 auto 12px; font-size: 1.02rem; line-height: 1.85; }
+.hero .affils { max-width: 860px; margin: 0 auto; font-size: .86rem; }
+.hero .affils span { margin: 0 7px; }
+@media (max-width: 640px) { .hero { padding-top: 48px; } .hero h1 { gap: 10px; } }
+.hero h1 .name .tau { margin: 0 -.02em 0 -.06em; letter-spacing: 0; }
+.hero h1 .sub, .hero .authors, .hero .affils { text-wrap: balance; }
