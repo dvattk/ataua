@@ -103,8 +103,8 @@
     <thead><tr><th>Attribute</th><th>Values</th><th>Count</th></tr></thead>
     <tbody>
       <tr><td>Cabin class</td><td>basic economy, economy, business</td><td>3</td></tr>
-      <tr><td>Passengers</td><td>1, 2</td><td>2</td></tr>
-      <tr><td>Checked bags</td><td>0, 1, 2</td><td>3</td></tr>
+      <tr><td>Passengers</td><td>1, 2, 3</td><td>3</td></tr>
+      <tr><td>Checked bags per passenger</td><td>0, 1, 2, 3, 4</td><td>5</td></tr>
       <tr><td>Insurance</td><td>yes, no</td><td>2</td></tr>
       <tr><td>Seat preference</td><td>aisle, window, none</td><td>3</td></tr>
       <tr><td>Flight type</td><td>one-way, round-trip</td><td>2</td></tr>
@@ -112,10 +112,10 @@
       <tr><td>Membership tier</td><td>regular, silver, gold</td><td>3</td></tr>
     </tbody>
   </table>
-  <div class="eq">$$G = 3 \times 2 \times 3 \times 2 \times 3 \times 2 \times 3 \times 3 = 1{,}944$$</div>
-  <div class="eq">$$N_{\text{goal}} = F \times G = 24{,}444 \times 1{,}944 \approx 47.5 \text{ million}$$</div>
+  <div class="eq">$$G = 3 \times 3 \times 5 \times 2 \times 3 \times 2 \times 3 \times 3 = 4{,}860$$</div>
+  <div class="eq">$$N_{\text{goal}} = F \times G = 24{,}444 \times 4{,}860 \approx 118.8 \text{ million}$$</div>
   <p>A task puts \(m\) users on the same reference flight, so the space grows as \(F \times G^{m}\). For a pool of 20
-    users that is about \(10^{70}\) combinations. We evaluate a fixed sample of 100 tasks.</p>
+    users that is about \(10^{78}\) combinations. We evaluate a fixed sample of 100 tasks.</p>
   </div>
   </details>
 
