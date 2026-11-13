@@ -4,7 +4,7 @@
   const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
   const clamp01 = (x) => Math.min(Math.max(x, 0), 1);
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const C = { ink: "#181825", muted: "#666674", line: "#e7e5ee", soft: "#f7f6fb", max: "var(--accent)", a: "#4285F4", b: "#D97757" };
+  const C = { ink: "#181825", muted: "#666674", line: "#e7e5ee", soft: "#f7f6fb", max: "var(--accent)", a: "#4285F4", b: "#16A34A" };
 
   function el(parent, tag, attrs, text) {
     const e = document.createElementNS(NS, tag);
@@ -49,7 +49,7 @@
   }
 
   // ---------------------------------------------------------------- shared pieces
-  const TINT = { [C.a]: "#E8F0FE", [C.b]: "#FBEDE6" };
+  const TINT = { [C.a]: "#E8F0FE", [C.b]: "#E3F5E9" };
   // the Figure 2 robot, drawn small: head, eyes, mouth, antenna; headset for provider agents
   // colours match Figure 2: dark outline, lavender for user agents, pink for provider agents
   const BOT = { ink: "#34343B", user: "var(--accent-tint)", provider: "#FFE9D6" };
@@ -175,92 +175,101 @@
     };
   });
 
-  // ---------------------------------------------------------------- 2. a provider agent and its levers
-  // The provider agent sits among the levers it could pull. Each time a user agent comes to book, it looks from
-  // lever to lever, can't settle, and pulls the discount to the 30% maximum; the discount flies to the user.
+  // ---------------------------------------------------------------- 2. a provider agent at its computer
+  // The provider agent sits at a computer. For each booking request on screen, it moves the mouse straight to
+  // the Discount lever (always the 30% maximum) and clicks; hold the fare, another cabin and paid add-ons are
+  // never clicked. The on-screen cursor follows the mouse on the desk.
   const disc = document.querySelector(".why-anim.discount");
-  if (disc) player(disc, 18000, (svg) => {           // played 1.5x slower than its 12 s timeline
+  if (disc) player(disc, 13500, (svg) => {
     svg.setAttribute("viewBox", "0 0 480 300");
     const g = el(svg, "g", { "font-family": "Inter, Arial, sans-serif" });
     chip(g, 14, 12, "WHICH LEVER TO PULL?").fit();
-    const AG = [240, 152];
-    const W = 156, H = 52;
-    const LEVERS = [
-      { name: "Hold the fare", x: 14, y: 50, icon: "lock" },
-      { name: "Discount", x: 310, y: 50, icon: "$", bar: true },
-      { name: "Another cabin", x: 14, y: 206, icon: "seat" },
-      { name: "Paid add-ons", x: 310, y: 206, icon: "+" },
-    ];
-    const levers = LEVERS.map((L) => {
-      const cx = L.x + W / 2, cy = L.y + H / 2;
-      const link = el(g, "line", { x1: AG[0], y1: AG[1], x2: cx, y2: cy, stroke: C.line, "stroke-width": 1.6, "stroke-dasharray": "4 4" });
-      const r = el(g, "rect", { x: L.x, y: L.y, width: W, height: H, rx: 13, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
-      // icon badge
-      const ix = L.x + 24, iy = L.y + H / 2;
-      const badge = el(g, "circle", { cx: ix, cy: iy, r: 13, fill: C.soft });
-      if (L.icon === "$") el(g, "text", { x: ix, y: iy + 5, "text-anchor": "middle", "font-size": 15, "font-weight": 800, fill: C.max }, "$");
-      if (L.icon === "+") el(g, "text", { x: ix, y: iy + 6, "text-anchor": "middle", "font-size": 18, "font-weight": 700, fill: C.muted }, "+");
-      if (L.icon === "lock") {
-        el(g, "path", { d: `M ${ix - 4} ${iy - 1} V ${iy - 4} A 4 4 0 0 1 ${ix + 4} ${iy - 4} V ${iy - 1}`, fill: "none", stroke: C.muted, "stroke-width": 1.8 });
-        el(g, "rect", { x: ix - 6, y: iy - 1, width: 12, height: 9, rx: 2, fill: C.muted });
+    const MONO = "JetBrains Mono, monospace";
+    const DESK = 262;
+    // desk, monitor stand, monitor
+    el(g, "line", { x1: 14, y1: DESK, x2: 466, y2: DESK, stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round" });
+    el(g, "rect", { x: 296, y: 236, width: 24, height: 20, fill: "#dcd9e2" });
+    el(g, "rect", { x: 270, y: 254, width: 76, height: 8, rx: 3, fill: "#cfcbd8" });
+    el(g, "rect", { x: 152, y: 40, width: 312, height: 198, rx: 12, fill: BOT.ink });
+    const SX = 162, SY = 50, SW = 292, SH = 178;
+    el(g, "rect", { x: SX, y: SY, width: SW, height: SH, rx: 6, fill: "#fff" });
+    // screen: the booking request and the quote
+    robot(g, SX + 20, SY + 22, BOT.user, 0.55);
+    el(g, "text", { x: SX + 38, y: SY + 17, "font-size": 9.5, fill: C.muted }, "Booking request");
+    const reqT = el(g, "text", { x: SX + 38, y: SY + 32, "font-size": 11.5, "font-weight": 700, fill: C.ink });
+    el(g, "text", { x: SX + SW - 10, y: SY + 17, "text-anchor": "end", "font-size": 9.5, fill: C.muted }, "Quote");
+    const oldP = el(g, "text", { "font-size": 10.5, "font-family": MONO, fill: C.muted, "text-anchor": "end" });
+    const strike = el(g, "line", { stroke: C.muted, "stroke-width": 1.2 });
+    const newP = el(g, "text", { x: SX + SW - 10, y: SY + 33, "text-anchor": "end", "font-size": 12.5, "font-weight": 700, "font-family": MONO, fill: C.ink });
+    el(g, "line", { x1: SX, y1: SY + 44, x2: SX + SW, y2: SY + 44, stroke: C.line, "stroke-width": 1.2 });
+    // screen: four levers, as buttons
+    const CW = 132, CH = 50, CX = [SX + 10, SX + 150], CY = [SY + 56, SY + 116];
+    const LEV = [["Hold the fare", "lock", 0, 0], ["Discount 30%", "$", 1, 0], ["Another cabin", "seat", 0, 1], ["Paid add-ons", "+", 1, 1]];
+    const btns = LEV.map(([name, icon, c, r]) => {
+      const x = CX[c], y = CY[r], ix = x + 20, iy = y + CH / 2;
+      const rect = el(g, "rect", { x, y, width: CW, height: CH, rx: 10, fill: "#fff", stroke: C.line, "stroke-width": 1.5 });
+      const badge = el(g, "circle", { cx: ix, cy: iy, r: 11, fill: C.soft });
+      if (icon === "$") el(g, "text", { x: ix, y: iy + 4.5, "text-anchor": "middle", "font-size": 13, "font-weight": 800, fill: C.max }, "$");
+      if (icon === "+") el(g, "text", { x: ix, y: iy + 5.5, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: C.muted }, "+");
+      if (icon === "lock") {
+        el(g, "path", { d: `M ${ix - 3.5} ${iy - 1} V ${iy - 3.5} A 3.5 3.5 0 0 1 ${ix + 3.5} ${iy - 3.5} V ${iy - 1}`, fill: "none", stroke: C.muted, "stroke-width": 1.6 });
+        el(g, "rect", { x: ix - 5, y: iy - 1, width: 10, height: 7.5, rx: 2, fill: C.muted });
       }
-      if (L.icon === "seat") {
-        el(g, "rect", { x: ix - 5, y: iy - 7, width: 10, height: 8, rx: 2.5, fill: "none", stroke: C.muted, "stroke-width": 1.6 });
-        el(g, "rect", { x: ix - 6.5, y: iy + 1, width: 13, height: 5, rx: 2, fill: "none", stroke: C.muted, "stroke-width": 1.6 });
+      if (icon === "seat") {
+        el(g, "rect", { x: ix - 4, y: iy - 6, width: 8, height: 7, rx: 2, fill: "none", stroke: C.muted, "stroke-width": 1.5 });
+        el(g, "rect", { x: ix - 5.5, y: iy + 1, width: 11, height: 4.5, rx: 2, fill: "none", stroke: C.muted, "stroke-width": 1.5 });
       }
-      el(g, "text", { x: L.x + 46, y: L.y + (L.bar ? 22 : 31), "font-size": 13, "font-weight": 700, fill: C.ink }, L.name);
-      let fill = null, pct = null;
-      if (L.bar) {
-        el(g, "rect", { x: L.x + 46, y: L.y + 31, width: 70, height: 7, rx: 3.5, fill: C.soft });
-        fill = el(g, "rect", { x: L.x + 46, y: L.y + 31, height: 7, rx: 3.5, fill: C.max });
-        pct = el(g, "text", { x: L.x + 124, y: L.y + 38, "font-size": 11, "font-weight": 700, "font-family": "JetBrains Mono, monospace", fill: C.max });
-      }
-      return { link, r, badge, fill, pct };
+      const label = el(g, "text", { x: x + 37, y: iy + 4, "font-size": 11, "font-weight": 700, fill: C.ink }, name);
+      return { rect, badge, label, cx: x + CW / 2, cy: iy };
     });
-    robot(g, AG[0], AG[1] - 4, BOT.provider, 1.35, true);
-    el(g, "text", { x: AG[0], y: AG[1] + 40, "text-anchor": "middle", "font-size": 12, "font-weight": 700, fill: C.ink }, "Provider agent");
-    // the "?" while it hesitates
-    const think = el(g, "g", {});
-    el(think, "circle", { cx: AG[0] + 34, cy: AG[1] - 44, r: 15, fill: "#fff", stroke: C.max, "stroke-width": 1.8 });
-    const qmark = el(think, "text", { x: AG[0] + 34, y: AG[1] - 37, "text-anchor": "middle", "font-size": 20, "font-weight": 800, fill: C.max }, "?");
-    // the user agent who comes to book, and the discount that flies to it
-    const user = el(g, "g", {});
-    robot(user, 0, 0, BOT.user, 0.85);
-    const tag = el(g, "g", {});
-    el(tag, "rect", { x: -22, y: -11, width: 44, height: 22, rx: 11, fill: C.max });
-    el(tag, "text", { x: 0, y: 4.5, "text-anchor": "middle", "font-size": 12, "font-weight": 800, fill: "#fff" }, "−30%");
-    const takeaway = el(g, "text", { x: 240, y: 290, "text-anchor": "middle", "font-size": 13, "font-weight": 700, fill: C.ink }, "Every booking got the full 30% discount.");
-    const LOOK = [0, 2, 3, 0, 2, 3];
-    const B = 3200, SPOT = [138, 152], DISC = [310 + 78, 50 + 66], SLOW = 1.5;
-    return (tt) => {
-      const t = tt / SLOW;
+    const D = btns[1];
+    const booked = el(g, "g", {});
+    el(booked, "rect", { x: SX + 168, y: SY + 9, width: 52, height: 19, rx: 9.5, fill: "var(--accent-soft)" });
+    el(booked, "text", { x: SX + 194, y: SY + 22, "text-anchor": "middle", "font-size": 9.5, "font-weight": 700, fill: C.max }, "Booked");
+    const ring = el(g, "circle", { fill: "none", stroke: C.max, "stroke-width": 2 });
+    const cur = el(g, "g", {});
+    el(cur, "path", { d: "M0 0 L0 15 L4 11.5 L6.6 17.5 L9.2 16.4 L6.7 10.6 L11.5 10.6 Z", fill: C.ink, stroke: "#fff", "stroke-width": 1.3, "stroke-linejoin": "round" });
+    // the provider agent at the desk, with its arm on the mouse
+    robot(g, 74, 214, BOT.provider, 1.5, true);
+    el(g, "text", { x: 74, y: 282, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "Provider agent");
+    const arm = el(g, "path", { fill: "none", stroke: BOT.ink, "stroke-width": 2.4, "stroke-linecap": "round" });
+    const mouse = el(g, "g", {});
+    el(mouse, "rect", { x: -9, y: -13, width: 18, height: 13, rx: 7, fill: "#fff", stroke: BOT.ink, "stroke-width": 2 });
+    el(mouse, "line", { x1: 0, y1: -13, x2: 0, y2: -6.5, stroke: BOT.ink, "stroke-width": 1.5 });
+    const btnL = el(mouse, "path", { d: "M -8 -6.5 V -9 A 7 6 0 0 1 -0.8 -12.2 V -6.5 Z", fill: "none" });
+    const count = el(g, "text", { x: 314, y: 285, "text-anchor": "middle", "font-size": 12.5, "font-weight": 700, fill: C.ink });
+    const REQ = [["1 passenger · economy", 420], ["2 passengers · business", 1860], ["3 passengers · basic economy", 510]];
+    const fmt = (v) => "$" + Math.round(v).toLocaleString("en-US");
+    const B = 3600, REST = [SX + 150, SY + 108], TGT = [D.cx + 22, D.cy + 3], M0 = [138, DESK];
+    return (t) => {
       const k = Math.min(Math.floor(t / B), 2), u = t - k * B, live = t < 3 * B;
-      let look = -1;
-      if (live && u > 700 && u < 1900) look = LOOK[Math.floor((u - 700) / 200) % LOOK.length];
-      if (live && u >= 1900 && u < 2700) look = 1;
-      levers.forEach((L, i) => {
-        const on = i === look;
-        L.r.setAttribute("stroke", on ? C.max : C.line); L.r.setAttribute("stroke-width", on ? 2.4 : 1.5);
-        L.link.setAttribute("stroke", on ? C.max : C.line);
-        L.badge.setAttribute("fill", on ? "var(--accent-soft)" : C.soft);
-      });
-      think.setAttribute("opacity", live && u > 600 && u < 1900 ? 1 : 0);
-      qmark.setAttribute("transform", `rotate(${(Math.sin(t / 150) * 22).toFixed(1)} ${AG[0] + 34} ${AG[1] - 44})`);
-      const f = live ? kf([[0, 0], [1900, 0], [2250, 1], [3000, 1], [3200, 0]], u) : 0;
-      levers[1].fill.setAttribute("width", 70 * f);
-      levers[1].pct.textContent = f > 0.02 ? `${Math.round(30 * f)}%` : "";
-      // user walks in from the left, waits, takes the discount and walks back out
-      const [ux, uy] = live ? kf([[0, [-30, 152]], [600, SPOT], [2700, SPOT], [3150, [-30, 152]]], u) : [-60, 152];
-      user.setAttribute("transform", `translate(${ux} ${uy})`);
-      // the −30% tag flies from the Discount lever to the user, then rides along
-      const fly = live ? clamp01((u - 2250) / 450) : 0;
-      // arc over the agent's head (quadratic curve through a point above it)
-      const q = ease(fly), P1 = [250, 84], end = [ux, uy - 34];
-      const bz = (a, b, c) => (1 - q) * (1 - q) * a + 2 * (1 - q) * q * b + q * q * c;
-      const tx = fly < 1 ? bz(DISC[0], P1[0], end[0]) : end[0], ty = fly < 1 ? bz(DISC[1], P1[1], end[1]) : end[1];
-      tag.setAttribute("transform", `translate(${tx} ${ty})`);
-      tag.setAttribute("opacity", live && u > 2250 && u < 3100 ? 1 : 0);
-      takeaway.setAttribute("opacity", kf([[0, 0], [3 * B, 0], [3 * B + 400, 1]], t));
+      const [label, fare] = REQ[k];
+      reqT.textContent = label;
+      // cursor: rest -> Discount -> click -> back to rest; the mouse on the desk moves with it
+      const [cx, cy] = live ? kf([[0, REST], [500, REST], [1400, TGT], [2600, TGT], [3300, REST]], u) : TGT;
+      const press = live && u > 1500 && u < 1700;
+      cur.setAttribute("transform", `translate(${cx} ${cy}) scale(${press ? 0.85 : 1})`);
+      const mx = M0[0] + (cx - REST[0]) * 0.22, my = M0[1] + (cy - REST[1]) * 0.05 - 0.2;
+      mouse.setAttribute("transform", `translate(${mx} ${my})`);
+      btnL.setAttribute("fill", press ? C.max : "none");
+      arm.setAttribute("d", `M 92 222 Q ${(92 + mx) / 2} ${my - 4} ${mx - 2} ${my - 9}`);
+      const rp = live ? clamp01((u - 1600) / 450) : 1;
+      ring.setAttribute("cx", TGT[0]); ring.setAttribute("cy", TGT[1]); ring.setAttribute("r", 3 + 15 * rp);
+      ring.setAttribute("opacity", live && u > 1600 && u < 2050 ? 1 - rp : 0);
+      const on = !live || (u > 1600 && u < 3400);
+      D.rect.setAttribute("fill", on ? C.max : "#fff"); D.rect.setAttribute("stroke", on ? C.max : C.line);
+      D.label.setAttribute("fill", on ? "#fff" : C.ink); D.badge.setAttribute("fill", on ? "#fff" : C.soft);
+      const f = live ? kf([[0, 0], [1600, 0], [2000, 1], [3300, 1], [3500, 0]], u) : 1;
+      newP.textContent = fmt(fare * (1 - 0.3 * f));
+      const showOld = f > 0.02, R = SX + SW - 10;
+      oldP.textContent = showOld ? fmt(fare) : "";
+      const ow = showOld ? (oldP.getComputedTextLength() || 34) : 0, nw = newP.getComputedTextLength() || 44;
+      oldP.setAttribute("x", R - nw - 6); oldP.setAttribute("y", SY + 33);
+      strike.setAttribute("x1", R - nw - 6 - ow); strike.setAttribute("x2", R - nw - 6);
+      strike.setAttribute("y1", SY + 29.5); strike.setAttribute("y2", SY + 29.5); strike.setAttribute("opacity", showOld ? 1 : 0);
+      booked.setAttribute("opacity", live && u > 2500 && u < 3400 ? 1 : 0);
+      const n = live ? k + (u > 2500 ? 1 : 0) : 3;
+      count.textContent = !live ? "Every booking got the full 30% discount." : n ? `Bookings at the full 30%: ${n} of ${n}` : "";
     };
   });
 
