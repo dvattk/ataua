@@ -30,14 +30,14 @@
   const show = (node, o) => { node.setAttribute("opacity", o.toFixed(3)); node.style.display = o < 0.005 ? "none" : ""; };
   const txt = (p, x, y, s, a = {}) => el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, s);
 
-  function player(fig, duration, build) {
+  function player(fig, duration, build, speed = 1) {
     const svg = fig.querySelector("svg");
     const api = {};
     const draw = build(svg, api);
     let t0 = null, raf = 0, on = false;
     const frame = (now) => {
       if (t0 === null) t0 = now;
-      draw(reduce ? duration - 1 : (now - t0) % duration);
+      draw(reduce ? duration - 1 : ((now - t0) * speed) % duration);
       raf = requestAnimationFrame(frame);
     };
     const start = () => { if (!on) { on = true; t0 = null; raf = requestAnimationFrame(frame); } };
@@ -134,7 +134,7 @@
     const A1 = arrow($("database-to-catalog")), A2 = arrow($("catalog-to-itinerary"));
     const br = [...$("sample-branches").children].map(arrow);
     const D = 14500, OUT = 13300;
-    player(inv, D, () => (t) => {
+    player(inv, D, () => (t) => {   // played 1.4x faster (speed argument at the end)
       const out = 1 - fade(t, OUT, 700);
       B.db(t, 0, out);
       A1(t, 900, 700, out);
@@ -156,7 +156,7 @@
         u.bar.setAttribute("width", (u.W * ease(fade(t, t0 + 800, 700))).toFixed(1));
       });
       dotLayer.setAttribute("opacity", out.toFixed(3));
-    });
+    }, 1.4);
   });
 
   // ---------------------------------------------------------------- 2. users: the hidden profile becomes the prose of an email (21 s, three users)

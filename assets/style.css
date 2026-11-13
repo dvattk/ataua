@@ -397,3 +397,4 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 @media (max-width: 640px) { .hero { padding-top: 48px; } .hero h1 { gap: 10px; } }
 .hero h1 .name .tau { margin: 0 -.02em 0 -.06em; letter-spacing: 0; }
 .hero h1 .sub, .hero .authors, .hero .affils { text-wrap: balance; }
+.hero h1 .sub { max-width: 1120px; font-size: clamp(1.3rem, 2.6vw, 1.95rem); }
