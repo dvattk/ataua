@@ -136,14 +136,14 @@
         u.bar.setAttribute("width", (u.W * ease(fade(t, t0 + 800, 700))).toFixed(1));
       });
       dotLayer.setAttribute("opacity", out.toFixed(3));
-    }, 0.75, [[0, "Flight database"], [1500, "Provider inventory"], [3000, "Itinerary"], [6000, "Users"]]);
+    }, 0.65, [[0, "Flight database"], [1500, "Provider inventory"], [3000, "Itinerary"], [6000, "Users"]]);
   });
 
-  // ---------------------------------------------------------------- 2. users: the hidden profile becomes the prose of an email (21 s, three users)
+  // ---------------------------------------------------------------- 2. users: the hidden profile becomes the prose of an email (14 s, two users)
   // Each profile tag lifts off and lands on the phrase of the email that expresses it.
   const usr = document.querySelector(".d-anim.users");
-  if (usr) player(usr, 21000, (svg) => {
-    svg.setAttribute("viewBox", "0 0 680 270");
+  if (usr) player(usr, 14000, (svg) => {
+    svg.setAttribute("viewBox", "0 0 680 272");
     const K = { tag: "#F1F0F6", tagInk: "#3f3f4a", hard: "var(--accent-tint)", hardInk: "var(--accent-deep)", soft: "var(--accent-mid)" };
     const T = (p, x, y, str, a = {}) => { const e = el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, str); e.style.whiteSpace = "pre"; return e; };
     const defs = el(svg, "defs", {});
@@ -154,27 +154,33 @@
       else if (kind === "soft") { r.setAttribute("fill", "#fff"); r.setAttribute("stroke", K.soft); r.setAttribute("stroke-dasharray", "3 2.5"); }
       else r.setAttribute("fill", K.tag);
     };
+    // two real users from the benchmark; the excerpts are quoted from their synthetic mailboxes
+    // (data/airline_a2a/current/emails.json: mary_santos_8312 and barbara_smith_4897)
     const USERS = [
-      { who: "User 1", persona: "Budget-conscious", subj: "Re: Houston → New York",
-        tags: [["IAH ⇄ JFK · Aug 2–6"], ["2 travelers"], ["No insurance", "hard"], ["Layover ≤ 3 h", "soft"], ["$900 – $1,150"]],
-        mail: [[["Two of us", 1], [", out "], ["Aug 2, back Aug 6", 0], ["."]],
-               [["Please, "], ["no travel insurance", 2], [" this time."]],
-               [["Short layovers", 3], [" would be nice, ideally under 3 h."]],
-               [["Hoping for "], ["about $900, $1,150 at most", 4], ["."]]] },
-      { who: "User 2", persona: "Premium traveler", subj: "Family trip to New York",
-        tags: [["IAH → JFK · Aug 2"], ["3 travelers"], ["Insurance", "hard"], ["Same itinerary", "soft"], ["$2,400 – $3,100"]],
-        mail: [[["Booking for "], ["the three of us", 1], [" on "], ["Aug 2", 0], ["."]],
-               [["Insurance is a must", 2], [", we never fly without it."]],
-               [["It would be great to be "], ["on the same flights", 3], ["."]],
-               [["Around "], ["$2,400, no more than $3,100", 4], ["."]]] },
-      { who: "User 3", persona: "Time-sensitive business", subj: "Fwd: NYC client meeting",
-        tags: [["IAH → JFK · Aug 2"], ["1 traveler"], ["Insurance", "hard"], ["Layover ≤ 2 h", "soft"], ["$650 – $900"]],
-        mail: [[["Just me", 1], [", one way on "], ["Aug 2", 0], ["."]],
-               [["Policy: "], ["insurance on every trip", 2], ["."]],
-               [["Short connections", 3], [" are fine, under two hours."]],
-               [["Budget is "], ["$650, $900 at the very most", 4], ["."]]] },
+      { who: "User 1", persona: "Budget-conscious",
+        tags: [["IAH → BOS · Aug 4"], ["1 traveler"], ["No insurance", "hard"], ["Afternoon", "soft"], ["Target $125"]],
+        mails: [
+          { subj: "Thinking about Boston", to: "to: a friend",
+            lines: [[["I'm looking at a one-way flight from"]],
+                    [["IAH to BOS around August 4, 2024", 0], [". "], ["It's just me", 1], [","]],
+                    [["and I'm "], ["aiming for $125 for the whole trip", 4], ["."]]] },
+          { subj: "Re: How wide should I search?", to: "to: travel agent",
+            lines: [[["Afternoon departures suit me best", 3], ["; I'd even consider …"]]] },
+          { subj: "Re: Before I continue the search", to: "to: travel agent",
+            lines: [[["Do not include travel insurance", 2], [" under any circumstances."]]] }] },
+      { who: "User 2", persona: "Explicit explorer",
+        tags: [["IAH → BOS · Aug 4"], ["2 travelers"], ["Insurance", "hard"], ["Same flights", "soft"], ["Target $571"]],
+        mails: [
+          { subj: "Thinking about Boston", to: "to: a friend",
+            lines: [[["James and I", 1], [" are looking at a one-way trip from"]],
+                    [["IAH to BOS around August 4, 2024", 0], [". I'm aiming for"]],
+                    [["$571 for the two of us altogether", 4], ["."]]] },
+          { subj: "Re: How is Boston planning going?", to: "to: a friend",
+            lines: [[["I'd like "], ["James and me on the same flights", 3], [", …"]]] },
+          { subj: "Re: A couple of final planning details", to: "to: travel agent",
+            lines: [[["Travel insurance must be included", 2], [" for both of us."]]] }] },
     ];
-    const MX = 300, MY = 34, MW = 360, MH = 196;           // email card
+    const MX = 286, MY = 12, MW = 378;           // inbox card; its height fits the excerpts
     const sets = USERS.map((u) => {
       const root = el(svg, "g", {});
       // left: who, and the hidden profile as tags
@@ -192,32 +198,42 @@
         const w = (t.getComputedTextLength() || label.length * 7) + 24; r.setAttribute("width", w);
         return { tg, r, w, x: 24, y, kind, label };
       });
-      // right: the email
+      // right: excerpts from the user's inbox, the only thing the user agent sees
       const mail = el(root, "g", {});
-      el(mail, "rect", { x: MX, y: MY, width: MW, height: MH, rx: 14, fill: "#fff", stroke: C.line, filter: "url(#mailshadow)" });
-      el(mail, "circle", { cx: MX + 26, cy: MY + 28, r: 11, fill: C.user });
-      T(mail, MX + 26, MY + 32, u.who.slice(-1), { "font-size": 11, "font-weight": 700, fill: C.max, "text-anchor": "middle" });
-      T(mail, MX + 46, MY + 25, u.subj, { "font-weight": 700, fill: C.ink, "font-size": 13 });
-      T(mail, MX + 46, MY + 41, "to: travel agent", { fill: C.muted, "font-size": 11 });
-      el(mail, "line", { x1: MX + 16, y1: MY + 56, x2: MX + MW - 16, y2: MY + 56, stroke: C.line });
-      const phrases = [];
-      const lines = u.mail.map((segs, li) => {
-        const lg = el(mail, "g", {}), y = MY + 86 + li * 28;
-        let x = MX + 18;
-        segs.forEach(([str, ti]) => {
-          const t = T(lg, x, y, str, { "font-size": 13 });
-          const w = t.getComputedTextLength() || str.length * 6.6;
-          if (ti !== undefined) {
-            const kind = u.tags[ti][1];
-            const hl = el(lg, "rect", { x: x - 3, y: y - 14, width: w + 6, height: 20, rx: 5 });
-            style(hl, kind); lg.insertBefore(hl, t);
-            if (kind === "hard") t.setAttribute("fill", K.hardInk);
-            phrases[ti] = { hl, x: x - 3, y: y - 14, w: w + 6, li };
-          }
-          x += w;
+      const card = el(mail, "rect", { x: MX, y: MY, width: MW, height: 200, rx: 14, fill: "#fff", stroke: C.line, filter: "url(#mailshadow)" });
+      el(mail, "circle", { cx: MX + 24, cy: MY + 22, r: 10, fill: C.user });
+      T(mail, MX + 24, MY + 26, u.who.slice(-1), { "font-size": 11, "font-weight": 700, fill: C.max, "text-anchor": "middle" });
+      T(mail, MX + 42, MY + 26, "From the user's inbox", { "font-weight": 700, fill: C.ink, "font-size": 13 });
+      T(mail, MX + MW - 16, MY + 26, "excerpts", { fill: C.muted, "font-size": 11, "text-anchor": "end" });
+      const phrases = [], lines = [];
+      let y = MY + 40;
+      u.mails.forEach((m, mi) => {
+        const head = el(mail, "g", {});
+        el(head, "line", { x1: MX + 16, y1: y, x2: MX + MW - 16, y2: y, stroke: C.line });
+        T(head, MX + 18, y + 16, m.subj, { "font-weight": 650, fill: C.ink, "font-size": 12 });
+        T(head, MX + MW - 16, y + 16, m.to, { fill: C.muted, "font-size": 10.5, "text-anchor": "end" });
+        y += 36;
+        m.lines.forEach((segs) => {
+          const lg = el(mail, "g", {}), li = lines.length;
+          let x = MX + 18;
+          segs.forEach(([str, ti]) => {
+            const t = T(lg, x, y, str, { "font-size": 12.5 });
+            const w = t.getComputedTextLength() || str.length * 6.4;
+            if (ti !== undefined) {
+              const kind = u.tags[ti][1];
+              const hl = el(lg, "rect", { x: x - 3, y: y - 14, width: w + 6, height: 19, rx: 5 });
+              style(hl, kind); lg.insertBefore(hl, t);
+              if (kind === "hard") t.setAttribute("fill", K.hardInk);
+              phrases[ti] = { hl, x: x - 3, y: y - 14, w: w + 6, li };
+            }
+            x += w;
+          });
+          lines.push(lg);
+          y += 19;
         });
-        return lg;
+        y += 5;
       });
+      card.setAttribute("height", y - MY - 2);
       // flying copies of the tags
       const ghosts = tags.map(({ label, kind, w }) => {
         const gg = el(root, "g", {});
@@ -229,7 +245,7 @@
     });
     const PER = 7000, T0 = 1300, STEP = 850, FLY = 650;
     return (t) => {
-      const k = Math.min(Math.floor(t / PER), 2), l = t - k * PER;
+      const k = Math.min(Math.floor(t / PER), USERS.length - 1), l = t - k * PER;
       const out = 1 - fade(l, PER - 500, 500);
       sets.forEach((s, i) => {
         if (i !== k) { show(s.root, 0); return; }
@@ -239,11 +255,7 @@
           show(tg, fade(l, 150 + j * 110, 300) * (1 - 0.65 * fade(l, leave, 200)));
         });
         show(s.mail, fade(l, 500, 450));
-        // a line appears when its first phrase lands
-        s.lines.forEach((lg, li) => {
-          const first = Math.min(...s.phrases.map((p, j) => (p && p.li === li ? j : 99)));
-          show(lg, fade(l, T0 + first * STEP + FLY - 250, 300));
-        });
+        s.lines.forEach((lg) => show(lg, fade(l, 500, 450)));       // the emails are there; each tag lights up its phrase
         s.ghosts.forEach((gg, j) => {
           const tg = s.tags[j], ph = s.phrases[j], t0 = T0 + j * STEP;
           const q = clamp01((l - t0) / FLY), e = ease(q);
@@ -257,7 +269,7 @@
         });
       });
     };
-  }, 0.65, [[0, "User 1"], [7000, "User 2"], [14000, "User 3"]]);
+  }, 0.55, [[0, "User 1"], [7000, "User 2"]]);
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
