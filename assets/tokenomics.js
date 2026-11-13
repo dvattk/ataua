@@ -7,7 +7,7 @@
   const NS = "http://www.w3.org/2000/svg";
   const FAM = { OpenAI: "var(--openai)", Google: "var(--google)", Anthropic: "var(--anthropic)" };
   const USERS = ["GPT-6 Astra", "Claude Opus 5.5", "Gemini 3.8 Flash", "GPT-5.4"];
-  const W = 640, H = 400, M = { l: 58, r: 24, t: 20, b: 52 }, XMAX = 6, YMAX = 1;
+  const W = 640, H = 450, M = { l: 58, r: 24, t: 70, b: 52 }, XMAX = 6, YMAX = 1;
   const X = (c) => M.l + (c / XMAX) * (W - M.l - M.r);
   const Y = (v) => H - M.b - (v / YMAX) * (H - M.t - M.b);
   const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -32,7 +32,12 @@
   // bracket from the cheapest to the priciest provider agent
   const note = el("g", { opacity: 0 }, noteLayer);
   const noteLine = el("line", { stroke: "var(--max)", "stroke-width": 1.6, "stroke-dasharray": "4 4" }, note);
-  const noteTxt = el("text", { "text-anchor": "middle", fill: "var(--max)", "font-size": 13, "font-weight": 700, "font-family": "var(--sans)" }, note);
+  // headline over the bracket: a big "4.1×" and a small caps label beside it
+  const noteTxt = el("text", { "text-anchor": "middle", fill: "var(--max)", "font-family": "var(--sans)" }, note);
+  const nBig = el("tspan", { "font-size": 40, "font-weight": 800, "letter-spacing": "-0.02em" }, noteTxt);
+  const nX = el("tspan", { "font-size": 24, "font-weight": 700 }, noteTxt);
+  const nSub = el("tspan", { dx: 10, "font-size": 11, "font-weight": 500, "font-family": "var(--mono)", "letter-spacing": "0.08em", fill: "var(--muted)" }, noteTxt);
+  nX.textContent = "×";
   const caps = [0, 1].map(() => el("line", { stroke: "var(--max)", "stroke-width": 1.6 }, note));
 
   let data = [], user = USERS[0], supply = "scarce", metric = "rp", t0 = 0;   // metric: rp = provider reward, ru = user reward
@@ -76,8 +81,8 @@
     const who = metric === "rp" ? "providers" : "users", d = pricey[metric] - cheap[metric];
     const same = Math.abs(d) < 0.03 ? "about the same" : d < 0 ? "less" : "a little more";
     pair.text = `${(pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "")}× the cost, ${same === "a little more" ? "+" + d.toFixed(2) : same} reward`;
-    document.querySelector(".tok-mult").innerHTML = `${(pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "")}<i>×</i>`;
-    document.querySelector(".tok-mult-sub").textContent = `lower cost · ${same === "less" ? "higher" : same === "a little more" ? "slightly lower" : same} ${metric === "rp" ? "provider" : "user"} reward`;
+    nBig.textContent = (pricey.cost / cheap.cost).toFixed(1).replace(/\.0$/, "");
+    nSub.textContent = `LOWER COST · ${same === "less" ? "HIGHER" : same === "a little more" ? "SLIGHTLY LOWER" : same.toUpperCase()} ${metric === "rp" ? "PROVIDER" : "USER"} REWARD`;
     yTitle.textContent = metric === "rp" ? "Provider reward" : "User reward";
     const sync = (attr, v) => document.querySelectorAll(`[${attr}]`).forEach((b) => b.setAttribute("aria-pressed", b.getAttribute(attr) === v ? "true" : "false"));
     sync("data-tsupply", supply); sync("data-tmetric", metric); sel.value = user;
@@ -100,12 +105,11 @@
     }
     if (pair && runs[pair.cheap] && runs[pair.pricey] && runs[pair.cheap].cur) {
       const a = runs[pair.cheap].cur, b = runs[pair.pricey].cur;
-      const y = Math.max(Math.min(a.y, b.y) - 44, 18);
+      const y = 58;      // bracket pinned above the plot; its ends drop to the two dots
       noteLine.setAttribute("x1", a.x); noteLine.setAttribute("x2", b.x); noteLine.setAttribute("y1", y); noteLine.setAttribute("y2", y);
-      caps.forEach((c, i) => { const p = i ? b : a; c.setAttribute("x1", p.x); c.setAttribute("x2", p.x); c.setAttribute("y1", y); c.setAttribute("y2", y + 7); });
-      noteTxt.textContent = pair.text;
+      caps.forEach((c, i) => { const p = i ? b : a; c.setAttribute("x1", p.x); c.setAttribute("x2", p.x); c.setAttribute("y1", y); c.setAttribute("y2", Math.max(y + 7, p.y - 30)); c.setAttribute("stroke-dasharray", "2 4"); });
       const half = (noteTxt.getComputedTextLength() || 160) / 2;      // keep the note inside the plot
-      noteTxt.setAttribute("x", Math.min(Math.max((a.x + b.x) / 2, X(0) + half + 4), W - half - 4)); noteTxt.setAttribute("y", y - 8);
+      noteTxt.setAttribute("x", Math.min(Math.max((a.x + b.x) / 2, X(0) + half + 4), W - half - 4)); noteTxt.setAttribute("y", y - 10);
       note.setAttribute("opacity", clamp01((now - t0 - 900) / 500).toFixed(2));
     }
     requestAnimationFrame(render);

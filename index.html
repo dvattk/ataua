@@ -287,8 +287,13 @@
 
   <div class="tok-grid">
     <div class="tok-side">
-      <div class="big"><b class="tok-mult">4.1<i>×</i></b><span class="tok-mult-sub"></span></div>
-      <p class="tok-caption">A higher provider inference cost does not consistently bring higher reward for either side. Lower-cost provider agents can match or beat more expensive ones.</p>
+      <p class="tok-caption">Users may run their agents only now and then, but a provider agent serves many users, so small
+        differences in cost per request add up. We fix the users' model and compare the inference cost per task of each
+        provider model with the reward of both sides, under scarce and abundant supply. Each dot is one provider model.</p>
+      <p class="tok-caption">Provider inference cost is about <b>twice as high</b> under scarce supply as under abundant
+        supply. Gemini Flash providers are the cheapest in every group, with no consistent loss in either reward. With
+        Astra users, both Gemini Flash providers beat Opus 5 on both rewards at a much lower cost. A higher provider
+        inference cost does not consistently bring a higher reward for either side.</p>
     </div>
     <div class="tok-chart">
       <div class="tok-controls">
@@ -305,7 +310,7 @@
             <button type="button" data-tmetric="ru" aria-pressed="false">User</button>
           </div></div>
       </div>
-      <svg class="tokplot" viewBox="0 0 640 400" role="img" aria-label="Provider agent inference cost per task against provider reward, for each pairing of user and provider models"></svg>
+      <svg class="tokplot" viewBox="0 0 640 450" role="img" aria-label="Provider agent inference cost per task against provider reward, for each pairing of user and provider models"></svg>
       <div class="key">
         <span><i class="dot" style="--c: var(--openai)"></i>OpenAI</span>
         <span><i class="dot" style="--c: var(--google)"></i>Google</span>
@@ -318,8 +323,8 @@
 
 <script src="assets/player.js?v=1794497979" defer></script>
 <script src="assets/chart.js?v=1794529110" defer></script>
-<script src="assets/why.js?v=1794533507" defer></script>
+<script src="assets/why.js?v=1794533914" defer></script>
 <script src="assets/design.js?v=1794507726" defer></script>
-<script src="assets/tokenomics.js?v=1794497701" defer></script>
+<script src="assets/tokenomics.js?v=1794533914" defer></script>
 </body>
 </html>

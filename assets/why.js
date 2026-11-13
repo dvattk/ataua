@@ -187,9 +187,7 @@
     const MONO = "JetBrains Mono, monospace";
     const DESK = 262;
     // desk, monitor stand, monitor
-    el(g, "line", { x1: 14, y1: DESK, x2: 466, y2: DESK, stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round" });
-    el(g, "rect", { x: 296, y: 236, width: 24, height: 20, fill: "#dcd9e2" });
-    el(g, "rect", { x: 270, y: 254, width: 76, height: 8, rx: 3, fill: "#cfcbd8" });
+    el(g, "rect", { x: 296, y: 236, width: 24, height: 16, fill: "#dcd9e2" });
     el(g, "rect", { x: 152, y: 40, width: 312, height: 198, rx: 12, fill: BOT.ink });
     const SX = 162, SY = 50, SW = 292, SH = 178;
     el(g, "rect", { x: SX, y: SY, width: SW, height: SH, rx: 6, fill: "#fff" });
@@ -229,30 +227,46 @@
     const ring = el(g, "circle", { fill: "none", stroke: C.max, "stroke-width": 2 });
     const cur = el(g, "g", {});
     el(cur, "path", { d: "M0 0 L0 15 L4 11.5 L6.6 17.5 L9.2 16.4 L6.7 10.6 L11.5 10.6 Z", fill: C.ink, stroke: "#fff", "stroke-width": 1.3, "stroke-linejoin": "round" });
-    // the provider agent at the desk, with its arm on the mouse
-    robot(g, 74, 214, BOT.provider, 1.5, true);
-    el(g, "text", { x: 74, y: 282, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "Provider agent");
-    const arm = el(g, "path", { fill: "none", stroke: BOT.ink, "stroke-width": 2.4, "stroke-linecap": "round" });
+    // the provider agent behind the desk; desk top, mouse pad, mouse, then its arm and hand on the mouse
+    robot(g, 78, 222, BOT.provider, 1.5, true);
+    el(g, "rect", { x: 14, y: 246, width: 452, height: 16, fill: "#f1eef4" });
+    el(g, "line", { x1: 14, y1: DESK, x2: 466, y2: DESK, stroke: C.ink, "stroke-width": 2, "stroke-linecap": "round" });
+    el(g, "rect", { x: 270, y: 248, width: 76, height: 7, rx: 3, fill: "#cfcbd8" });
+    el(g, "rect", { x: 128, y: 248, width: 72, height: 12, rx: 3, fill: "#e3dfe8" });
+    el(g, "text", { x: 78, y: 282, "text-anchor": "middle", "font-size": 11, "font-weight": 700, fill: C.ink }, "Provider agent");
     const mouse = el(g, "g", {});
-    el(mouse, "rect", { x: -9, y: -13, width: 18, height: 13, rx: 7, fill: "#fff", stroke: BOT.ink, "stroke-width": 2 });
-    el(mouse, "line", { x1: 0, y1: -13, x2: 0, y2: -6.5, stroke: BOT.ink, "stroke-width": 1.5 });
-    const btnL = el(mouse, "path", { d: "M -8 -6.5 V -9 A 7 6 0 0 1 -0.8 -12.2 V -6.5 Z", fill: "none" });
+    el(mouse, "ellipse", { cx: 0, cy: -5, rx: 10, ry: 7, fill: "#fff", stroke: BOT.ink, "stroke-width": 2 });
+    el(mouse, "line", { x1: -1, y1: -12, x2: -1, y2: -6, stroke: BOT.ink, "stroke-width": 1.4 });
+    const btnL = el(mouse, "path", { d: "M -9 -6 A 9.5 6 0 0 1 -1.7 -11.4 V -6 Z", fill: "none" });
+    const armO = el(g, "path", { fill: "none", stroke: BOT.ink, "stroke-width": 8.5, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const armI = el(g, "path", { fill: "none", stroke: BOT.provider, "stroke-width": 4.5, "stroke-linecap": "round", "stroke-linejoin": "round" });
+    const hand = el(g, "g", {});
+    el(hand, "rect", { x: -9, y: -6, width: 15, height: 9, rx: 4.5, fill: BOT.provider, stroke: BOT.ink, "stroke-width": 2 });
+    el(hand, "line", { x1: 2, y1: -6, x2: 2, y2: 3, stroke: BOT.ink, "stroke-width": 1.2 });
+    const SHO = [91, 243];
     const count = el(g, "text", { x: 314, y: 285, "text-anchor": "middle", "font-size": 12.5, "font-weight": 700, fill: C.ink });
     const REQ = [["1 passenger · economy", 420], ["2 passengers · business", 1860], ["3 passengers · basic economy", 510]];
     const fmt = (v) => "$" + Math.round(v).toLocaleString("en-US");
-    const B = 3600, REST = [SX + 150, SY + 108], TGT = [D.cx + 22, D.cy + 3], M0 = [138, DESK];
+    const B = 3600, REST = [SX + 150, SY + 108], TGT = [D.cx + 22, D.cy + 3], M0 = [150, 257];
     return (t) => {
       const k = Math.min(Math.floor(t / B), 2), u = t - k * B, live = t < 3 * B;
       const [label, fare] = REQ[k];
       reqT.textContent = label;
       // cursor: rest -> Discount -> click -> back to rest; the mouse on the desk moves with it
-      const [cx, cy] = live ? kf([[0, REST], [500, REST], [1400, TGT], [2600, TGT], [3300, REST]], u) : TGT;
+      const MID = [(REST[0] + TGT[0]) / 2 + 6, (REST[1] + TGT[1]) / 2 + 10];
+      const [cx, cy] = live ? kf([[0, REST], [450, REST], [950, MID], [1400, TGT], [2600, TGT], [3300, REST]], u) : TGT;
       const press = live && u > 1500 && u < 1700;
       cur.setAttribute("transform", `translate(${cx} ${cy}) scale(${press ? 0.85 : 1})`);
-      const mx = M0[0] + (cx - REST[0]) * 0.22, my = M0[1] + (cy - REST[1]) * 0.05 - 0.2;
+      // the mouse slides on the pad: left-right with the cursor, back-forth (up-down on the pad) with its height
+      const mx = M0[0] + (cx - REST[0]) * 0.25, my = M0[1] + (cy - REST[1]) * 0.08;
       mouse.setAttribute("transform", `translate(${mx} ${my})`);
       btnL.setAttribute("fill", press ? C.max : "none");
-      arm.setAttribute("d", `M 92 222 Q ${(92 + mx) / 2} ${my - 4} ${mx - 2} ${my - 9}`);
+      // arm: upper arm down to an elbow resting on the desk, forearm flat to the hand on the mouse
+      const H = [mx - 2, my - 10 + (press ? 1.5 : 0)];
+      const E = [112 + 0.45 * (mx - M0[0]), 253];
+      const ad = `M ${SHO[0]} ${SHO[1]} L ${E[0].toFixed(1)} ${E[1].toFixed(1)} L ${H[0].toFixed(1)} ${H[1].toFixed(1)}`;
+      armO.setAttribute("d", ad); armI.setAttribute("d", ad);
+      hand.setAttribute("transform", `translate(${H[0]} ${H[1]})`);
       const rp = live ? clamp01((u - 1600) / 450) : 1;
       ring.setAttribute("cx", TGT[0]); ring.setAttribute("cy", TGT[1]); ring.setAttribute("r", 3 + 15 * rp);
       ring.setAttribute("opacity", live && u > 1600 && u < 2050 ? 1 - rp : 0);
