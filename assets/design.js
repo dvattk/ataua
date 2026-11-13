@@ -30,27 +30,7 @@
   const show = (node, o) => { node.setAttribute("opacity", o.toFixed(3)); node.style.display = o < 0.005 ? "none" : ""; };
   const txt = (p, x, y, s, a = {}) => el(p, "text", { x, y, "font-size": 13, fill: C.text, "font-family": "var(--sans)", ...a }, s);
 
-  function player(fig, duration, build, speed = 1) {
-    const svg = fig.querySelector("svg");
-    const api = {};
-    const draw = build(svg, api);
-    let t0 = null, raf = 0, on = false;
-    const frame = (now) => {
-      if (t0 === null) t0 = now;
-      draw(reduce ? duration - 1 : ((now - t0) * speed) % duration);
-      raf = requestAnimationFrame(frame);
-    };
-    const start = () => { if (!on) { on = true; t0 = null; raf = requestAnimationFrame(frame); } };
-    const stop = () => { on = false; cancelAnimationFrame(raf); };
-    api.restart = () => { t0 = null; if (!on) draw(0); };
-    const rb = fig.querySelector(".replay-mini");
-    if (rb) rb.addEventListener("click", () => { t0 = null; start(); });
-    draw(0);
-    const wt = new URLSearchParams(location.search).get("wt");
-    if (wt !== null) { draw(+wt % duration); api.redraw = () => draw(+wt % duration); return api; }
-    new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? start() : stop())), { threshold: 0.35 }).observe(fig);
-    return api;
-  }
+  const player = (...a) => window.animPlayer(...a);   // assets/anim-player.js
   function robot(g, x, y, fill, s = 1) {
     const r = el(g, "g", { transform: `translate(${x} ${y}) scale(${s})` });
     el(r, "line", { x1: 0, y1: -13, x2: 0, y2: -18, stroke: C.bot, "stroke-width": 2, "stroke-linecap": "round" });

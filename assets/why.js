@@ -30,23 +30,7 @@
     el(g, "text", { x: x + 12, y: y + 22, "font-size": 13, "font-weight": 650, fill: C.ink }, title);
     if (sub) el(g, "text", { x: x + 12, y: y + 40, "font-size": 12, fill: C.muted }, sub);
   }
-  function player(fig, duration, build) {
-    const svg = fig.querySelector("svg");
-    const draw = build(svg);
-    let t0 = null, raf = 0, on = false;
-    const frame = (now) => {
-      if (t0 === null) t0 = now;
-      draw(reduce ? duration - 1 : (now - t0) % duration);
-      raf = requestAnimationFrame(frame);
-    };
-    const start = () => { if (!on) { on = true; t0 = null; raf = requestAnimationFrame(frame); } };
-    const stop = () => { on = false; cancelAnimationFrame(raf); };
-    fig.querySelector(".replay-mini").addEventListener("click", () => { t0 = null; start(); });
-    draw(0);
-    const wt = new URLSearchParams(location.search).get("wt");      // ?wt=3000 draws a fixed moment (testing)
-    if (wt !== null) { draw(+wt % duration); return; }
-    new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? start() : stop())), { threshold: 0.4 }).observe(fig);
-  }
+  const player = (...a) => window.animPlayer(...a);   // assets/anim-player.js
 
   // ---------------------------------------------------------------- shared pieces
   const TINT = { [C.a]: "#E8F0FE", [C.b]: "#E3F5E9" };

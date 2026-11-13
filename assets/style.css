@@ -420,3 +420,9 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .hero .logos img[alt="Mercor"] { height: 26px; }
 .hero .logos img[alt="Mila"] { height: 30px; }
 .hero .logos img { filter: none; opacity: 1; }
+
+/* play/pause + seek bar under each animation (assets/anim-player.js) */
+.anim-controls { padding: 6px 10px; border-radius: 0 0 var(--radius) var(--radius); }
+.d-anim > .anim-controls { margin: 10px -10px -10px; }
+.why-anim > .anim-controls { margin: 8px -8px -8px; }
+.anim-controls .scrub .knob { opacity: 1; }

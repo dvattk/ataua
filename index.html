@@ -13,7 +13,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794534963">
+<link rel="stylesheet" href="assets/style.css?v=1794588196">
 </head>
 <body>
 
@@ -77,7 +77,7 @@
     the BTS DB1B market survey and compute the median observed fare for each route and airline. We then generate
     flight schedules over a 30-day period, with fares based on these reference prices and adjusted for each cabin
     class. The resulting catalog contains 1,746 itineraries across 44 airports and 23 airlines.</p>
-  <figure class="d-anim inventory"><svg viewBox="0 0 680 590"></svg><button type="button" class="replay-mini">Replay</button></figure>
+  <figure class="d-anim inventory"><svg viewBox="0 0 680 590"></svg></figure>
 
   <h3>User inventory</h3>
   <p>We create users with diverse personas, preferences and budgets. A persona shapes what a user wants. A
@@ -90,7 +90,7 @@
     For example, a user may refuse travel insurance but prefer layovers shorter than three hours. An LLM then writes
     the user's personal emails from this profile. The user agent sees only the emails, so it has to infer what the
     user wants and which requests are non-negotiable.</p>
-  <figure class="d-anim users"><svg viewBox="0 0 680 300"></svg><button type="button" class="replay-mini">Replay</button></figure>
+  <figure class="d-anim users"><svg viewBox="0 0 680 300"></svg></figure>
   <p>A <b>task</b> brings together \(\boldsymbol{N}\) users who interact with the providers at the same time. To build one, we
     sample a reference itinerary (a route and travel date) from the provider inventory and create each user's
     booking goal around it: the locations, dates and number of travelers. The users share a common travel context
@@ -265,7 +265,7 @@
     </div>
     <figure class="why-anim seats" aria-label="Animation: agent A takes the two Delta seats, agent B is diverted to United; in the coordinated version B takes Delta and A moves to a later flight, and both rewards rise.">
       <svg viewBox="0 0 520 330"></svg>
-      <button type="button" class="replay-mini">Replay</button>
+      
     </figure>
   </div>
 
@@ -277,7 +277,7 @@
     </div>
     <figure class="why-anim discount" aria-label="Animation: a provider agent at a computer uses its mouse to pick a lever for each booking request. It never picks hold the fare, another cabin or paid add-ons, and clicks Discount 30% every time.">
       <svg viewBox="0 0 520 330"></svg>
-      <button type="button" class="replay-mini">Replay</button>
+      
     </figure>
   </div>
 </section>
@@ -323,8 +323,9 @@
 
 <script src="assets/player.js?v=1794497979" defer></script>
 <script src="assets/chart.js?v=1794529110" defer></script>
-<script src="assets/why.js?v=1794533914" defer></script>
-<script src="assets/design.js?v=1794534460" defer></script>
+<script src="assets/anim-player.js?v=1794588196" defer></script>
+<script src="assets/why.js?v=1794588196" defer></script>
+<script src="assets/design.js?v=1794588196" defer></script>
 <script src="assets/tokenomics.js?v=1794533914" defer></script>
 </body>
 </html>
