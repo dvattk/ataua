@@ -13,7 +13,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
   onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}],throwOnError:false})"></script>
-<link rel="stylesheet" href="assets/style.css?v=1794588523">
+<link rel="stylesheet" href="assets/style.css?v=1794590322">
 </head>
 <body>
 
@@ -232,10 +232,9 @@
           <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4 2.5v11l9.5-5.5z"/><path class="i-pause" d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z"/></svg>
         </button>
         <div class="segs">
-          <button type="button" class="seg-i" data-goto="1" aria-label="Step 1"><i></i></button>
-          <button type="button" class="seg-i" data-goto="2" aria-label="Step 2"><i></i></button>
+          <button type="button" class="seg-i" data-goto="1" aria-label="Symmetric: same model on both sides"><i></i><span>Symmetric</span></button>
+          <button type="button" class="seg-i" data-goto="2" aria-label="Asymmetric: different user and provider models"><i></i><span>Asymmetric</span></button>
         </div>
-        <span class="time">1 / 2</span>
       </div>
       <svg class="pareto" viewBox="0 0 640 560" role="img" aria-label="Mean user reward against mean provider reward for each model assignment, with the MAX reference line"></svg>
       <div class="key">
@@ -243,7 +242,7 @@
         <span><i class="dot" style="--c: var(--openai)"></i>OpenAI</span>
         <span><i class="dot" style="--c: var(--google)"></i>Google</span>
         <span><i class="dot" style="--c: var(--anthropic)"></i>Anthropic</span>
-        <span class="k-asym"><i class="dot hollow"></i>mixed pairing</span>
+        <span class="k-asym">colour = user model's family · tap or hover a dot for its pairing</span>
       </div>
     </div>
   </div>
@@ -322,10 +321,10 @@
 <footer class="wrap foot"></footer>
 
 <script src="assets/player.js?v=1794497979" defer></script>
-<script src="assets/chart.js?v=1794529110" defer></script>
+<script src="assets/chart.js?v=1794590322" defer></script>
 <script src="assets/anim-player.js?v=1794588523" defer></script>
 <script src="assets/why.js?v=1794589068" defer></script>
-<script src="assets/design.js?v=1794589776" defer></script>
+<script src="assets/design.js?v=1794590526" defer></script>
 <script src="assets/tokenomics.js?v=1794533914" defer></script>
 </body>
 </html>

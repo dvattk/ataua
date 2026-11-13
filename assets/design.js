@@ -245,8 +245,8 @@
     });
     // key: filled tag = hard constraint, dashed tag = soft preference
     const key = el(svg, "g", {});
-    [["hard", "Hard constraint: must be satisfied"], ["soft", "Soft preference: allows compromise"]].forEach(([kind, label], i) => {
-      const x = 24 + i * 250;
+    [["hard", "Hard constraint"], ["soft", "Soft constraint"]].forEach(([kind, label], i) => {
+      const x = 24 + i * 160;
       const r = el(key, "rect", { x, y: 280, width: 26, height: 14, rx: 7 }); style(r, kind);
       T(key, x + 34, 291.5, label, { "font-size": 12, fill: C.muted });
     });

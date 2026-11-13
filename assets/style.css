@@ -436,3 +436,14 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .anim-steps .seg-i.on span { color: var(--ink); }
 .anim-steps .seg-i:hover span { color: var(--ink); }
 .anim-steps .play { margin-top: -4px; }
+
+/* results chart: symmetric / asymmetric toggle; the asymmetric key note shows only in that view */
+.story .chart-top { flex-wrap: wrap; }
+.chart-box .k-asym { display: none; color: var(--muted); }
+.chart-box.asym .k-asym { display: inline; }
+.chart-controls { align-items: flex-start; }
+.chart-controls .seg-i { height: auto; min-width: 0; padding: 14px 0 0; text-align: left; }
+.chart-controls .seg-i::before, .chart-controls .seg-i i { top: 4px; }
+.chart-controls .seg-i span { display: block; font: 500 .76rem var(--sans); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chart-box:not(.asym) .seg-i[data-goto="1"] span, .chart-box.asym .seg-i[data-goto="2"] span { color: var(--ink); }
+.chart-controls .play { margin-top: -4px; }

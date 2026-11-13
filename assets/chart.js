@@ -94,7 +94,7 @@
       it.idx = it.sym ? si++ : ai++;
       it.g = el("g", { class: "pt" }, dotLayer);
       const c = FAM[it.fam];
-      it.c = el("circle", { r: it.sym ? 8 : 6.5, fill: it.sym ? c : "#fff", stroke: c, "stroke-width": it.sym ? 0 : 2.4, tabindex: 0 }, it.g);
+      it.c = el("circle", { r: it.sym ? 8 : 7, fill: c, stroke: "#fff", "stroke-width": it.sym ? 0 : 1.5, tabindex: 0 }, it.g);
       if (it.sym) {
         it.lead = el("line", { stroke: "#b9b9c6", "stroke-width": 1 }, lblLayer);
         it.lbl = el("text", { class: "lbl", "text-anchor": "start" }, lblLayer);
@@ -108,10 +108,8 @@
       it.c.addEventListener("click", show);
       it.c.addEventListener("mouseleave", hideTip);
       it.c.addEventListener("blur", hideTip);
-      if (it.sym) {
-        it.gap = el("line", { class: "gap" + (it.user === HERO ? " hero" : "") }, gapLayer);
-        if (it.user === HERO) it.num = el("text", { class: "gapnum", "text-anchor": "middle" }, gapLayer);
-      }
+      it.gap = el("line", { class: "gap" + (it.sym && it.user === HERO ? " hero" : "") }, gapLayer);
+      if (it.sym && it.user === HERO) it.num = el("text", { class: "gapnum", "text-anchor": "middle" }, gapLayer);
     }
   }
 
@@ -142,7 +140,7 @@
     region.setAttribute("d", `M${X(0)},${Y(0)} L${X(0)},${Y(top.u)} L` + [...pts].reverse().join(" L") + ` L${X(c[0].p)},${Y(0)} Z`);
     region.setAttribute("opacity", reg.toFixed(2));
 
-    const gapT = get("gap", now), dim = 1 - 0.65 * get("asymAll", now);
+    const gapT = get("gap", now), dim = 0.55;
     for (const it of items) {
       const a = it.at.scarce, b = it.at.abundant;
       let pos, pres;
@@ -175,7 +173,7 @@
         const x2 = lerp(x + 9, X(m), gapT);
         it.gap.setAttribute("x1", x + 9); it.gap.setAttribute("x2", x2);
         it.gap.setAttribute("y1", y); it.gap.setAttribute("y2", y);
-        it.gap.setAttribute("opacity", (gv * (it.num ? 1 : dim)).toFixed(2));
+        it.gap.setAttribute("opacity", (gv * (it.num ? 1 : dim)).toFixed(2));   // the hero gap is spelled out; the rest are lighter
         if (it.num) {
           it.num.textContent = `${pos.p.toFixed(2)} → ${m.toFixed(2)}`;
           it.num.setAttribute("x", (x + X(m)) / 2 + 8);
@@ -187,7 +185,7 @@
     if (tipFor) {
       const it = tipFor, q = (s < 0.5 ? it.at.scarce : it.at.abundant) || it.at.scarce || it.at.abundant;
       tipText.textContent = it.sym ? `${it.user} on both sides · user ${q.u.toFixed(2)}, provider ${q.p.toFixed(2)}`
-        : `${it.user} travelers, ${it.provider} airlines · ${q.u.toFixed(2)} / ${q.p.toFixed(2)}`;
+        : `${it.user} → ${it.provider} · user ${q.u.toFixed(2)}, provider ${q.p.toFixed(2)}`;
       const bb = tipText.getBBox();
       const tr = it.g.getAttribute("transform").match(/[-\d.]+/g).map(Number);
       let tx = tr[0] + 14, ty = tr[1] - 22;
@@ -200,22 +198,24 @@
 
   // ---------------------------------------------------------------- two videos: scarce supply and abundant supply
   // Each plays 4 steps by itself while on screen and loops; the named buttons switch video (restarts at step 1).
-  let step = 0, seen = false, video = "scarce";    // seen: dots drop in the moment the chart is first on screen
+  let step = 0, seen = false, video = "scarce";   // step 1: symmetric pairings, step 2: asymmetric pairings    // seen: dots drop in the moment the chart is first on screen
   const allSteps = [...document.querySelectorAll(".story .step")];
   const N = 2;
   const box = document.querySelector(".story .chart-box");
   const supBtns = [...box.querySelectorAll("[data-supply]")];
-  const HOLD = [5500, 6500];          // ms on each step (slow enough to read)
+  const HOLD = [8000, 8000];          // ms on each step (slow enough to read)
 
   function apply() {
-    set("draw", step >= 1 ? 1 : 0, 700, 450);          // dots land first, then MAX draws
+    set("draw", step >= 1 ? 1 : 0, 700, 450);          // step 1: dots land, then MAX draws
     set("region", step >= 1 ? 1 : 0, 350, 1100);
+    const asym = step === 2;
     for (const it of items) {
-      if (it.sym) set("sym" + it.idx, seen ? 1 : 0, 400, it.idx * 30);
-      else set("asym" + it.idx, step >= 2 ? 1 : 0, 400, step >= 2 ? 1100 + it.idx * 25 : 0);
+      const on = seen && asym === !it.sym;
+      set((it.sym ? "sym" : "asym") + it.idx, on ? 1 : 0, 400, on ? 350 + it.idx * 30 : 0);
     }
-    set("asymAll", step >= 2 ? 1 : 0, 400, step >= 2 ? 1100 : 0);
-    set("gap", step >= 2 ? 1 : 0, 600, step >= 2 ? 150 : 0);
+    // then the gap to MAX grows out of each dot
+    tw.gap = { from: 0, to: 1, start: performance.now() + (reduce ? 0 : 2600), dur: reduce ? 1 : 700 };
+    box.classList.toggle("asym", asym);
     set("supply", video === "abundant" ? 1 : 0, 500);
     supBtns.forEach((b) => b.setAttribute("aria-pressed", b.dataset.supply === video ? "true" : "false"));
     allSteps.forEach((s) => s.classList.toggle("active", s.dataset.video === video && +s.dataset.step === step));
@@ -233,11 +233,10 @@
       if (elapsed >= HOLD[step - 1]) { elapsed = 0; go(step === N ? 1 : step + 1); }
     }
     segFills.forEach((f, i) => { f.style.width = (i < step - 1 ? 100 : i === step - 1 ? Math.min(100, (elapsed / HOLD[step - 1]) * 100) : 0) + "%"; });
-    if (timeEl) timeEl.textContent = `${Math.max(step, 1)} / ${N}`;
     last = now;
     requestAnimationFrame(clock);
   }
-  const segFills = [...box.querySelectorAll(".seg-i i")], timeEl = box.querySelector(".chart-controls .time");
+  const segFills = [...box.querySelectorAll(".seg-i i")];
   box.querySelectorAll(".seg-i").forEach((b) => b.addEventListener("click", () => { elapsed = 0; go(+b.dataset.goto); }));
   box.querySelector(".chart-controls .play").addEventListener("click", () => { userPaused = playing; setPlaying(!playing); });
   function setPlaying(on) {
