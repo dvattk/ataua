@@ -415,3 +415,7 @@ ul.defs li { margin: .3em 0; line-height: 1.6; }
 .hero .logos img[alt="McGill University"] { height: 28px; }
 @media (max-width: 1000px) { .hero .logos { flex-wrap: wrap; gap: 16px 26px; } }
 @media (max-width: 640px) { .hero .logos img { transform: scale(.8); } .hero .logos { gap: 10px 14px; } }
+.hero .logos { gap: 40px; }
+.hero .logos img[alt="Sierra"] { height: 26px; }
+.hero .logos img[alt="Mercor"] { height: 26px; }
+.hero .logos img[alt="Mila"] { height: 30px; }
