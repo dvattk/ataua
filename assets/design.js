@@ -136,7 +136,7 @@
         u.bar.setAttribute("width", (u.W * ease(fade(t, t0 + 800, 700))).toFixed(1));
       });
       dotLayer.setAttribute("opacity", out.toFixed(3));
-    }, 1, [[0, "Flight database"], [1500, "Provider inventory"], [3000, "Itinerary"], [6000, "Users"]]);
+    }, 0.75, [[0, "Flight database"], [1500, "Provider inventory"], [3000, "Itinerary"], [6000, "Users"]]);
   });
 
   // ---------------------------------------------------------------- 2. users: the hidden profile becomes the prose of an email (21 s, three users)
@@ -257,7 +257,7 @@
         });
       });
     };
-  }, 0.8, [[0, "User 1"], [7000, "User 2"], [14000, "User 3"]]);
+  }, 0.65, [[0, "User 1"], [7000, "User 2"], [14000, "User 3"]]);
 
   // ---------------------------------------------------------------- 6. MAX: sweeping lambda traces the reference (12 s)
   const mx = document.querySelector(".d-anim.maxsweep");
