@@ -40,15 +40,16 @@
 <!-- ======================================================= overview -->
 <section class="wrap prose">
   <h2>Overview</h2>
-  <p>This post covers our paper, <b>A<span class="tau">τ</span>A: A Benchmark for Multi-Agent Interaction in Agentic
-    Economies</b>, a simulator for studying multi-agent interaction in a realistic market.</p>
-  <p>In a real market, decisions do not happen in isolation. Many users with different preferences and budgets compete
-    for limited inventory, while providers decide what to offer and at what price. Each transaction changes what
-    remains available to others, making the outcome for any participant dependent on the decisions of others.</p>
-  <p>With <b>A<span class="tau">τ</span>A</b>, we simulate these dynamics by bringing user agents and provider agents
-    together in a shared market, each acting on behalf of the party they represent. We study how well agents achieve
-    their respective objectives through these interactions and how their individual decisions shape outcomes across
-    the market. In the next section, we describe how the simulator works.</p>
+  <p>We introduce <b>A<span class="tau">τ</span>A</b>, a scalable simulator for studying agentic markets.</p>
+  <p>Current benchmarks assume that agents work in isolated workspaces, interacting with platforms through custom tools
+    (<a href="https://arxiv.org/abs/2406.12045">Yao et al., 2024</a>; <a href="https://arxiv.org/abs/2506.07982">Barres et al., 2025</a>;
+    <a href="https://arxiv.org/abs/2603.04370">Shi et al., 2026</a>; <a href="https://arxiv.org/abs/2402.01622">Xie et al., 2024</a>).
+    We believe instead that the web will become more agentic, with multiple agents interacting on behalf of their
+    respective parties, each optimizing a different utility.</p>
+  <p><b>A<span class="tau">τ</span>A</b> is built to simulate these dynamics where multiple user agents interact
+    asynchronously with multiple provider agents, each optimizing their owner's utility function. We study how well
+    agents achieve their respective objectives under abundance and scarcity and under cost asymmetry between providers
+    and users, as well as how different communication channels affect market dynamics.</p>
 
   <details class="more"><summary>Cite this work</summary>
     <div class="bib">
@@ -65,36 +66,33 @@
 
 <!-- ======================================================= benchmark design -->
 <section class="wrap prose sec">
-  <h2>Building the market</h2>
-  <p>The most important part of a market is the data behind it: provider inventory for the providers to sell, and
-    diverse users who want to use the service. In A<span class="tau">τ</span>A, providers sell from flight inventory
-    built from real U.S. fare records, while the users differ in their personas, preferences and budgets.</p>
+  <h2>Simulator Design</h2>
+  <p>We focus on the airline domain for our simulator, as it provides real historical fare and flight-route data to
+    ground task generation. This data comes from the Airline Origin and Destination Survey (DB1B) of the U.S. Bureau of
+    Transportation Statistics (<a href="https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFI">BTS, 2025</a>). Using
+    these routes as targets, we synthetically inject personas, preferences and budgets for each user to build
+    personalized tasks.</p>
+  <p>Each task in the simulator is therefore made up of multiple user agents interacting with multiple provider agents,
+    each trying to optimize the utility of the party it represents.</p>
 
-  <h3>Provider inventory</h3>
+  <h3>Provider Agent</h3>
   <p>Each airline provider maintains a flight database listing the routes it serves, departure and arrival times,
     fares, and the number of seats available in each cabin class. This inventory determines which flights a provider
-    can offer and how many travelers it can serve. To build it, we take travel records between 20 U.S. airports from
-    the BTS DB1B market survey and compute the median observed fare for each route and airline. We then generate
-    flight schedules over a 30-day period, with fares based on these reference prices and adjusted for each cabin
-    class. The resulting catalog contains 1,746 itineraries across 44 airports and 23 airlines.</p>
+    can offer and how many travelers it can serve. For our experiments, we generate flight schedules over a 30-day
+    period. The resulting catalog contains 1,746 itineraries across 44 airports and 23 airlines, and it can be
+    expanded by using the full historical data.</p>
   <figure class="d-anim inventory"><svg viewBox="0 0 680 590"></svg></figure>
 
-  <h3>User inventory</h3>
-  <p>We create users with diverse personas, preferences and budgets. A persona shapes what a user wants. A
-    budget-conscious user leans toward basic economy and a lower budget, while a premium user is more likely to
-    prefer business class with a higher budget. Each user has a <b>target budget</b>, the amount they would prefer to
-    spend, and a <b>walk-away budget</b>, the limit on their credit card.</p>
-  <p>Real travelers rarely state all of their preferences in a booking request. Much of it can only be inferred from
-    their personal correspondence. We follow the same setup. Each user's preferences are fixed in a structured
-    profile of <b>hard constraints</b>, which must be satisfied, and <b>soft preferences</b>, which allow compromise.
-    For example, a user may refuse travel insurance but prefer layovers shorter than three hours. An LLM then writes
-    the user's personal emails from this profile. The user agent sees only the emails, so it has to infer what the
-    user wants and which requests are non-negotiable.</p>
+  <h3>User Agent</h3>
+  <p>We create users with diverse personas, preferences and budgets. To simulate realistic spending, we give each user
+    a <b>target budget</b>, the amount they would prefer to spend, and a <b>walk-away budget</b>, the limit on their
+    credit card.</p>
+  <p>In practice, users rarely state all of their preferences in each request. To test whether agents can extract
+    preferences from user data, we give each user synthetic emails that mention their preferences naturally. For each
+    user we generate between 20 and 30 emails (sampled uniformly), and only 25% of them contain the user's real
+    preferences, while the rest contain noisy preferences.</p>
   <figure class="d-anim users"><svg viewBox="0 0 680 300"></svg></figure>
-  <p>A <b>task</b> brings together \(\boldsymbol{N}\) users who interact with the providers at the same time. To build one, we
-    sample a reference itinerary (a route and travel date) from the provider inventory and create each user's
-    booking goal around it: the locations, dates and number of travelers. The users share a common travel context
-    but differ in party size, cabin, date flexibility and return dates.</p>
+  <p>A task brings together \(\boldsymbol{N}\) users who interact with \(\boldsymbol{P}\) providers at the same time.</p>
 
   <details class="more"><summary>How large is the task space?</summary>
   <div class="comp">
@@ -121,13 +119,10 @@
   </details>
 
   <h3>Supply conditions</h3>
-  <p>Real markets often face scarcity when demand exceeds the supply of preferred options. We consider two settings.
-    Under <b>abundant supply</b>, supply substantially exceeds demand, so users can easily find options that match
-    their preferences. Under <b>scarce supply</b>, limited availability creates competition for these options. For
-    example, two users may want basic economy on the same flight, but the provider has only one such seat. One of
-    them may then have to pay more for economy or look for another flight. In both settings users share the same
-    inventory, so each booking reduces availability for the others.</p>
-  <details class="more"><summary>How is scarcity generated?</summary>
+  <p>In real life, flights can only take a limited number of travelers. To account for this, we provide two settings in
+    our simulator. In <b>abundant</b> mode, we assume there is no cap on passengers per flight. In <b>scarce</b> mode,
+    we sample the number of available seats on each flight from a Poisson distribution (details below).</p>
+  <details class="more"><summary>Scarcity</summary>
     <div class="comp">
       <p>For each task, we take every date within seven days of any user's departure or return date. On these dates,
         each flight and cabin gets a new number of seats, drawn from a Poisson distribution and capped at its original
@@ -158,7 +153,8 @@
   <p>We score every booking goal from both sides, with each reward between 0 and 1.</p>
 
   <h3>User reward</h3>
-  <p>The user reward asks one question: <i>did the traveler get the trip they wanted, at a price they accept?</i></p>
+  <p>For each user, the task is rewarded based on whether the agent booked the flight the user wants at a price within
+    their budget, scaled by the proportion of their preferences that were satisfied.</p>
   <div class="eq">$$R_u \;=\; \underbrace{I_{\mathrm{pax}}}_{\substack{\text{passenger}\\\text{count}}}\;\times\;\underbrace{C_{\mathrm{trip}}}_{\substack{\text{trip}\\\text{coverage}}}\;\times\;\underbrace{S_{\mathrm{budget}}}_{\substack{\text{budget}\\\text{satisfaction}}}\;\times\;\underbrace{S_{\mathrm{pref}}}_{\substack{\text{preference}\\\text{satisfaction}}}$$</div>
   <p>Because the four terms multiply, a missing traveler or a price at the walk-away budget sets the reward to
     zero, whatever else went well.</p>
@@ -195,7 +191,7 @@
   </details>
 
   <h3>Provider reward</h3>
-  <p>The provider reward asks: <i>how much of the revenue this trip could bring did the airline actually earn?</i></p>
+  <p>We reward the provider agent by how much of the total possible revenue it actually earns.</p>
   <div class="eq">$$R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} \min\!\left(1, \frac{r_a}{R_a}\right)$$</div>
   <p>where</p>
   <ul class="defs">
@@ -203,16 +199,14 @@
     <li>\(r_a\) is what the user paid airline \(a\): fares plus paid extras, after discounts.</li>
     <li>\(R_a\) is a reference revenue for the trip: airline \(a\)'s highest fare times the number of travelers, plus standard extras.</li>
   </ul>
-  <p>Each airline scores at most one, and the scores are averaged. Discounting too much or selling no extras lowers
-    the reward.</p>
 </section>
 
 <section class="wrap prose sec results-head">
   <h2>Results</h2>
-  <p>We evaluate frontier models from three families: GPT, Claude and Gemini. We run them in two settings. In the
-    <b>symmetric</b> setting, the same model acts as both the user agents and the provider agents. In the
-    <b>asymmetric</b> setting, the user agents and the provider agents use different models, for example Gemini users
-    buying from GPT providers.</p>
+  <p>We evaluate frontier models from three families, OpenAI's GPT, Anthropic's Claude and Google's Gemini, in two
+    settings. In the <b>symmetric</b> setting, the same model acts as both the user agents and the provider agents. In
+    the <b>asymmetric</b> setting, the user and provider agents use different models, for example Gemini users buying
+    from GPT providers.</p>
   <p>Each point is averaged over 100 tasks with five users each, 500 booking goals in total, and placed by its user
     reward and provider reward. The dashed <b>MAX</b> line indicates the maximum reward achievable.</p>
 </section>
@@ -254,13 +248,18 @@
 <!-- ======================================================= why -->
 <section class="wrap why">
   <h2 class="section-title">Why the gap?</h2>
-  <p class="why-lead">Two patterns explain most of this gap: how agents compete for scarce seats, and how provider agents sell.</p>
+  <p class="why-lead">We identify two main shortcomings in how agents behave.</p>
+  <ol class="why-lead">
+    <li>Agents compete for scarce seats.</li>
+    <li>Providers are poor sellers.</li>
+  </ol>
 
   <div class="why-block">
     <div class="why-text">
       <h3>Individual decisions can undermine collective outcomes</h3>
-      <p>Agent A booked the Delta seats, so Agent B settled for a pricier United trip. A coordinated allocation
-        raises user reward from <b>0.88 to 0.93</b> and provider reward from <b>0.40 to 0.93</b>.</p>
+      <p>A representative example is one in which Agent A booked the Delta seats, so Agent B settled for a pricier
+        United trip. Had the agents coordinated, the user reward could have risen from <b>0.88 to 0.93</b>, while the
+        provider reward would also have improved from <b>0.40 to 0.93</b>.</p>
     </div>
     <figure class="why-anim seats" aria-label="Animation: agent A takes the two Delta seats, agent B is diverted to United; in the coordinated version B takes Delta and A moves to a later flight, and both rewards rise.">
       <svg viewBox="0 0 520 330"></svg>
@@ -271,8 +270,8 @@
   <div class="why-block flip">
     <div class="why-text">
       <h3>Agents are good buyers but poor sellers</h3>
-      <p>Provider agents could hold the fare, offer another cabin or add paid services. Instead, every booking
-        received the full <b>30%</b> discount, while customers spent only about half their budgets.</p>
+      <p>We find that providers are eager to get agents to book their flights, often applying pressure and offering
+        discounts so that users book sooner.</p>
     </div>
     <figure class="why-anim discount" aria-label="Animation: a provider agent at a computer uses its mouse to pick a lever for each booking request. It never picks hold the fare, another cabin or paid add-ons, and clicks Discount 30% every time.">
       <svg viewBox="0 0 520 330"></svg>
