@@ -166,13 +166,11 @@
         deduplicated when a trip is split across several reservations.</p>
 
       <h4>Trip coverage, \(C_{\mathrm{trip}}\)</h4>
-      <p>A gate: one if every traveler is booked on every required journey, whether in one reservation or several,
-        and zero otherwise. With party size \(n\), and \(n_{\mathrm{out}}\), \(n_{\mathrm{ret}}\) the travelers with a
-        covered outbound and return journey:</p>
+      <p>One if every traveler is booked on every journey they need, and zero otherwise. The booking can be split
+        across several reservations. Let \(n\) be the party size, and \(n_{\mathrm{out}}\) and \(n_{\mathrm{ret}}\) the
+        number of travelers booked on the outbound and return journeys:</p>
       $$C_{\mathrm{trip}} = \begin{cases} \mathbf{1}[\,n_{\mathrm{out}} = n\,], & \text{one-way trip}, \\[6pt] \mathbf{1}[\,n_{\mathrm{out}} = n_{\mathrm{ret}} = n\,], & \text{round trip}. \end{cases}$$
-      <p>Two people flying to Paris and back need four journeys. If one person's return is missing,
-        \(C_{\mathrm{trip}} = 0\). Connecting flights do not add journeys; coverage checks that each traveler's
-        flights connect the requested airports.</p>
+      <p>Connecting flights count as one journey if they link the requested airports.</p>
 
       <h4>Budget satisfaction, \(S_{\mathrm{budget}}\)</h4>
       <p>Let \(c\) be net credit-card spending, \(B_{\mathrm{target}}\) the user's preferred budget and
