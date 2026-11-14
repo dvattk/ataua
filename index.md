@@ -114,7 +114,7 @@ We score every booking goal from both sides, with each reward between 0 and 1.
 
 ### User reward
 
-For each user the task is rewarded based on if the agent booked the flight the user wants, at a price within their budget, scaled by the proportion of their preferences satisfied.
+For each user, the task is rewarded based on whether the agent booked the flight the user wants at a price within their budget, scaled by the proportion of their preferences that were satisfied.
 
 $$R_u \;=\; \underbrace{I_{\mathrm{pax}}}_{\substack{\text{passenger}\\\text{count}}}\;\times\;\underbrace{C_{\mathrm{trip}}}_{\substack{\text{trip}\\\text{coverage}}}\;\times\;\underbrace{S_{\mathrm{budget}}}_{\substack{\text{budget}\\\text{satisfaction}}}\;\times\;\underbrace{S_{\mathrm{pref}}}_{\substack{\text{preference}\\\text{satisfaction}}}$$
 
@@ -152,7 +152,7 @@ EXPLAIN HERE @dheeraj clearly
 
 ### Provider reward
 
-We reward the provider agent by how much revenue they could obtain in totality against what they actually earn. 
+We reward the provider agent by how much of the total possible revenue it actually earns.
 
 $$R_p = \frac{1}{|\mathcal{A}_{\mathrm{book}}|} \sum_{a \in \mathcal{A}_{\mathrm{book}}} \min\!\left(1, \frac{r_a}{R_a}\right)$$
 
@@ -167,7 +167,7 @@ where
 
 ## Results
 
-We evaluate frontier models from three families: OpenAI's GPT, Anthropic's Claude and Google's Gemini. We measure two settings settings. Symmetric, in which the same model acts as both the user agents and the provider agents. Further, we test them in an asymmetric setting, where the user agents and the provider agents use different models, for example Gemini users buying from GPT providers.
+We evaluate frontier models from three families, OpenAI's GPT, Anthropic's Claude and Google's Gemini, in two settings. In the **symmetric** setting, the same model acts as both the user agents and the provider agents. In the **asymmetric** setting, the user and provider agents use different models, for example Gemini users buying from GPT providers.
 
 Each point is averaged over 100 tasks with five users each, 500 booking goals in total, and placed by its user reward and provider reward. The dashed **MAX** line indicates the maximum reward achievable.
 
@@ -179,20 +179,20 @@ Each point is averaged over 100 tasks with five users each, 500 booking goals in
 
 ## Why the gap?
 
-We identify two main drawbacks from agents:
+We identify two main shortcomings in how agents behave.
 
-1. Agents competing for scarce seats,
-2. Providers being bad sellers. 
+1. Agents compete for scarce seats.
+2. Providers are poor sellers.
 
 ### Individual decisions can undermine collective outcomes
 
-A representative example is one in which Agent A booked the Delta seats, so Agent B settled for a pricier United trip. Had agents properly coordinatedm their respective rewards could have risen from **0.88 to 0.93** and while also improving the provider reward from **0.40 to 0.93**.
+A representative example is one in which Agent A booked the Delta seats, so Agent B settled for a pricier United trip. Had the agents coordinated, the user reward could have risen from **0.88 to 0.93**, while the provider reward would also have improved from **0.40 to 0.93**.
 
 [figure: Animation: agent A takes the two Delta seats, agent B is diverted to United; in the coordinated version B takes Delta and A moves to a later flight, and both rewards rise.]
 
 ### Agents are good buyers but poor sellers
 
-We find providers are eager to get the agents to book their flight, often applying preassure and offering discounts to ensure users booked quicker. 
+We find that providers are eager to get agents to book their flights, often applying pressure and offering discounts so that users book sooner.
 
 
 [figure: Animation: a provider agent at a computer uses its mouse to pick a lever for each booking request. It never picks hold the fare, another cabin or paid add-ons, and clicks Discount 30% every time.]
