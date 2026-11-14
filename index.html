@@ -166,11 +166,8 @@
         deduplicated when a trip is split across several reservations.</p>
 
       <h4>Trip coverage, \(C_{\mathrm{trip}}\)</h4>
-      <p>One if every traveler is booked on every journey they need, and zero otherwise. The booking can be split
-        across several reservations. Let \(n\) be the party size, and \(n_{\mathrm{out}}\) and \(n_{\mathrm{ret}}\) the
-        number of travelers booked on the outbound and return journeys:</p>
-      $$C_{\mathrm{trip}} = \begin{cases} \mathbf{1}[\,n_{\mathrm{out}} = n\,], & \text{one-way trip}, \\[6pt] \mathbf{1}[\,n_{\mathrm{out}} = n_{\mathrm{ret}} = n\,], & \text{round trip}. \end{cases}$$
-      <p>Connecting flights count as one journey if they link the requested airports.</p>
+      <p>If every traveler is booked on all of their journeys, the reward is 1. If anything is missing, it is 0.</p>
+      $$C_{\mathrm{trip}} = \begin{cases} 1, & \text{every traveler is booked on every journey}, \\[6pt] 0, & \text{otherwise}. \end{cases}$$
 
       <h4>Budget satisfaction, \(S_{\mathrm{budget}}\)</h4>
       <p>Let \(c\) be net credit-card spending, \(B_{\mathrm{target}}\) the user's preferred budget and
